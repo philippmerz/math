@@ -1,0 +1,421 @@
+:root {
+  --bg: #ffffff;
+  --fg: #000000;
+  --muted: #6b6b6b;
+  --line: #000000;
+  --hairline: #e6e6e6;
+  --node-bg: #ffffff;
+  --panel-bg: #ffffff;
+  --dot: #ececec;
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg: #000000;
+  --fg: #ffffff;
+  --muted: #9a9a9a;
+  --line: #d0d0d0;
+  --hairline: #2a2a2a;
+  --node-bg: #1c1c1c;
+  --panel-bg: #000000;
+  --dot: #141414;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* ---- React Flow canvas ------------------------------------------------ */
+
+.react-flow {
+  background: var(--bg);
+}
+
+.react-flow__attribution {
+  display: none;
+}
+
+.concept-node {
+  width: 220px;
+  min-height: 56px;
+  padding: 8px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  background: var(--node-bg);
+  color: var(--fg);
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+
+.concept-node:hover {
+  box-shadow: 0 0 0 3px var(--hairline);
+}
+
+.concept-node__kind {
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.concept-node__label {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* selection → inverted fill */
+.react-flow__node.selected .concept-node,
+.concept-node.is-selected {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+.react-flow__node.selected .concept-node .concept-node__kind,
+.concept-node.is-selected .concept-node__kind {
+  color: var(--bg);
+  opacity: 0.7;
+}
+
+.react-flow__node.is-dimmed {
+  opacity: 0.16;
+}
+
+/* hide the connection handles — the graph is read-only */
+.concept-node .react-flow__handle {
+  width: 1px;
+  height: 1px;
+  min-width: 0;
+  min-height: 0;
+  border: none;
+  background: transparent;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.react-flow__controls {
+  box-shadow: none;
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.react-flow__controls-button {
+  width: 28px;
+  height: 28px;
+  background: var(--panel-bg);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.react-flow__controls-button:hover {
+  background: var(--hairline);
+}
+
+.react-flow__controls-button svg {
+  fill: var(--fg);
+}
+
+/* ---- Toolbar ---------------------------------------------------------- */
+
+.toolbar {
+  position: absolute;
+  inset: 0 0 auto 0;
+  /* above the definition panel so the controls stay clickable */
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 14px 18px;
+  pointer-events: none;
+}
+
+.toolbar > * {
+  pointer-events: auto;
+}
+
+.toolbar__brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.toolbar__title {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.toolbar__subtitle {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+.toolbar__tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ---- Search ----------------------------------------------------------- */
+
+.search {
+  position: relative;
+}
+
+.search__input {
+  width: 240px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--fg);
+  background: var(--panel-bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline: none;
+}
+
+.search__input::placeholder {
+  color: var(--muted);
+}
+
+.search__input:focus {
+  box-shadow: 0 0 0 3px var(--hairline);
+}
+
+.search__results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--panel-bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+}
+
+.search__result {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 9px;
+  background: none;
+  border: none;
+  border-radius: 5px;
+  color: var(--fg);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.search__result:hover {
+  background: var(--hairline);
+}
+
+.search__result-kind {
+  flex: none;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---- Theme toggle ----------------------------------------------------- */
+
+.theme-toggle {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  background: var(--panel-bg);
+  color: var(--fg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  background: var(--hairline);
+}
+
+/* ---- Definition panel ------------------------------------------------- */
+
+.panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 7;
+  width: min(440px, 92vw);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel-bg);
+  border-left: 1px solid var(--line);
+  padding: 18px 22px 28px;
+  overflow-y: auto;
+  animation: panel-in 200ms ease;
+}
+
+@keyframes panel-in {
+  from {
+    transform: translateX(12px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel__kind {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.panel__close {
+  background: none;
+  border: none;
+  color: var(--fg);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.panel__title {
+  margin: 8px 0 10px;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.panel__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.panel__tag {
+  padding: 3px 9px;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+}
+
+.panel__body {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 15.5px;
+  line-height: 1.62;
+}
+
+.panel__body p {
+  margin: 0 0 12px;
+}
+
+.panel__body mjx-container {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.panel__body mjx-container[display='true'] {
+  margin: 12px 0;
+}
+
+.panel__section {
+  margin-top: 18px;
+  border-top: 1px solid var(--hairline);
+  padding-top: 14px;
+}
+
+.panel__section-title {
+  margin: 0 0 9px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.panel__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.panel__chip {
+  padding: 5px 10px;
+  font-size: 12px;
+  background: var(--panel-bg);
+  color: var(--fg);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.panel__chip:hover {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+/* ---- Responsive ------------------------------------------------------- */
+
+@media (max-width: 560px) {
+  .toolbar__subtitle {
+    display: none;
+  }
+  .search__input {
+    width: 150px;
+  }
+  .panel {
+    width: 100vw;
+    border-left: none;
+  }
+}

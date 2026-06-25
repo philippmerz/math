@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    :root { --c: #000; }
+    @media (prefers-color-scheme: dark) { :root { --c: #fff; } }
+  </style>
+  <g stroke="var(--c)" stroke-width="2" fill="none">
+    <line x1="16" y1="8" x2="8" y2="23" />
+    <line x1="16" y1="8" x2="24" y2="23" />
+  </g>
+  <g fill="var(--c)">
+    <circle cx="16" cy="7" r="4" />
+    <circle cx="8" cy="25" r="4" />
+    <circle cx="24" cy="25" r="4" />
+  </g>
+</svg>
