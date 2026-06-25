@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { ReactFlowProvider } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { GraphView } from './graph/GraphView'
@@ -12,10 +12,14 @@ const DefinitionPanel = lazy(() =>
   import('./ui/DefinitionPanel').then((m) => ({ default: m.DefinitionPanel })),
 )
 
+const REPO_URL = 'https://github.com/philippmerz/math'
+
 export default function App() {
   const [theme, toggleTheme] = useTheme()
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [query, setQuery] = useState('')
+  const [viewArea, setViewArea] = useState<string | null>(null)
+  const onAreaChange = useCallback((area: string | null) => setViewArea(area), [])
 
   const results = useMemo(() => searchNodes(query), [query])
   const matchIds = useMemo(
@@ -41,23 +45,36 @@ export default function App() {
           selectedId={selectedId}
           matchIds={matchIds}
           onSelect={setSelectedId}
+          onAreaChange={onAreaChange}
         />
 
         <header className="toolbar">
           <div className="toolbar__brand">
             <span className="toolbar__title">Mathematics Graph</span>
-            <span className="toolbar__subtitle">ZFC · foundations</span>
+            {viewArea && <span className="toolbar__subtitle">{viewArea}</span>}
           </div>
-          <div className="toolbar__tools">
-            <SearchBox
-              query={query}
-              onQueryChange={setQuery}
-              results={results}
-              onPick={(id) => {
-                setSelectedId(id)
-                setQuery('')
-              }}
-            />
+          <SearchBox
+            query={query}
+            onQueryChange={setQuery}
+            results={results}
+            onPick={(id) => {
+              setSelectedId(id)
+              setQuery('')
+            }}
+          />
+          <div className="toolbar__right">
+            <a
+              className="icon-btn"
+              href={REPO_URL}
+              target="_blank"
+              rel="noreferrer noopener"
+              aria-label="View source on GitHub"
+              title="View source on GitHub"
+            >
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+              </svg>
+            </a>
             <ThemeToggle theme={theme} onToggle={toggleTheme} />
           </div>
         </header>

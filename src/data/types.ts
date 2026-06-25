@@ -1,5 +1,5 @@
 /** The kind of mathematical object a node represents. */
-export type NodeKind = 'primitive' | 'axiom' | 'definition'
+export type NodeKind = 'primitive' | 'axiom' | 'definition' | 'theorem'
 
 /**
  * A single concept in the knowledge graph. The graph is the set of all

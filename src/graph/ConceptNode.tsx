@@ -6,7 +6,6 @@ export function ConceptNode({ data, selected }: NodeProps<ConceptNodeType>) {
   return (
     <div className={`concept-node${selected ? ' is-selected' : ''}`}>
       <Handle type="target" position={Position.Top} isConnectable={false} />
-      <span className="concept-node__kind">{data.kind}</span>
       <span className="concept-node__label">{data.label}</span>
       <Handle type="source" position={Position.Bottom} isConnectable={false} />
     </div>

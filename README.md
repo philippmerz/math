@@ -3,12 +3,9 @@
 An open, pure-frontend tool for visualising mathematics as a directed dependency
 graph. Each concept is a labelled node; an arrow runs from every prerequisite to
 the concept it enables. Click a node to read a concise, MathJax-rendered
-definition. Search jumps to any concept; the canvas has light (`#fff`) and dark
-(`#000`) modes.
+definition.
 
-The seed content is the foundational core of **Zermelo–Fraenkel set theory with
-Choice (ZFC)** — the two primitives, the ten axioms, and the constructions
-(ordered pairs, functions, ordinals, …) built on top of them.
+Open a PR if you spot any mistakes.
 
 No backend, no accounts, no paywall. It builds to static files and ships on
 GitHub Pages.

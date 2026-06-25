@@ -59,16 +59,15 @@ body {
 
 .concept-node {
   width: 220px;
-  min-height: 56px;
-  padding: 8px 14px;
+  min-height: 50px;
+  padding: 6px 12px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 2px;
   background: var(--node-bg);
   color: var(--fg);
-  border: 1.5px solid var(--line);
-  border-radius: 8px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
   cursor: pointer;
   transition: background 120ms ease, color 120ms ease, box-shadow 120ms ease;
 }
@@ -77,17 +76,11 @@ body {
   box-shadow: 0 0 0 3px var(--hairline);
 }
 
-.concept-node__kind {
-  font-size: 9.5px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
 .concept-node__label {
-  font-size: 14px;
+  font-size: 15.5px;
   font-weight: 600;
   line-height: 1.2;
+  text-align: center;
 }
 
 /* selection → inverted fill */
@@ -96,12 +89,6 @@ body {
   background: var(--fg);
   color: var(--bg);
   border-color: var(--fg);
-}
-
-.react-flow__node.selected .concept-node .concept-node__kind,
-.concept-node.is-selected .concept-node__kind {
-  color: var(--bg);
-  opacity: 0.7;
 }
 
 .react-flow__node.is-dimmed {
@@ -142,6 +129,42 @@ body {
   fill: var(--fg);
 }
 
+/* ---- Hover tooltip (screen space, fixed size at any zoom) ------------- */
+
+.node-tip {
+  position: fixed;
+  z-index: 9;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 260px;
+  padding: 8px 12px;
+  background: var(--panel-bg);
+  color: var(--fg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.22);
+}
+
+.node-tip__kind {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.node-tip__title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.node-tip__tags {
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
 /* ---- Toolbar ---------------------------------------------------------- */
 
 .toolbar {
@@ -178,10 +201,34 @@ body {
   letter-spacing: 0.04em;
 }
 
-.toolbar__tools {
+/* The icon cluster (GitHub + theme) sits in the upper-right corner. */
+.toolbar__right {
+  margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+}
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  background: var(--panel-bg);
+  color: var(--fg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  background: var(--hairline);
+}
+
+.icon-btn svg {
+  width: 17px;
+  height: 17px;
+  fill: currentColor;
 }
 
 /* ---- Search ----------------------------------------------------------- */
@@ -285,7 +332,8 @@ body {
   flex-direction: column;
   background: var(--panel-bg);
   border-left: 1px solid var(--line);
-  padding: 18px 22px 28px;
+  /* extra top padding clears the floating toolbar / corner toggle */
+  padding: 54px 22px 28px;
   overflow-y: auto;
   animation: panel-in 200ms ease;
 }
