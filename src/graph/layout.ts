@@ -113,17 +113,24 @@ function dagreLayout(clustered: boolean, nodes: MathNode[]): LayoutResult {
     return rfNode(node, x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2)
   })
 
+  // Hull boxes from the actual node bounds, not dagre's compound-node size —
+  // the latter can be far wider than the nodes it holds (e.g. a sparse field
+  // reserving empty space to its right), giving wide, mostly-empty hulls.
   const clusters: ClusterBox[] = clustered
     ? areas.map((area) => {
-        const c = g.node(clusterId(area)) as DagreBox
-        return {
-          id: clusterId(area),
-          area,
-          x: c.x - c.width / 2,
-          y: c.y - c.height / 2,
-          width: c.width,
-          height: c.height,
-        }
+        let minX = Infinity
+        let minY = Infinity
+        let maxX = -Infinity
+        let maxY = -Infinity
+        nodes.forEach((node, i) => {
+          if (primaryArea(node) !== area) return
+          const p = rfNodes[i].position
+          minX = Math.min(minX, p.x)
+          minY = Math.min(minY, p.y)
+          maxX = Math.max(maxX, p.x + NODE_WIDTH)
+          maxY = Math.max(maxY, p.y + NODE_HEIGHT)
+        })
+        return { id: clusterId(area), area, x: minX, y: minY, width: maxX - minX, height: maxY - minY }
       })
     : []
 

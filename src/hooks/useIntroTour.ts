@@ -85,26 +85,40 @@ type Segment = { from: Viewport; to: Viewport; ms: number; ease: (t: number) => 
 
 function buildSegments(legs: Leg[]): Segment[] {
   const dist = (a: Viewport, b: Viewport) => Math.hypot(a.x - b.x, a.y - b.y)
+  // The most content a single scan covers, at the target speed within the cap.
+  const MAX_SCAN_FLOW = (SCAN_MAX_MS / 1000) * SCAN_FLOW_PER_SEC
   const segs: Segment[] = []
-  legs.forEach((leg, i) => {
-    if (i > 0) {
-      const from = legs[i - 1].end
+  let prevEnd: Viewport | null = null
+  legs.forEach((leg) => {
+    if (prevEnd) {
       segs.push({
-        from,
+        from: prevEnd,
         to: leg.frame,
-        ms: clamp((dist(from, leg.frame) / TRAVEL_PX_PER_SEC) * 1000, TRAVEL_MIN_MS, TRAVEL_MAX_MS),
+        ms: clamp((dist(prevEnd, leg.frame) / TRAVEL_PX_PER_SEC) * 1000, TRAVEL_MIN_MS, TRAVEL_MAX_MS),
         ease: easeInOutSine,
       })
     }
-    // Screen distance ÷ zoom = flow distance, so the drift is a constant
-    // content-space speed regardless of how zoomed-in the field is.
-    const flowDist = dist(leg.frame, leg.end) / leg.frame.zoom
+    // Constant content-space speed (screen distance ÷ zoom = flow distance), so
+    // the apparent reading pace is the same at any zoom. We cap the *distance*,
+    // not the time — a very wide field scans a bounded slice at that same pace
+    // instead of racing across all of it to beat a time cap.
+    const fullFlow = dist(leg.frame, leg.end) / leg.frame.zoom
+    const ratio = fullFlow > MAX_SCAN_FLOW ? MAX_SCAN_FLOW / fullFlow : 1
+    const to =
+      ratio < 1
+        ? {
+            x: leg.frame.x + (leg.end.x - leg.frame.x) * ratio,
+            y: leg.frame.y + (leg.end.y - leg.frame.y) * ratio,
+            zoom: leg.frame.zoom,
+          }
+        : leg.end
     segs.push({
       from: leg.frame,
-      to: leg.end,
-      ms: clamp((flowDist / SCAN_FLOW_PER_SEC) * 1000, SCAN_MIN_MS, SCAN_MAX_MS),
+      to,
+      ms: clamp((fullFlow * ratio) / SCAN_FLOW_PER_SEC * 1000, SCAN_MIN_MS, SCAN_MAX_MS),
       ease: (t) => t, // steady gaze across the field
     })
+    prevEnd = to
   })
   return segs
 }
