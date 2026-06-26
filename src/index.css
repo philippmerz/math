@@ -4,7 +4,9 @@
   --muted: #6b6b6b;
   --line: #000000;
   --hairline: #e6e6e6;
-  --node-bg: #ffffff;
+  /* off-white so nodes read as cards against the pure-white page + faint hulls
+     (mirrors dark mode, where the node fill is lighter than the #000 page) */
+  --node-bg: #ededed;
   --panel-bg: #ffffff;
   --dot: #ececec;
   color-scheme: light;
