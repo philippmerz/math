@@ -4,6 +4,7 @@ import {
   Controls,
   MarkerType,
   ReactFlow,
+  ViewportPortal,
   useNodesState,
   useReactFlow,
   type Edge,
@@ -11,21 +12,22 @@ import {
 } from '@xyflow/react'
 import { ConceptNode } from './ConceptNode'
 import {
-  layoutEdges,
-  layoutNodes,
   NODE_HEIGHT,
   NODE_WIDTH,
   type ConceptNode as ConceptNodeType,
+  type LayoutResult,
 } from './layout'
 import { nodeById } from '../data/graph'
 import type { Theme } from '../hooks/useTheme'
+
+const CLUSTER_PAD = 26
 
 // Below this fraction of all nodes in view, the camera is "focused" on a region
 // and we name its dominant area; at or above it (zoomed out) we show nothing.
 const FOCUSED_FRACTION = 0.6
 
 /** The dominant mathematical area(s) among the nodes inside the viewport. */
-function areaInView(vp: Viewport): string | null {
+function areaInView(vp: Viewport, nodes: ConceptNodeType[]): string | null {
   const { x, y, zoom } = vp
   const w = window.innerWidth
   const h = window.innerHeight
@@ -34,7 +36,7 @@ function areaInView(vp: Viewport): string | null {
 
   const counts = new Map<string, number>()
   let inView = 0
-  for (const n of layoutNodes) {
+  for (const n of nodes) {
     const cx = n.position.x + NODE_WIDTH / 2
     const cy = n.position.y + NODE_HEIGHT / 2
     if (cx < minX || cx > maxX || cy < minY || cy > maxY) continue
@@ -44,7 +46,7 @@ function areaInView(vp: Viewport): string | null {
     }
   }
 
-  if (inView === 0 || inView >= layoutNodes.length * FOCUSED_FRACTION) return null
+  if (inView === 0 || inView >= nodes.length * FOCUSED_FRACTION) return null
   const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1])
   const top = sorted[0][1]
   // Name every area at least half as common as the leader (max two).
@@ -59,6 +61,7 @@ const nodeTypes = { concept: ConceptNode }
 
 type Props = {
   theme: Theme
+  layout: LayoutResult
   selectedId: string | null
   /** ids matching the current search, or null when the search is empty. */
   matchIds: ReadonlySet<string> | null
@@ -71,6 +74,7 @@ type Props = {
 
 export function GraphView({
   theme,
+  layout,
   selectedId,
   matchIds,
   focusTag,
@@ -78,10 +82,20 @@ export function GraphView({
   onAreaChange,
 }: Props) {
   // `nodes` carries React Flow's measured dimensions; we layer flags on top.
-  const [nodes, , onNodesChange] = useNodesState<ConceptNodeType>(layoutNodes)
+  const [nodes, setNodes, onNodesChange] = useNodesState<ConceptNodeType>(layout.nodes)
   const rf = useReactFlow()
 
-  const reportArea = useCallback(() => onAreaChange(areaInView(rf.getViewport())), [onAreaChange, rf])
+  const reportArea = useCallback(
+    () => onAreaChange(areaInView(rf.getViewport(), layout.nodes)),
+    [onAreaChange, rf, layout],
+  )
+
+  // Swap in the new positions and re-fit whenever the layout engine changes.
+  useEffect(() => {
+    setNodes(layout.nodes)
+    const id = window.setTimeout(() => rf.fitView({ padding: 0.2, duration: 400 }), 60)
+    return () => window.clearTimeout(id)
+  }, [layout, setNodes, rf])
 
   // Report once after the initial fitView settles, then on every camera move.
   useEffect(() => {
@@ -110,7 +124,7 @@ export function GraphView({
   const hoveredId = tip?.id ?? null
   const edges = useMemo<Edge[]>(
     () =>
-      layoutEdges.map((e) => {
+      layout.edges.map((e) => {
         const touches = (id: string | null) => id != null && (e.source === id || e.target === id)
         const active = touches(hoveredId) || touches(selectedId)
         const color = active ? stroke : dimStroke
@@ -121,7 +135,7 @@ export function GraphView({
           zIndex: active ? 1 : 0,
         }
       }),
-    [stroke, dimStroke, hoveredId, selectedId],
+    [layout, stroke, dimStroke, hoveredId, selectedId],
   )
 
   // Glide the camera to the selected node whenever the selection changes.
@@ -134,46 +148,70 @@ export function GraphView({
     rf.setCenter(node.position.x + w / 2, node.position.y + h / 2, { zoom: 1.25, duration: 500 })
   }, [selectedId, rf])
 
+  const clusters = layout.clusters
+
   return (
     <>
-    <ReactFlow
-      nodes={displayNodes}
-      edges={edges}
-      onNodesChange={onNodesChange}
-      onNodeClick={(_, node) => onSelect(node.id)}
-      onPaneClick={() => onSelect(null)}
-      onNodeMouseEnter={(e, node) => setTip({ id: node.id, x: e.clientX, y: e.clientY })}
-      onNodeMouseMove={(e, node) => setTip({ id: node.id, x: e.clientX, y: e.clientY })}
-      onNodeMouseLeave={() => setTip(null)}
-      onMoveEnd={reportArea}
-      nodeTypes={nodeTypes}
-      colorMode={theme}
-      fitView
-      fitViewOptions={{ padding: 0.2 }}
-      minZoom={0.2}
-      maxZoom={2.5}
-      nodesDraggable={false}
-      nodesConnectable={false}
-      proOptions={{ hideAttribution: true }}
-    >
-      <Background gap={28} size={1} color={theme === 'dark' ? '#141414' : '#ececec'} />
-      <Controls showInteractive={false} position="bottom-right" />
-    </ReactFlow>
-    {tip && tipNode && (
-      <div
-        className="node-tip"
-        style={{
-          left: tip.x + 16 + 260 > window.innerWidth ? tip.x - 16 - 260 : tip.x + 16,
-          top: Math.min(tip.y + 16, window.innerHeight - 96),
-        }}
+      <ReactFlow
+        nodes={displayNodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onNodeClick={(_, node) => onSelect(node.id)}
+        onPaneClick={() => onSelect(null)}
+        onNodeMouseEnter={(e, node) => setTip({ id: node.id, x: e.clientX, y: e.clientY })}
+        onNodeMouseMove={(e, node) => setTip({ id: node.id, x: e.clientX, y: e.clientY })}
+        onNodeMouseLeave={() => setTip(null)}
+        onMoveEnd={reportArea}
+        nodeTypes={nodeTypes}
+        colorMode={theme}
+        fitView
+        fitViewOptions={{ padding: 0.2 }}
+        minZoom={0.2}
+        maxZoom={2.5}
+        nodesDraggable={false}
+        nodesConnectable={false}
+        proOptions={{ hideAttribution: true }}
       >
-        <span className="node-tip__kind">{tipNode.kind}</span>
-        <span className="node-tip__title">{tipNode.title}</span>
-        {tipNode.tags.length > 0 && (
-          <span className="node-tip__tags">{tipNode.tags.join(' · ')}</span>
-        )}
-      </div>
-    )}
+        <ViewportPortal>
+          {clusters.map((c, i) => {
+            // Evenly spaced hue per area; very low opacity so it stays a hint.
+            const hue = Math.round((i * 360) / clusters.length)
+            return (
+              <div
+                key={c.id}
+                className="cluster-hull"
+                style={{
+                  position: 'absolute',
+                  left: c.x - CLUSTER_PAD,
+                  top: c.y - CLUSTER_PAD,
+                  width: c.width + CLUSTER_PAD * 2,
+                  height: c.height + CLUSTER_PAD * 2,
+                  background: `hsl(${hue} 65% 55% / 0.1)`,
+                }}
+              >
+                <span className="cluster-hull__label">{c.area}</span>
+              </div>
+            )
+          })}
+        </ViewportPortal>
+        <Background gap={28} size={1} color={theme === 'dark' ? '#141414' : '#ececec'} />
+        <Controls showInteractive={false} position="bottom-right" />
+      </ReactFlow>
+      {tip && tipNode && (
+        <div
+          className="node-tip"
+          style={{
+            left: tip.x + 16 + 260 > window.innerWidth ? tip.x - 16 - 260 : tip.x + 16,
+            top: Math.min(tip.y + 16, window.innerHeight - 96),
+          }}
+        >
+          <span className="node-tip__kind">{tipNode.kind}</span>
+          <span className="node-tip__title">{tipNode.title}</span>
+          {tipNode.tags.length > 0 && (
+            <span className="node-tip__tags">{tipNode.tags.join(' · ')}</span>
+          )}
+        </div>
+      )}
     </>
   )
 }

@@ -4,7 +4,9 @@
   --muted: #6b6b6b;
   --line: #000000;
   --hairline: #e6e6e6;
-  --node-bg: #ffffff;
+  /* off-white so nodes read as cards against the pure-white page + faint hulls
+     (mirrors dark mode, where the node fill is lighter than the #000 page) */
+  --node-bg: #ededed;
   --panel-bg: #ffffff;
   --dot: #ececec;
   color-scheme: light;
@@ -55,6 +57,27 @@ body {
 
 .react-flow__attribution {
   display: none;
+}
+
+/* ---- Area cluster hulls (clustering experiment) ----------------------- */
+
+.cluster-hull {
+  border: 1px dashed var(--hairline);
+  border-radius: 18px;
+  pointer-events: none;
+}
+
+.cluster-hull__label {
+  position: absolute;
+  top: -9px;
+  left: 16px;
+  padding: 0 8px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--bg);
+  white-space: nowrap;
 }
 
 .concept-node {
@@ -228,7 +251,130 @@ body {
 .icon-btn svg {
   width: 17px;
   height: 17px;
-  fill: currentColor;
+}
+
+/* ---- Settings menu ---------------------------------------------------- */
+
+.settings {
+  position: relative;
+}
+
+.settings__menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 256px;
+  padding: 6px;
+  background: var(--panel-bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+  display: flex;
+  flex-direction: column;
+  transform-origin: top right;
+  /* closed: faded + slightly lifted; visibility hide is delayed past the fade */
+  opacity: 0;
+  transform: translateY(-6px) scale(0.97);
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 140ms ease, transform 140ms ease, visibility 0s linear 140ms;
+}
+
+.settings__menu.is-open {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.settings__section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 8px 10px;
+}
+
+.settings__section + .settings__section {
+  border-top: 1px solid var(--hairline);
+}
+
+.settings__heading {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.settings__seg {
+  display: flex;
+  gap: 4px;
+}
+
+.settings__seg-btn {
+  flex: 1;
+  padding: 6px 0;
+  font-size: 13px;
+  color: var(--fg);
+  background: none;
+  border: 1px solid var(--hairline);
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.settings__seg-btn.is-active {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+.settings__option {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  text-align: left;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.settings__option:hover {
+  background: var(--hairline);
+}
+
+.settings__option.is-active {
+  border-color: var(--line);
+}
+
+.settings__option-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.settings__option-desc {
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+/* ---- Layout loading hint ---------------------------------------------- */
+
+.layout-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  padding: 8px 16px;
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--panel-bg);
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  pointer-events: none;
 }
 
 /* ---- Search ----------------------------------------------------------- */
