@@ -9,7 +9,7 @@
  *
  * Imports the real data via Node's type stripping — no fragile text parsing.
  */
-import { MATH_NODES } from '../src/data/nodes.ts'
+import { MATH_NODES } from '../src/data/nodes/index.ts'
 import type { NodeKind } from '../src/data/types.ts'
 
 const VALID_KINDS: ReadonlySet<NodeKind> = new Set([

@@ -22,6 +22,7 @@ GitHub Pages.
 npm install
 npm run dev      # http://localhost:5173
 npm run build    # type-check + production build into dist/
+npm run check    # validate the graph: unique ids, deps resolve, acyclic
 npm run preview  # serve the production build locally
 ```
 
@@ -31,8 +32,8 @@ npm run preview  # serve the production build locally
 src/
   data/
     types.ts    MathNode — the one data type
-    nodes.ts    the ZFC content (the single source of truth)
-    graph.ts    derived lookups: by-id, reverse-deps, search
+    nodes/      one file per area (logic, set-theory, algebra, …) + index.ts
+    graph.ts    derived lookups: by-id, reverse-deps, search, tags
   graph/
     layout.ts       dagre → positioned nodes + edges (computed once)
     GraphView.tsx   the React Flow canvas (selection, dimming, camera)
@@ -51,22 +52,26 @@ layout is pure and runs once at module load.
 
 ## Adding a concept
 
-Append one object to [`src/data/nodes.ts`](src/data/nodes.ts):
+Append one object to the relevant area file under
+[`src/data/nodes/`](src/data/nodes/) (e.g. `analysis.ts`); `index.ts`
+concatenates them:
 
 ```ts
 {
   id: 'union',                       // stable, unique, URL-safe
   label: 'Union',                    // short — drawn on the node
   title: 'Axiom of Union',           // full — panel header
-  kind: 'axiom',                     // 'primitive' | 'axiom' | 'definition'
+  kind: 'axiom',                     // 'primitive' | 'axiom' | 'definition' | 'theorem'
+  tags: ['Set Theory'],              // area(s); the first tag picks the file
   dependencies: ['membership'],      // ids this concept is built from
   definition: String.raw`...`,       // Markdown + LaTeX ($…$, $$…$$)
 }
 ```
 
 Use `String.raw` so LaTeX backslashes (`\forall`, `\varnothing`, …) survive the
-template literal verbatim. Edges, the reverse "Leads to" links, search, and the
-layout all update automatically — there is nothing else to wire up.
+template literal verbatim. Edges, the reverse "Leads to" links, search, tags, and
+the layout all update automatically. Run `npm run check` to validate ids,
+dependencies, and acyclicity.
 
 ## Deploy to GitHub Pages
 
