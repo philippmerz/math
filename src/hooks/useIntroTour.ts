@@ -5,9 +5,12 @@ import type { ClusterBox } from '../graph/layout'
 // Legibly zoomed-in: a 220px node reads at ~0.5–0.9 scale.
 const ZOOM_MIN = 0.5
 const ZOOM_MAX = 0.9
-const SCAN_PX_PER_SEC = 46 // slow drift across a field
+// Drift speed in *flow* (content) units/sec, so the apparent reading speed is
+// the same whatever the field's zoom — a zoomed-out (large) field pans slower on
+// screen rather than whipping its smaller text past.
+const SCAN_FLOW_PER_SEC = 54
 const SCAN_MIN_MS = 1600 // even a field that fits gets a beat
-const SCAN_MAX_MS = 14000
+const SCAN_MAX_MS = 24000 // generous, so even wide fields hold the steady speed
 const TRAVEL_PX_PER_SEC = 320 // quicker hop to the next field
 const TRAVEL_MIN_MS = 700
 const TRAVEL_MAX_MS = 2400
@@ -93,10 +96,13 @@ function buildSegments(legs: Leg[]): Segment[] {
         ease: easeInOutSine,
       })
     }
+    // Screen distance ÷ zoom = flow distance, so the drift is a constant
+    // content-space speed regardless of how zoomed-in the field is.
+    const flowDist = dist(leg.frame, leg.end) / leg.frame.zoom
     segs.push({
       from: leg.frame,
       to: leg.end,
-      ms: clamp((dist(leg.frame, leg.end) / SCAN_PX_PER_SEC) * 1000, SCAN_MIN_MS, SCAN_MAX_MS),
+      ms: clamp((flowDist / SCAN_FLOW_PER_SEC) * 1000, SCAN_MIN_MS, SCAN_MAX_MS),
       ease: (t) => t, // steady gaze across the field
     })
   })
