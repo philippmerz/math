@@ -79,7 +79,7 @@ Taking each $N_i = x_i$ (reducible, by CR3 applied to variables) yields $M \in \
     title: 'Curry–Howard Correspondence',
     kind: 'theorem',
     tags: ['Type Theory'],
-    dependencies: ['simply-typed-lambda-calculus', 'sum-and-product-types', 'logical-connectives', 'stlc-strong-normalization'],
+    dependencies: ['simply-typed-lambda-calculus', 'sum-and-product-types', 'logical-connectives', 'stlc-strong-normalization', 'type-preservation'],
     description: String.raw`The **Curry–Howard correspondence** is the discovery that two seemingly different activities — proving theorems and writing programs — are *literally the same*. Read a type as a proposition and a term of that type as a proof of it: a function $A \to B$ is exactly a method turning proofs of $A$ into proofs of $B$, which is the constructive meaning of implication. Adding product and sum types matches conjunction and disjunction. Most strikingly, evaluating a program (normalizing a term) is the very same process as simplifying a proof (cut elimination). Intuitionistic logic and typed computation are two readings of one calculus — the conceptual foundation of every proof assistant.`,
     statement: String.raw`There is an isomorphism between the **simply typed lambda calculus** (with $\to$, products, and sums) and the **natural-deduction proof system for intuitionistic propositional logic** (with $\to$, $\wedge$, $\vee$), under the reading "types $=$ propositions, terms $=$ proofs." Precisely, reading each type as a propositional formula:
 - typing derivations $\Gamma \vdash M : A$ correspond bijectively to natural-deduction proofs of $A$ from the assumptions in $\Gamma$, with the term $M$ recording the proof;

@@ -28,7 +28,7 @@ export const MODEL_THEORY_NODES: MathNode[] = [
     title: 'Theory & Model',
     kind: 'definition',
     tags: ['Model Theory'],
-    dependencies: ['satisfaction', 'godel-completeness'],
+    dependencies: ['satisfaction', 'godel-completeness', 'elementary-equivalence'],
     description: String.raw`A set of axioms carves out the class of objects obeying them: the models of the field axioms are exactly the fields, of the group axioms the groups. A **theory** is just such a set of sentences, and a **model** is a structure satisfying all of them. The theory is **consistent** precisely when it has a model — and by Gödel's completeness theorem this semantic notion coincides with the syntactic one, that the theory proves no contradiction. Model theory studies the whole class of models a theory admits.`,
     definition: String.raw`A **theory** $T$ over a signature $\sigma$ is a set of $\sigma$-sentences. A $\sigma$-structure $M$ is a **model** of $T$, written $M \models T$, if $M \models \varphi$ for every $\varphi \in T$. The theory $T$ is **satisfiable** (**consistent**) if it has at least one model; by **Gödel's completeness theorem** this is equivalent to syntactic consistency $T \nvdash \bot$. $T$ is **complete** if it is consistent and, for every $\sigma$-sentence $\varphi$, either $T \models \varphi$ or $T \models \neg\varphi$ (equivalently $T \vdash \varphi$ or $T \vdash \neg\varphi$) — equivalently, $T$ has, up to elementary equivalence, exactly one model. For a structure $M$, its **complete theory** $\operatorname{Th}(M) = \{\varphi : M \models \varphi\}$ is always complete.`,
   },

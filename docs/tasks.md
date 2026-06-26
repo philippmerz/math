@@ -4,8 +4,9 @@
 
 - arrow keys should navigate the search results when search bar is focused, enter should select the currently highlighted one
 - rename entire repo to 'turnstile'
-- remove '/' in search bar on mobile since there's no permanent keyboard there
-- sidebar expandable per border-drag on mobile
+- make sidebar expandable per border-drag
+- move dagre computation to web worker and add a loading screen on first load to give visual indicator instead of 'stuck' 
+- many adjacent fields have the same hull color
 
 ### content agent
 

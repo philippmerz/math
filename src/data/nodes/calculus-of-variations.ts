@@ -174,7 +174,7 @@ When $L = T - V$ with $T$ quadratic in $\dot q$ and $L$ has no explicit time dep
     title: "Noether's Theorem",
     kind: 'theorem',
     tags: ['Calculus of Variations'],
-    dependencies: ['hamiltons-principle', 'euler-lagrange-equation', 'fundamental-theorem-of-calculus'],
+    dependencies: ['hamiltons-principle', 'euler-lagrange-equation', 'fundamental-theorem-of-calculus', 'beltrami-identity'],
     description: String.raw`Every continuous symmetry of an action gives rise to a conserved quantity. Invariance under time translation yields conservation of energy, under spatial translation conservation of momentum, under rotation conservation of angular momentum. Noether's theorem thus reveals the great conservation laws not as accidents but as the exact shadows of the symmetries of the laws of motion — one of the deepest organizing principles in physics, and the crowning achievement of the variational viewpoint.`,
     statement: String.raw`Let $L(q, \dot q, t)$ and consider a one-parameter family of transformations acting on both time and configuration, $(t, q) \mapsto (T_s(t, q),\, Q_s(t, q))$ with $T_0 = t$, $Q_0(t, q) = q$, with infinitesimal generators $\tau(t, q) := \tfrac{d}{ds}\big|_{s=0} T_s$ and $\xi(t, q) := \tfrac{d}{ds}\big|_{s=0} Q_s$. Suppose the action $S[q] = \int L(q, \dot q, t)\,dt$ is **invariant** to first order: for every curve, $\tfrac{d}{ds}\big|_{s=0}\!\int L\bigl(Q_s, \tfrac{dQ_s}{dT_s}, T_s\bigr)\,dT_s = 0$. Then, along any solution of the **Euler–Lagrange equations**, the **Noether charge**
 $$Q := \sum_i \frac{\partial L}{\partial \dot q^i}\bigl(\xi^i - \dot q^i\,\tau\bigr) + L\,\tau$$
@@ -193,7 +193,7 @@ in which the bulk integrand is the **Euler–Lagrange** expression contracted wi
     title: 'Lower Semicontinuity',
     kind: 'definition',
     tags: ['Calculus of Variations'],
-    dependencies: ['continuity', 'limit-of-a-sequence'],
+    dependencies: ['continuity', 'limit-of-a-sequence', 'weak-topology'],
     description: String.raw`Lower semicontinuity is the one-sided continuity that is exactly right for minimization. A function is lower semicontinuous if it never jumps *down* in the limit: the value at a limit point cannot exceed what the function approaches. This is all one needs to make minima behave — a lower semicontinuous function on a compact set attains its infimum — and it is the property a functional must have for the direct method to pass to the limit, even when full continuity fails (as it does for energies in the weak topology).`,
     definition: String.raw`A function $F : X \to \mathbb{R} \cup \{+\infty\}$ on a topological space $X$ is **lower semicontinuous** (lsc) at $x$ if for every $c < F(x)$ there is a neighborhood $U$ of $x$ with $F(y) > c$ for all $y \in U$; $F$ is lsc on $X$ if it is lsc at every point, equivalently if each sublevel set $\{\,x : F(x) \le c\,\}$ is closed. The **sequential** version requires, for every sequence $x_n \to x$,
 $$F(x) \le \liminf_{n \to \infty} F(x_n).$$

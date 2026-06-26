@@ -133,13 +133,13 @@ the $x$-intercept of the tangent line at $x_n$. An iteration converges with **or
     title: 'Convergence of Bisection',
     kind: 'proposition',
     tags: ['Numerical Analysis'],
-    dependencies: ['root-finding', 'intermediate-value-theorem'],
+    dependencies: ['root-finding', 'intermediate-value-theorem', 'monotone-convergence-sequence'],
     description: String.raw`Bisection is the safest root-finder: as long as the function is continuous and the starting endpoints straddle a sign change, a root is trapped inside the bracket forever, and since the bracket is halved each step its width — and therefore the error — shrinks geometrically by a factor of two. The cost is speed: each step buys only a single bit of accuracy, so convergence is merely linear. Robustness is the payoff — no derivative, no good initial guess, and no possibility of running away are required.`,
     statement: String.raw`Let $f : [a, b] \to \mathbb{R}$ be continuous with $f(a)f(b) < 0$. The bisection iterates $[a_n, b_n]$ (with $[a_0,b_0] = [a,b]$) bracket a root $x^*$ of $f$ for every $n$, and the midpoints $c_n = \tfrac12(a_n + b_n)$ satisfy
 $$|c_n - x^*| \le \frac{b - a}{2^{\,n+1}} \xrightarrow{\ n \to \infty\ } 0.$$`,
     proof: String.raw`Each interval keeps a sign change: by construction $f(a_n)f(b_n) < 0$ for every $n$, and by the **intermediate value theorem** this guarantees no bracket is ever empty of a root. Bisection forms the midpoint $m = \tfrac12(a_n + b_n)$ and keeps whichever half $[a_n, m]$ or $[m, b_n]$ has endpoints of opposite sign (if $f(m) = 0$ the root is found exactly), so $b_{n+1} - a_{n+1} = \tfrac12(b_n - a_n)$, whence by induction $b_n - a_n = (b - a)/2^n$.
 
-*A single root in all brackets.* Each new bracket is a half of its predecessor, so the brackets are nested, $[a_{n+1}, b_{n+1}] \subseteq [a_n, b_n]$, with lengths $b_n - a_n = (b-a)/2^n \to 0$. Thus $(a_n)$ is nondecreasing and $(b_n)$ nonincreasing with $b_n - a_n \to 0$, so both converge to a common limit and $\bigcap_n [a_n, b_n] = \{x^*\}$ is a single point with $a_n \to x^*$ and $b_n \to x^*$. By continuity of $f$, $f(x^*)^2 = \lim_n f(a_n)f(b_n) \le 0$, forcing $f(x^*) = 0$; this one fixed root $x^*$ lies in every $[a_n, b_n]$.
+*A single root in all brackets.* Each new bracket is a half of its predecessor, so the brackets are nested, $[a_{n+1}, b_{n+1}] \subseteq [a_n, b_n]$, with lengths $b_n - a_n = (b-a)/2^n \to 0$. Thus $(a_n)$ is nondecreasing and bounded above (by $b$) and $(b_n)$ nonincreasing and bounded below (by $a$); by the **monotone convergence theorem** each converges, and since $b_n - a_n \to 0$ they share a common limit, so $\bigcap_n [a_n, b_n] = \{x^*\}$ is a single point with $a_n \to x^*$ and $b_n \to x^*$. By continuity of $f$, $f(x^*)^2 = \lim_n f(a_n)f(b_n) \le 0$, forcing $f(x^*) = 0$; this one fixed root $x^*$ lies in every $[a_n, b_n]$.
 
 *Error bound.* Since this $x^*$ and the midpoint $c_n$ both lie in $[a_n, b_n]$, they differ by at most half its length:
 $$|c_n - x^*| \le \tfrac12(b_n - a_n) = \frac{b-a}{2^{\,n+1}} \to 0.$$

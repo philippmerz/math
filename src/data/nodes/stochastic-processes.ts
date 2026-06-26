@@ -42,7 +42,7 @@ the right side independent of $n$. The numbers $p_{ij} \ge 0$ with $\sum_{j} p_{
     title: 'Transition Matrix & Chapman–Kolmogorov',
     kind: 'proposition',
     tags: ['Stochastic Processes'],
-    dependencies: ['markov-chain', 'matrix', 'conditional-probability'],
+    dependencies: ['markov-chain', 'matrix', 'conditional-probability', 'law-of-total-probability'],
     description: String.raw`The one-step probabilities of a Markov chain assemble into a stochastic matrix, and the central computational fact is that probabilities of moving across several steps are obtained simply by matrix multiplication: the $n$-step transition probabilities are the entries of the $n$-th power of the one-step matrix. The underlying identity — that to go from $i$ to $j$ in $m+n$ steps one passes through some intermediate state after $m$ steps — is the Chapman–Kolmogorov equation, the discrete analogue of the semigroup property of a flow.`,
     statement: String.raw`Let $P = (p_{ij})_{i,j \in S}$ be the **transition matrix** of a **Markov chain**, so $p_{ij} \ge 0$ and each row sums to $1$ (a **stochastic matrix**). Writing $p_{ij}^{(n)} = P(X_{m+n} = j \mid X_m = i)$ for the $n$-step probabilities, one has $p_{ij}^{(n)} = (P^n)_{ij}$, and the **Chapman–Kolmogorov equation** holds:
 $$p_{ij}^{(m+n)} = \sum_{k \in S} p_{ik}^{(m)}\, p_{kj}^{(n)}, \qquad \text{i.e. } P^{m+n} = P^m P^n.$$`,

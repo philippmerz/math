@@ -68,7 +68,7 @@ the integral closure of $\mathbb{Z}$ in $K$. It is a subring of $K$ (intersectio
     title: 'Embeddings and Signature of a Number Field',
     kind: 'definition',
     tags: ['Algebraic Number Theory'],
-    dependencies: ['number-field', 'complex-numbers', 'field-norm-trace'],
+    dependencies: ['number-field', 'complex-numbers', 'field-norm-trace', 'ring-of-integers'],
     description: String.raw`A number field of degree $n$ has exactly $n$ distinct ways to be embedded into $\mathbb{C}$, the roots of a defining polynomial $f$ supplying the images of a primitive element. These embeddings come in two flavors: those landing in $\mathbb{R}$ (real embeddings) and those landing genuinely in $\mathbb{C}$, which occur in complex-conjugate pairs. The count $(r_1, r_2)$ of real embeddings and conjugate pairs — the **signature** — is the single combinatorial invariant governing the unit rank in Dirichlet's theorem and the shape of the Minkowski embedding used in the geometry of numbers.`,
     definition: String.raw`Let $K = \mathbb{Q}(\theta)$ be a number field of degree $n$, with $\theta$ having minimal polynomial $f \in \mathbb{Q}[x]$. The **embeddings** of $K$ are the $n$ field homomorphisms $\sigma : K \hookrightarrow \mathbb{C}$ (each $\mathbb{Q}$-linear and sending $\theta$ to one of the $n$ distinct roots of $f$). An embedding is **real** if $\sigma(K) \subseteq \mathbb{R}$ and **complex** otherwise; complex embeddings occur in conjugate pairs $\sigma, \bar\sigma$. Writing $r_1$ for the number of real embeddings and $r_2$ for the number of conjugate pairs of complex embeddings, the **signature** is $(r_1, r_2)$ and
 $$r_1 + 2 r_2 = n.$$
@@ -80,7 +80,7 @@ The **Minkowski embedding** $K \hookrightarrow \mathbb{R}^{r_1} \times \mathbb{C
     title: 'Discriminant of a Number Field',
     kind: 'definition',
     tags: ['Algebraic Number Theory'],
-    dependencies: ['ring-of-integers', 'field-norm-trace'],
+    dependencies: ['ring-of-integers', 'field-norm-trace', 'embeddings-number-field'],
     description: String.raw`The discriminant is a single integer attached to a number field that packages how its ring of integers sits geometrically and where its arithmetic is special. It is computed from the trace pairing on an integral basis, and its value answers a sharp question: a rational prime ramifies in $K$ exactly when it divides the discriminant — so the finitely many "bad" primes are read off this one number. Its absolute value also measures the covolume of $\mathcal{O}_K$ under the Minkowski embedding, linking it to the geometry of numbers; by Minkowski's theorem only $\mathbb{Q}$ itself has discriminant $\pm 1$.`,
     definition: String.raw`Let $K$ be a number field of degree $n$ with integral basis $\omega_1, \dots, \omega_n$ of $\mathcal{O}_K$. The **discriminant** of $K$ is
 $$d_K = \det\bigl(\operatorname{Tr}_{K/\mathbb{Q}}(\omega_i\omega_j)\bigr)_{i,j=1}^{n} = \det(\sigma_i(\omega_j))^2,$$
