@@ -319,6 +319,9 @@ export function GraphView({
         edgesFocusable={false}
         // We run our own keyboard navigation (see useKeyboardNav).
         disableKeyboardA11y
+        // Cull off-screen nodes/edges — with hundreds of them this keeps the DOM
+        // light and pans smooth, especially when zoomed in for reading.
+        onlyRenderVisibleElements
         proOptions={{ hideAttribution: true }}
       >
         <ViewportPortal>
