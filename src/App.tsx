@@ -9,6 +9,7 @@ import { AreaTag } from './ui/AreaTag'
 import { SettingsMenu } from './ui/SettingsMenu'
 import { useTheme } from './hooks/useTheme'
 import { useLayout } from './hooks/useLayout'
+import { useChromeAutoHide } from './hooks/useChromeAutoHide'
 import type { LayoutMode } from './graph/layout'
 import type { NodeKind } from './data/types'
 import { allTags, nodeById, searchNodes } from './data/graph'
@@ -103,6 +104,9 @@ export default function App() {
     localStorage.setItem(LAYOUT_KEY, layoutMode)
   }, [layoutMode])
 
+  // Float the chrome away when the mouse rests; it returns on the next move.
+  const chromeHidden = useChromeAutoHide()
+
   // Isomorphic constructions collapse under their canonical node by default;
   // `expanded` tracks individually-opened canonicals, `showAllConstructions` is
   // the global override. `revealTarget`/`revealNonce` tell the camera what to
@@ -147,7 +151,7 @@ export default function App() {
 
   return (
     <ReactFlowProvider>
-      <main className="app">
+      <main className={`app${chromeHidden ? ' chrome-hidden' : ''}`}>
         <GraphView
           theme={theme}
           layout={layout}

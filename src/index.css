@@ -64,6 +64,23 @@ body {
   overflow: hidden;
 }
 
+/* Idle chrome auto-hide: the toolbar floats up out of view, the bottom controls
+   float down, and they all glide back the moment the mouse moves. */
+.toolbar,
+.freqbar,
+.react-flow__controls {
+  transition: transform 420ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms ease;
+}
+.app.chrome-hidden .toolbar {
+  transform: translateY(-130%);
+  opacity: 0;
+}
+.app.chrome-hidden .freqbar,
+.app.chrome-hidden .react-flow__controls {
+  transform: translateY(180%);
+  opacity: 0;
+}
+
 /* ---- React Flow canvas ------------------------------------------------ */
 
 /* Win over React Flow's colorMode stylesheet (loaded after ours), which paints
