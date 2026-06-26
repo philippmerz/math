@@ -66,7 +66,9 @@ body {
 
 /* ---- React Flow canvas ------------------------------------------------ */
 
-.react-flow {
+/* Win over React Flow's colorMode stylesheet (loaded after ours), which paints
+   a #141414 canvas in dark mode — we want a true #000 page for night reading. */
+.app .react-flow {
   background: var(--bg);
 }
 
@@ -770,6 +772,24 @@ body {
   box-shadow: 0 0 0 3px var(--hairline);
 }
 
+/* "/" key hint, shown while the field is empty and unfocused. */
+.search__kbd {
+  position: absolute;
+  right: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  min-width: 18px;
+  padding: 1px 0 2px;
+  text-align: center;
+  font-family: inherit;
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--control-hover);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+
 .search__results {
   position: absolute;
   top: calc(100% + 6px);
@@ -839,16 +859,20 @@ body {
   position: absolute;
   top: 0;
   right: 0;
-  z-index: 7;
+  /* above the toolbar so it cleanly covers the corner buttons instead of having
+     them float over its top edge; its own × then sits at the natural top */
+  z-index: 9;
   width: min(440px, 92vw);
   height: 100%;
   display: flex;
   flex-direction: column;
   background: var(--panel-bg);
   border-left: 1px solid var(--line);
-  /* extra top padding clears the floating toolbar / corner toggle */
-  padding: 54px 22px 28px;
+  padding: 18px 22px 28px;
   overflow-y: auto;
+  /* never scroll the panel sideways — wide content (e.g. long display math)
+     scrolls within its own box instead */
+  overflow-x: hidden;
   animation: panel-in 200ms ease;
   scrollbar-width: thin;
   scrollbar-color: var(--line) transparent;
@@ -974,6 +998,20 @@ body {
 
 .panel__body p {
   margin: 0 0 12px;
+  /* A wide one-line equation (often authored as inline math) scrolls within its
+     own paragraph instead of blowing out the whole panel width. Plain prose
+     wraps and never triggers this. */
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+.panel__body p::-webkit-scrollbar {
+  height: 7px;
+}
+.panel__body p::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 999px;
 }
 
 .panel__body mjx-container {
@@ -982,7 +1020,9 @@ body {
   overflow-y: hidden;
 }
 
+/* Display math sits on its own centered line and scrolls within if too wide. */
 .panel__body mjx-container[display='true'] {
+  display: block;
   margin: 12px 0;
 }
 

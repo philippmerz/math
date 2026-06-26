@@ -1,4 +1,4 @@
-import { useState, type KeyboardEvent } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import type { MathNode } from '../data/types'
 
 type Props = {
@@ -10,6 +10,21 @@ type Props = {
 
 export function SearchBox({ query, onQueryChange, results, onPick }: Props) {
   const [open, setOpen] = useState(false)
+  const [focused, setFocused] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // "/" focuses the search from anywhere (unless already typing in a field).
+  useEffect(() => {
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return
+      const t = e.target as HTMLElement | null
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return
+      e.preventDefault()
+      inputRef.current?.focus()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
 
   const pick = (id: string) => {
     onPick(id)
@@ -30,6 +45,7 @@ export function SearchBox({ query, onQueryChange, results, onPick }: Props) {
   return (
     <div className="search">
       <input
+        ref={inputRef}
         className="search__input"
         type="text"
         placeholder="Search concepts…"
@@ -40,11 +56,22 @@ export function SearchBox({ query, onQueryChange, results, onPick }: Props) {
           onQueryChange(e.target.value)
           setOpen(true)
         }}
-        onFocus={() => setOpen(true)}
+        onFocus={() => {
+          setFocused(true)
+          setOpen(true)
+        }}
         onKeyDown={onKeyDown}
         // Delay close so a result's onMouseDown still registers.
-        onBlur={() => window.setTimeout(() => setOpen(false), 120)}
+        onBlur={() => {
+          setFocused(false)
+          window.setTimeout(() => setOpen(false), 120)
+        }}
       />
+      {!focused && query === '' && (
+        <kbd className="search__kbd" aria-hidden="true">
+          /
+        </kbd>
+      )}
       {showList && (
         <ul className="search__results">
           {results.slice(0, 8).map((n) => (
