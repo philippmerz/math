@@ -17,6 +17,12 @@ import { COMPLEX_ANALYSIS_NODES } from './complex-analysis.ts'
 import { MULTIVARIABLE_CALCULUS_NODES } from './multivariable-calculus.ts'
 import { NUMBER_THEORY_NODES } from './number-theory.ts'
 import { DIFFERENTIAL_GEOMETRY_NODES } from './differential-geometry.ts'
+import { CATEGORY_THEORY_NODES } from './category-theory.ts'
+import { TYPE_THEORY_NODES } from './type-theory.ts'
+import { FUNCTIONAL_ANALYSIS_NODES } from './functional-analysis.ts'
+import { GRAPH_THEORY_NODES } from './graph-theory.ts'
+import { COMBINATORICS_NODES } from './combinatorics.ts'
+import { ALGEBRAIC_TOPOLOGY_NODES } from './algebraic-topology.ts'
 
 /**
  * The full node corpus, assembled from one file per mathematical area so the
@@ -43,4 +49,10 @@ export const MATH_NODES: MathNode[] = [
   ...MULTIVARIABLE_CALCULUS_NODES,
   ...NUMBER_THEORY_NODES,
   ...DIFFERENTIAL_GEOMETRY_NODES,
+  ...CATEGORY_THEORY_NODES,
+  ...TYPE_THEORY_NODES,
+  ...FUNCTIONAL_ANALYSIS_NODES,
+  ...GRAPH_THEORY_NODES,
+  ...COMBINATORICS_NODES,
+  ...ALGEBRAIC_TOPOLOGY_NODES,
 ]
