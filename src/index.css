@@ -702,6 +702,11 @@ body {
   padding: 0 4px;
 }
 
+/* A bottom-pinned close, surfaced only on touch-sized screens (see below). */
+.panel__close-bottom {
+  display: none;
+}
+
 .panel__title {
   margin: 8px 0 10px;
   font-size: 22px;
@@ -886,11 +891,46 @@ body {
     /* cover the toolbar for a clean full-screen reading view */
     z-index: 10;
     padding-top: 18px;
+    /* the sticky close bar owns the bottom edge */
+    padding-bottom: 0;
   }
-  /* one scrollable row, full width */
+  /* Thumb-friendly close, pinned to the bottom of the reading view. */
+  .panel__close-bottom {
+    display: block;
+    position: sticky;
+    bottom: 0;
+    margin: auto -22px 0; /* push to the bottom; full-bleed past panel padding */
+    padding: 16px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--fg);
+    background: var(--panel-bg);
+    border: none;
+    border-top: 1px solid var(--line);
+    cursor: pointer;
+  }
+  /* Action buttons drop to the lower-right, stacked for thumb reach. */
+  .toolbar__right {
+    position: fixed;
+    right: 12px;
+    bottom: 12px;
+    margin-left: 0;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9;
+  }
+  /* their popovers must open upward from the bottom-right anchor */
+  .settings__menu {
+    top: auto;
+    bottom: calc(100% + 8px);
+    transform-origin: bottom right;
+  }
+  /* one scrollable row, kept clear of the bottom-right buttons */
   .freqbar {
     left: 10px;
-    right: 10px;
+    right: 64px;
     bottom: 10px;
     max-width: none;
     flex-wrap: nowrap;
@@ -900,7 +940,7 @@ body {
   .freqbar .filterbar__chip {
     flex: 0 0 auto;
   }
-  /* pinch-zoom replaces the +/- buttons on touch */
+  /* pinch / double-tap-drag zoom replaces the +/- buttons on touch */
   .react-flow .react-flow__controls {
     display: none;
   }

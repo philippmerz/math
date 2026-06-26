@@ -11,6 +11,7 @@ import {
   type Viewport,
 } from '@xyflow/react'
 import { ConceptNode } from './ConceptNode'
+import { NodeTip } from './NodeTip'
 import {
   NODE_HEIGHT,
   NODE_WIDTH,
@@ -21,6 +22,7 @@ import {
 import { nodeById } from '../data/graph'
 import { isoGroupByCanonical } from '../data/variants'
 import { useIntroTour } from '../hooks/useIntroTour'
+import { useDoubleTapZoom } from '../hooks/useDoubleTapZoom'
 import type { Theme } from '../hooks/useTheme'
 
 const CLUSTER_PAD = 26
@@ -111,6 +113,8 @@ export function GraphView({
 
   // A one-time cinematic pan across the graph on first load (desktop only).
   useIntroTour(layout.nodes)
+  // Touch: double-tap and drag to zoom about the tap point.
+  useDoubleTapZoom()
 
   const reportArea = useCallback(
     () => onAreaChange(areaInView(rf.getViewport(), layout.nodes)),
@@ -306,21 +310,7 @@ export function GraphView({
         <Background gap={28} size={1} color={theme === 'dark' ? '#141414' : '#ececec'} />
         <Controls showInteractive={false} position="bottom-right" />
       </ReactFlow>
-      {tip && tipNode && (
-        <div
-          className="node-tip"
-          style={{
-            left: tip.x + 16 + 260 > window.innerWidth ? tip.x - 16 - 260 : tip.x + 16,
-            top: Math.min(tip.y + 16, window.innerHeight - 96),
-          }}
-        >
-          <span className="node-tip__kind">{tipNode.kind}</span>
-          <span className="node-tip__title">{tipNode.title}</span>
-          {tipNode.tags.length > 0 && (
-            <span className="node-tip__tags">{tipNode.tags.join(' · ')}</span>
-          )}
-        </div>
-      )}
+      {tip && tipNode && <NodeTip x={tip.x} y={tip.y} node={tipNode} />}
     </>
   )
 }

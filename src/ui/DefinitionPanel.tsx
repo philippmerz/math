@@ -77,6 +77,11 @@ export function DefinitionPanel({ node, onClose, onNavigate }: Props) {
           <Chips ids={dependents.map((d) => d.id)} onNavigate={onNavigate} />
         </section>
       )}
+
+      {/* Thumb-friendly close, pinned to the bottom on small screens. */}
+      <button type="button" className="panel__close-bottom" onClick={onClose}>
+        Close
+      </button>
     </aside>
   )
 }
