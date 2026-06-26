@@ -1,6 +1,6 @@
 import type { MathNode } from '../types'
 
-/** Logic — 10 nodes. */
+/** Logic — 14 nodes. */
 export const LOGIC_NODES: MathNode[] = [
   {
     id: 'proposition',
@@ -97,5 +97,43 @@ Together with logical axioms it generates formal proofs — a proof being a fini
     tags: ['Logic'],
     dependencies: ['quantifiers', 'modus-ponens', 'law-of-excluded-middle'],
     definition: String.raw`**First-order logic** is the standard formal system for the foundations of mathematics: predicates over a domain, the connectives, the quantifiers $\forall$ and $\exists$, variables, function symbols, and equality $=$, with axioms and inference rules (modus ponens, generalization) generating proofs. Taking Excluded Middle makes it *classical*. ZFC and (in Tarski's axiomatization) Euclidean geometry are both first-order theories — axioms stated in this language.`,
+  },
+  {
+    id: 'godel-completeness',
+    label: 'Gödel Completeness',
+    title: "Gödel's Completeness Theorem",
+    kind: 'theorem',
+    tags: ['Logic'],
+    dependencies: ['first-order-logic'],
+    definition: String.raw`**Gödel's completeness theorem**: in first-order logic, every *semantically valid* statement is *provable* — truth in all models coincides with derivability from the axioms.
+$$\Gamma \models \varphi \quad\Longleftrightarrow\quad \Gamma \vdash \varphi.$$
+It welds semantics to syntax, guaranteeing the proof system can derive everything that is true in every model.`,
+  },
+  {
+    id: 'compactness-theorem',
+    label: 'Compactness Theorem',
+    title: 'Compactness Theorem',
+    kind: 'theorem',
+    tags: ['Logic'],
+    dependencies: ['first-order-logic'],
+    definition: String.raw`The **compactness theorem**: a set of first-order sentences has a model if and only if every *finite* subset does. A consequence of completeness (proofs are finite), it is the workhorse of model theory — building infinite models from finite consistency, and yielding non-standard models of arithmetic and analysis.`,
+  },
+  {
+    id: 'godel-incompleteness',
+    label: 'Gödel Incompleteness',
+    title: "Gödel's Incompleteness Theorems",
+    kind: 'theorem',
+    tags: ['Logic'],
+    dependencies: ['first-order-logic', 'natural-numbers'],
+    definition: String.raw`**Gödel's incompleteness theorems**: any consistent, effectively axiomatized theory strong enough to encode arithmetic (1) has a true statement it cannot prove, and (2) cannot prove its own consistency. They set hard limits on formalization, ending Hilbert's program of a complete, self-certifying foundation for mathematics.`,
+  },
+  {
+    id: 'lowenheim-skolem',
+    label: 'Löwenheim–Skolem',
+    title: 'Löwenheim–Skolem Theorem',
+    kind: 'theorem',
+    tags: ['Logic'],
+    dependencies: ['first-order-logic', 'cardinality'],
+    definition: String.raw`The **Löwenheim–Skolem theorem**: a first-order theory with an infinite model has models of *every* infinite cardinality. First-order logic thus cannot pin down the size of an infinite structure — the source of *Skolem's paradox*, that countable models of set theory exist even though they prove uncountable sets exist.`,
   },
 ]

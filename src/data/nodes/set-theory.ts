@@ -1,6 +1,6 @@
 import type { MathNode } from '../types'
 
-/** Set Theory — 31 nodes. */
+/** Set Theory — 37 nodes. */
 export const SET_THEORY_NODES: MathNode[] = [
   {
     id: 'set',
@@ -334,5 +334,61 @@ It exists as a subset of $\mathcal{P}(A)$ by Separation. Passing to the quotient
     definition: String.raw`The **recursion theorem** licenses definition by recursion on $\omega$: given a set $X$, a point $c \in X$, and a map $g : X \to X$, there is a *unique* function $f : \omega \to X$ with
 $$f(0) = c,\qquad f\bigl(S(n)\bigr) = g\bigl(f(n)\bigr).$$
 It is what makes the informal "$\dots$" rigorous, and it is the basis for defining addition and multiplication on $\omega$ (and hence its order).`,
+  },
+  {
+    id: 'cardinality',
+    label: 'Cardinality',
+    title: 'Cardinality',
+    kind: 'definition',
+    tags: ['Set Theory'],
+    dependencies: ['function'],
+    definition: String.raw`The **cardinality** $|A|$ of a set measures its size by *bijection*: $|A| = |B|$ when a bijection $A \to B$ exists, and $|A| \le |B|$ when an injection $A \hookrightarrow B$ does. For finite sets it is the number of elements; for infinite sets it opens a hierarchy of *transfinite* sizes, the cardinal numbers.`,
+  },
+  {
+    id: 'countable-uncountable',
+    label: 'Countable / Uncountable',
+    title: 'Countable and Uncountable Sets',
+    kind: 'definition',
+    tags: ['Set Theory'],
+    dependencies: ['cardinality', 'natural-numbers'],
+    definition: String.raw`A set is **countable** when it injects into $\mathbb{N}$ — finite, or in bijection with $\mathbb{N}$ (cardinality $\aleph_0$); otherwise it is **uncountable**. $\mathbb{Z}$ and $\mathbb{Q}$ are countable, whereas $\mathbb{R}$ is uncountable (Cantor's diagonal argument). Countability is the first dividing line in the theory of infinite size.`,
+  },
+  {
+    id: 'cantors-theorem',
+    label: "Cantor's Theorem",
+    title: "Cantor's Theorem",
+    kind: 'theorem',
+    tags: ['Set Theory'],
+    dependencies: ['power-set', 'cardinality'],
+    definition: String.raw`**Cantor's theorem**: no set maps onto its power set, so
+$$|A| < |\mathcal{P}(A)|$$
+for every set $A$. There is no largest cardinality — iterating $\mathcal{P}$ builds an endless tower of infinities — and the same diagonal argument shows $\mathbb{R}$ is uncountable.`,
+  },
+  {
+    id: 'cantor-schroder-bernstein',
+    label: 'Schröder–Bernstein',
+    title: 'Cantor–Schröder–Bernstein Theorem',
+    kind: 'theorem',
+    tags: ['Set Theory'],
+    dependencies: ['cardinality'],
+    definition: String.raw`The **Cantor–Schröder–Bernstein theorem**: if there are injections $A \hookrightarrow B$ and $B \hookrightarrow A$, then a bijection $A \leftrightarrow B$ exists — so $|A| \le |B|$ and $|B| \le |A|$ together give $|A| = |B|$. It makes cardinal comparison a genuine (antisymmetric) order, and it needs no axiom of choice.`,
+  },
+  {
+    id: 'zorns-lemma',
+    label: "Zorn's Lemma",
+    title: "Zorn's Lemma",
+    kind: 'theorem',
+    tags: ['Set Theory'],
+    dependencies: ['partial-order', 'choice'],
+    definition: String.raw`**Zorn's lemma**: a partially ordered set in which every chain (totally ordered subset) has an upper bound contains a maximal element. Equivalent to the Axiom of Choice, it is the form used to produce maximal ideals, vector-space bases, and algebraic closures without explicit construction.`,
+  },
+  {
+    id: 'well-ordering-theorem',
+    label: 'Well-Ordering Theorem',
+    title: 'Well-Ordering Theorem',
+    kind: 'theorem',
+    tags: ['Set Theory'],
+    dependencies: ['well-order', 'choice'],
+    definition: String.raw`The **well-ordering theorem**: every set admits a well-ordering — a total order in which every non-empty subset has a least element. Equivalent to the Axiom of Choice (and to Zorn's lemma), it underwrites transfinite induction and recursion on arbitrary sets, however large.`,
   },
 ]

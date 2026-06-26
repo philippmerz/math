@@ -1,6 +1,6 @@
 import type { MathNode } from '../types'
 
-/** Trigonometry — 6 nodes. */
+/** Trigonometry — 8 nodes. */
 export const TRIGONOMETRY_NODES: MathNode[] = [
   {
     id: 'angle-measure',
@@ -65,5 +65,27 @@ It is the fundamental relation among the trigonometric functions, from which ide
     definition: String.raw`In a **right triangle**, an acute angle $\theta$ fixes the ratios of side lengths, independent of the triangle's size (by similarity):
 $$\sin\theta = \frac{\text{opposite to }\theta}{\text{hypotenuse}},\quad \cos\theta = \frac{\text{adjacent to }\theta}{\text{hypotenuse}},\quad \tan\theta = \frac{\text{opposite to }\theta}{\text{adjacent to }\theta}.$$
 This "SOHCAHTOA" picture agrees with the unit-circle definition and is the classical face of trigonometry.`,
+  },
+  {
+    id: 'law-of-cosines',
+    label: 'Law of Cosines',
+    title: 'Law of Cosines',
+    kind: 'theorem',
+    tags: ['Trigonometry'],
+    dependencies: ['triangle', 'sine-cosine'],
+    definition: String.raw`The **law of cosines** generalizes the Pythagorean theorem to any triangle with sides $a, b, c$ and angle $C$ opposite side $c$:
+$$c^2 = a^2 + b^2 - 2ab\cos C.$$
+The correction $-2ab\cos C$ vanishes when $C = 90^\circ$, recovering $a^2 + b^2 = c^2$. It solves a triangle from two sides and the included angle.`,
+  },
+  {
+    id: 'law-of-sines',
+    label: 'Law of Sines',
+    title: 'Law of Sines',
+    kind: 'theorem',
+    tags: ['Trigonometry'],
+    dependencies: ['triangle', 'sine-cosine'],
+    definition: String.raw`The **law of sines**: in any triangle each side is proportional to the sine of its opposite angle,
+$$\frac{a}{\sin A} = \frac{b}{\sin B} = \frac{c}{\sin C} = 2R,$$
+the shared ratio being the diameter $2R$ of the circumscribed circle. It solves a triangle given two angles and a side.`,
   },
 ]

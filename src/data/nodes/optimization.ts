@@ -1,6 +1,6 @@
 import type { MathNode } from '../types'
 
-/** Optimization — 8 nodes. */
+/** Optimization — 9 nodes. */
 export const OPTIMIZATION_NODES: MathNode[] = [
   {
     id: 'critical-point',
@@ -83,5 +83,14 @@ Then $f$ cannot improve along the constraint surface, so $\nabla f$ has no compo
     tags: ['Optimization'],
     dependencies: ['convex-function', 'convex-set', 'gradient'],
     definition: String.raw`**Convex optimization** minimizes a convex function over a convex set. Because every local minimum is then global and first-order conditions are sufficient, such problems can be solved reliably and efficiently — by gradient and interior-point methods, with duality providing optimality certificates. The convex/non-convex divide, more than linear/non-linear, marks the practical boundary of tractable optimization.`,
+  },
+  {
+    id: 'kkt-conditions',
+    label: 'KKT Conditions',
+    title: 'Karush–Kuhn–Tucker Conditions',
+    kind: 'theorem',
+    tags: ['Optimization'],
+    dependencies: ['lagrange-multipliers', 'convex-function'],
+    definition: String.raw`The **Karush–Kuhn–Tucker conditions** extend Lagrange multipliers to *inequality* constraints. At an optimum (under a constraint qualification) they require stationarity of the Lagrangian, primal and dual feasibility, and **complementary slackness** $\lambda_i\,g_i = 0$. For convex problems they are sufficient as well as necessary — the cornerstone of constrained convex optimization.`,
   },
 ]

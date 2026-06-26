@@ -1,6 +1,6 @@
 import type { MathNode } from '../types'
 
-/** Measure Theory — 10 nodes. */
+/** Measure Theory — 14 nodes. */
 export const MEASURE_THEORY_NODES: MathNode[] = [
   {
     id: 'sigma-algebra',
@@ -97,5 +97,49 @@ It assigns a consistent size — for instance length, area, volume, or probabili
     definition: String.raw`The **Lebesgue integral** of a non-negative measurable $f$ against $\mu$ is the supremum of the integrals of the simple functions beneath it:
 $$\int_X f \, d\mu := \sup\Bigl\{\, \int_X s \, d\mu \;:\; s \text{ simple},\ 0 \le s \le f \,\Bigr\},$$
 where a simple function $s = \sum_i c_i\,\mathbf{1}_{A_i}$ (disjoint measurable $A_i$, $c_i \ge 0$) has integral $\sum_i c_i\,\mu(A_i)$. A general $f$ is split into positive and negative parts (integrable when at least one part is finite). By partitioning the *range* instead of the domain it integrates far more functions than Riemann's method and obeys powerful limit theorems (monotone and dominated convergence).`,
+  },
+  {
+    id: 'monotone-convergence-theorem',
+    label: 'Monotone Convergence (Lebesgue)',
+    title: 'Monotone Convergence Theorem',
+    kind: 'theorem',
+    tags: ['Measure Theory'],
+    dependencies: ['lebesgue-integral', 'measurable-function'],
+    definition: String.raw`The **monotone convergence theorem** (Lebesgue): if $0 \le f_1 \le f_2 \le \cdots$ are measurable with pointwise limit $f$, then
+$$\int \lim_{n} f_n \, d\mu = \lim_{n} \int f_n \, d\mu.$$
+Increasing limits pass through the integral — the basic licence to interchange limit and Lebesgue integral, and the very way the integral extends from simple functions.`,
+  },
+  {
+    id: 'dominated-convergence-theorem',
+    label: 'Dominated Convergence',
+    title: 'Dominated Convergence Theorem',
+    kind: 'theorem',
+    tags: ['Measure Theory'],
+    dependencies: ['lebesgue-integral', 'almost-everywhere'],
+    definition: String.raw`The **dominated convergence theorem**: if $f_n \to f$ almost everywhere and $|f_n| \le g$ for some integrable $g$, then $f$ is integrable and
+$$\lim_{n} \int f_n \, d\mu = \int f \, d\mu.$$
+A single integrable dominating function licenses swapping limit and integral — the most-used such theorem in analysis and probability.`,
+  },
+  {
+    id: 'fatous-lemma',
+    label: "Fatou's Lemma",
+    title: "Fatou's Lemma",
+    kind: 'theorem',
+    tags: ['Measure Theory'],
+    dependencies: ['lebesgue-integral'],
+    definition: String.raw`**Fatou's lemma**: for non-negative measurable $f_n$,
+$$\int \liminf_{n} f_n \, d\mu \;\le\; \liminf_{n} \int f_n \, d\mu.$$
+Mass can leak away in the limit but never appear from nowhere. This one-directional inequality underlies both the monotone and dominated convergence theorems.`,
+  },
+  {
+    id: 'fubinis-theorem',
+    label: "Fubini's Theorem",
+    title: "Fubini's Theorem",
+    kind: 'theorem',
+    tags: ['Measure Theory'],
+    dependencies: ['lebesgue-integral', 'measure'],
+    definition: String.raw`**Fubini's theorem**: for a function integrable on a product space, the double integral equals either iterated integral,
+$$\int_{X \times Y} f \, d(\mu \times \nu) = \int_X\!\Bigl(\int_Y f \, d\nu\Bigr) d\mu = \int_Y\!\Bigl(\int_X f \, d\mu\Bigr) d\nu.$$
+The order of integration may be swapped once $f$ is integrable (Tonelli's theorem gives the same for non-negative $f$).`,
   },
 ]

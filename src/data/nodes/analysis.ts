@@ -1,6 +1,6 @@
 import type { MathNode } from '../types'
 
-/** Analysis — 28 nodes. */
+/** Analysis — 35 nodes. */
 export const ANALYSIS_NODES: MathNode[] = [
   {
     id: 'absolute-value',
@@ -307,5 +307,70 @@ which represents the **total derivative** — the linear map best approximating 
     tags: ['Analysis'],
     dependencies: ['jacobian', 'determinant', 'continuity'],
     definition: String.raw`The **implicit function theorem**: if $F(x, y)$ is continuously differentiable, $F(a, b) = 0$, and the partial Jacobian $\partial F / \partial y$ is invertible at $(a, b)$ — for a single equation, $\partial F/\partial y \neq 0$ — — equivalently $\det(\partial F/\partial y) \neq 0$ — then near $a$ the equation $F(x, y) = 0$ has, for each $x$, a unique nearby solution $y = g(x)$ with $g(a) = b$ and $g$ differentiable. It guarantees that level sets are locally graphs; the inverse function theorem is its sibling.`,
+  },
+
+  // ── Compactness and the classical theorems ───────────────────────────────
+  {
+    id: 'compactness',
+    label: 'Compactness',
+    title: 'Compactness',
+    kind: 'definition',
+    tags: ['Analysis'],
+    dependencies: ['real-numbers'],
+    definition: String.raw`A set is **compact** when every open cover has a finite subcover — a finiteness property that tames the infinite. Compact sets behave like finite ones for analysis: a continuous function on one attains its extrema and is uniformly continuous. In $\mathbb{R}^n$, compact means exactly *closed and bounded* (Heine–Borel).`,
+  },
+  {
+    id: 'rolles-theorem',
+    label: "Rolle's Theorem",
+    title: "Rolle's Theorem",
+    kind: 'theorem',
+    tags: ['Analysis'],
+    dependencies: ['derivative', 'continuity'],
+    definition: String.raw`**Rolle's theorem**: if $f$ is continuous on $[a, b]$, differentiable on $(a, b)$, and $f(a) = f(b)$, then $f'(c) = 0$ for some $c \in (a, b)$. A level secant forces a horizontal tangent somewhere between. It is the special case from which the mean value theorem follows.`,
+  },
+  {
+    id: 'intermediate-value-theorem',
+    label: 'Intermediate Value Theorem',
+    title: 'Intermediate Value Theorem',
+    kind: 'theorem',
+    tags: ['Analysis'],
+    dependencies: ['continuity'],
+    definition: String.raw`The **intermediate value theorem**: a function continuous on $[a, b]$ takes every value between $f(a)$ and $f(b)$. In particular, if $f(a)$ and $f(b)$ have opposite signs it has a root in $(a, b)$. It is the precise form of "no gaps," and it rests on the completeness of $\mathbb{R}$.`,
+  },
+  {
+    id: 'bolzano-weierstrass',
+    label: 'Bolzano–Weierstrass',
+    title: 'Bolzano–Weierstrass Theorem',
+    kind: 'theorem',
+    tags: ['Analysis'],
+    dependencies: ['sequence', 'completeness'],
+    definition: String.raw`The **Bolzano–Weierstrass theorem**: every bounded sequence in $\mathbb{R}^n$ has a convergent subsequence. A direct consequence of completeness, it is the sequential heart of compactness and the standard device for extracting limits in existence proofs.`,
+  },
+  {
+    id: 'heine-borel',
+    label: 'Heine–Borel',
+    title: 'Heine–Borel Theorem',
+    kind: 'theorem',
+    tags: ['Analysis'],
+    dependencies: ['compactness'],
+    definition: String.raw`The **Heine–Borel theorem**: a subset of $\mathbb{R}^n$ is **compact** (every open cover has a finite subcover) if and only if it is **closed and bounded**. It ties the abstract notion of compactness to a concrete, checkable condition on Euclidean space.`,
+  },
+  {
+    id: 'monotone-convergence-sequence',
+    label: 'Monotone Convergence (Sequences)',
+    title: 'Monotone Convergence Theorem (Sequences)',
+    kind: 'theorem',
+    tags: ['Analysis'],
+    dependencies: ['limit-of-a-sequence', 'completeness'],
+    definition: String.raw`The **monotone convergence theorem** for sequences: a bounded monotone sequence of reals converges — increasing to its supremum, decreasing to its infimum. It converts the completeness of $\mathbb{R}$ into a practical convergence test that needs no advance knowledge of the limit.`,
+  },
+  {
+    id: 'weierstrass-approximation',
+    label: 'Weierstrass Approximation',
+    title: 'Weierstrass Approximation Theorem',
+    kind: 'theorem',
+    tags: ['Analysis'],
+    dependencies: ['continuity', 'polynomial', 'uniform-convergence'],
+    definition: String.raw`The **Weierstrass approximation theorem**: every continuous function on a closed interval $[a, b]$ is the uniform limit of polynomials — the polynomials are *dense* in $C[a, b]$. So any continuous function can be approximated arbitrarily well by the simplest ones, the foundation of approximation theory.`,
   },
 ]

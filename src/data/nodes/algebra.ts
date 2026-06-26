@@ -1,6 +1,6 @@
 import type { MathNode } from '../types'
 
-/** Algebra — 9 nodes. */
+/** Algebra — 13 nodes. */
 export const ALGEBRA_NODES: MathNode[] = [
   {
     id: 'natural-number-arithmetic',
@@ -98,5 +98,45 @@ so $[(a, b)]$ is the fraction $a/b$. The quotient $\mathbb{Q}$ is an ordered fie
     definition: String.raw`A **polynomial** over a field $F$ is a finite formal expression
 $$p(x) = \sum_{k=0}^{n} a_k\,x^k, \qquad a_k \in F,$$
 its **degree** the largest $k$ with $a_k \neq 0$ (the zero polynomial having degree $-\infty$). Polynomials form a commutative ring $F[x]$, and over $\mathbb{R}$ each defines a smooth polynomial function — the simplest functions of analysis.`,
+  },
+  {
+    id: 'complex-numbers',
+    label: 'Complex Numbers ℂ',
+    title: 'Complex Numbers (ℂ)',
+    kind: 'definition',
+    tags: ['Algebra'],
+    dependencies: ['real-numbers', 'field'],
+    definition: String.raw`The **complex numbers** $\mathbb{C} = \mathbb{R}[i]$ adjoin a square root of $-1$ to $\mathbb{R}$: numbers $a + bi$ with $i^2 = -1$, added componentwise and multiplied by distributing. They form a field — the *algebraic closure* of $\mathbb{R}$, in which every polynomial factors completely — at the cost of order, since $\mathbb{C}$ cannot be an ordered field.`,
+  },
+  {
+    id: 'fundamental-theorem-of-arithmetic',
+    label: 'FT of Arithmetic',
+    title: 'Fundamental Theorem of Arithmetic',
+    kind: 'theorem',
+    tags: ['Algebra'],
+    dependencies: ['integers'],
+    definition: String.raw`The **fundamental theorem of arithmetic**: every integer greater than $1$ factors into primes, uniquely up to order:
+$$n = p_1^{a_1} \cdots p_k^{a_k}.$$
+Existence and uniqueness together make the primes the multiplicative atoms of $\mathbb{Z}$ — the prototype of unique factorization in a ring.`,
+  },
+  {
+    id: 'lagrange-theorem-groups',
+    label: "Lagrange's Theorem",
+    title: "Lagrange's Theorem (Groups)",
+    kind: 'theorem',
+    tags: ['Algebra'],
+    dependencies: ['group'],
+    definition: String.raw`**Lagrange's theorem**: in a finite group $G$, the order of any subgroup $H$ divides the order of $G$,
+$$|H| \;\big|\; |G|,$$
+since $G$ splits into equal-sized cosets of $H$. It forces every element's order to divide $|G|$ and is the first structural constraint in finite group theory.`,
+  },
+  {
+    id: 'fundamental-theorem-of-algebra',
+    label: 'FT of Algebra',
+    title: 'Fundamental Theorem of Algebra',
+    kind: 'theorem',
+    tags: ['Algebra'],
+    dependencies: ['polynomial', 'complex-numbers'],
+    definition: String.raw`The **fundamental theorem of algebra**: every non-constant polynomial with complex coefficients has a root in $\mathbb{C}$. Hence a degree-$n$ polynomial splits into $n$ linear factors — $\mathbb{C}$ is **algebraically closed**. Despite the name, its deepest proofs are analytic or topological rather than purely algebraic.`,
   },
 ]

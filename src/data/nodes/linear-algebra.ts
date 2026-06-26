@@ -1,6 +1,6 @@
 import type { MathNode } from '../types'
 
-/** Linear Algebra — 12 nodes. */
+/** Linear Algebra — 14 nodes. */
 export const LINEAR_ALGEBRA_NODES: MathNode[] = [
   {
     id: 'vector-space',
@@ -125,5 +125,25 @@ It equips a vector space with geometry — the dot product on $\mathbb{R}^n$ is 
     definition: String.raw`The **spectral theorem**: every real symmetric matrix (equivalently, a self-adjoint operator on a real inner product space) has an orthonormal basis of eigenvectors and only real eigenvalues — equivalently, it is diagonalized by an orthogonal change of basis,
 $$A = Q \Lambda Q^{\mathsf{T}}, \qquad Q^{\mathsf{T}} Q = I.$$
 It is the cornerstone of principal component analysis, quadratic forms, and the stability analysis of equilibria.`,
+  },
+  {
+    id: 'cauchy-schwarz',
+    label: 'Cauchy–Schwarz',
+    title: 'Cauchy–Schwarz Inequality',
+    kind: 'theorem',
+    tags: ['Linear Algebra'],
+    dependencies: ['inner-product-space'],
+    definition: String.raw`The **Cauchy–Schwarz inequality**: in any inner product space,
+$$|\langle u, v\rangle| \le \|u\|\,\|v\|,$$
+with equality exactly when $u$ and $v$ are linearly dependent. It is what makes $\langle u, v\rangle / (\|u\|\,\|v\|)$ a valid cosine, it yields the triangle inequality for the norm, and it recurs throughout analysis and probability.`,
+  },
+  {
+    id: 'cayley-hamilton',
+    label: 'Cayley–Hamilton',
+    title: 'Cayley–Hamilton Theorem',
+    kind: 'theorem',
+    tags: ['Linear Algebra'],
+    dependencies: ['eigenvalue-eigenvector', 'matrix'],
+    definition: String.raw`The **Cayley–Hamilton theorem**: every square matrix satisfies its own characteristic polynomial — if $p(\lambda) = \det(\lambda I - A)$, then $p(A) = 0$. It expresses high powers of $A$ in terms of lower ones, and underlies the minimal polynomial and the calculus of matrix functions.`,
   },
 ]
