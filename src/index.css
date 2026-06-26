@@ -62,7 +62,6 @@ body {
 .cluster-hull {
   border: 1px dashed var(--hairline);
   border-radius: 18px;
-  background: rgba(127, 127, 127, 0.045);
   pointer-events: none;
 }
 
