@@ -42,6 +42,8 @@ export default function App() {
     () => (query.trim() ? new Set(results.map((n) => n.id)) : null),
     [query, results],
   )
+  // When the search narrows to a single hit, glide the camera onto it.
+  const focusNodeId = results.length === 1 ? results[0].id : null
   const selected = selectedId ? nodeById.get(selectedId) ?? null : null
 
   // Escape closes the open definition panel.
@@ -62,6 +64,7 @@ export default function App() {
           selectedId={selectedId}
           matchIds={matchIds}
           focusTag={focusTag}
+          focusNodeId={focusNodeId}
           onSelect={setSelectedId}
           onAreaChange={onAreaChange}
         />

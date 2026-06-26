@@ -25,20 +25,49 @@ export const dependentsById: ReadonlyMap<string, MathNode[]> = MATH_NODES.reduce
 )
 
 /**
- * Rank a query against the node set: case-insensitive substring match on
- * label and title, preferring prefix matches. An empty query matches nothing.
+ * Greedy subsequence match: every char of `q` appears in `haystack` in order.
+ * Returns the span of the match (lower = tighter, better) or null if no match.
+ */
+function subsequenceScore(haystack: string, q: string): number | null {
+  let qi = 0
+  let first = -1
+  let last = -1
+  for (let h = 0; h < haystack.length && qi < q.length; h++) {
+    if (haystack[h] === q[qi]) {
+      if (first === -1) first = h
+      last = h
+      qi++
+    }
+  }
+  return qi === q.length ? last - first : null
+}
+
+/**
+ * Rank a query against the node set. First, case-insensitive substring matches
+ * on label + title, preferring prefix-of-label. Only if that finds nothing do we
+ * fall back to a fuzzy (subsequence) match on the label — so typos / partials
+ * like "drv" → "Derivative" still resolve, at no cost to the common case. An
+ * empty query matches nothing.
  */
 export function searchNodes(query: string): MathNode[] {
   const q = query.trim().toLowerCase()
   if (!q) return []
-  const scored: { node: MathNode; score: number }[] = []
+
+  const direct: { node: MathNode; score: number }[] = []
   for (const node of MATH_NODES) {
     const haystack = `${node.label} ${node.title}`.toLowerCase()
     const at = haystack.indexOf(q)
     if (at === -1) continue
     // Prefix of the label is the strongest signal; earlier matches rank higher.
-    const score = node.label.toLowerCase().startsWith(q) ? -1 : at
-    scored.push({ node, score })
+    direct.push({ node, score: node.label.toLowerCase().startsWith(q) ? -1 : at })
   }
-  return scored.sort((a, b) => a.score - b.score).map((s) => s.node)
+  if (direct.length > 0) return direct.sort((a, b) => a.score - b.score).map((s) => s.node)
+
+  // Fuzzy fallback: tightest subsequence match on the label first.
+  const fuzzy: { node: MathNode; score: number }[] = []
+  for (const node of MATH_NODES) {
+    const s = subsequenceScore(node.label.toLowerCase(), q)
+    if (s != null) fuzzy.push({ node, score: s })
+  }
+  return fuzzy.sort((a, b) => a.score - b.score).map((s) => s.node)
 }

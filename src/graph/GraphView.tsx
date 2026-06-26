@@ -67,6 +67,8 @@ type Props = {
   matchIds: ReadonlySet<string> | null
   /** When set, nodes outside this area are greyed out. */
   focusTag: string | null
+  /** When the search narrows to one node, glide the camera onto it. */
+  focusNodeId: string | null
   onSelect: (id: string | null) => void
   /** Reports the dominant area currently in view (null when zoomed out). */
   onAreaChange: (area: string | null) => void
@@ -78,6 +80,7 @@ export function GraphView({
   selectedId,
   matchIds,
   focusTag,
+  focusNodeId,
   onSelect,
   onAreaChange,
 }: Props) {
@@ -133,6 +136,8 @@ export function GraphView({
           style: { stroke: color, strokeWidth: active ? 2 : 1.2 },
           markerEnd: { type: MarkerType.ArrowClosed, color, width: 16, height: 16 },
           zIndex: active ? 1 : 0,
+          // no click action on edges → drop the hit-area so pans can start on them
+          interactionWidth: 0,
         }
       }),
     [layout, stroke, dimStroke, hoveredId, selectedId],
@@ -147,6 +152,28 @@ export function GraphView({
     const h = node.measured?.height ?? NODE_HEIGHT
     rf.setCenter(node.position.x + w / 2, node.position.y + h / 2, { zoom: 1.25, duration: 500 })
   }, [selectedId, rf])
+
+  // When the search narrows to a single node, glide the camera onto it.
+  useEffect(() => {
+    if (!focusNodeId) return
+    const node = rf.getNode(focusNodeId)
+    if (!node) return
+    const w = node.measured?.width ?? NODE_WIDTH
+    const h = node.measured?.height ?? NODE_HEIGHT
+    rf.setCenter(node.position.x + w / 2, node.position.y + h / 2, { zoom: 1.2, duration: 500 })
+  }, [focusNodeId, rf])
+
+  // Selecting a tag frames that area's group (runs slightly late so it wins over
+  // any concurrent layout-change fit).
+  useEffect(() => {
+    if (!focusTag) return
+    const ids = layout.nodes
+      .filter((n) => nodeById.get(n.id)?.tags.includes(focusTag))
+      .map((n) => ({ id: n.id }))
+    if (ids.length === 0) return
+    const t = window.setTimeout(() => rf.fitView({ nodes: ids, padding: 0.25, duration: 600 }), 80)
+    return () => window.clearTimeout(t)
+  }, [focusTag, layout, rf])
 
   const clusters = layout.clusters
 

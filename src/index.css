@@ -59,6 +59,12 @@ body {
   display: none;
 }
 
+/* Edges have no click action, so let panning start on them too.
+   Higher specificity to beat React Flow's own rule. */
+.react-flow .react-flow__edge {
+  pointer-events: none;
+}
+
 /* ---- Area cluster hulls (clustering experiment) ----------------------- */
 
 .cluster-hull {
