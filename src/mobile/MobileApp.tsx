@@ -1,7 +1,8 @@
-import { lazy, Suspense, useMemo, useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { BottomNav, type MobileTab } from './BottomNav'
 import { DependencyList } from './DependencyList'
-import { allKinds, allTags, nodeById, searchNodes } from '../data/graph'
+import { PathSearch } from './PathSearch'
+import { allKinds, allTags, nodeById } from '../data/graph'
 import type { NodeKind } from '../data/types'
 import type { Theme } from '../hooks/useTheme'
 
@@ -52,7 +53,7 @@ export function MobileApp(props: Props) {
 
       <main className="mobile__view">
         {tab === 'math' && <DependencyList onOpen={props.onSelect} />}
-        {tab === 'search' && <SearchView onOpen={props.onSelect} />}
+        {tab === 'search' && <PathSearch onOpen={props.onSelect} />}
         {tab === 'filter' && (
           <FilterView
             focusTag={props.focusTag}
@@ -75,35 +76,6 @@ export function MobileApp(props: Props) {
           <DefinitionPanel node={selected} onClose={() => props.onSelect(null)} onNavigate={props.onSelect} />
         </Suspense>
       )}
-    </div>
-  )
-}
-
-function SearchView({ onOpen }: { onOpen: (id: string) => void }) {
-  const [query, setQuery] = useState('')
-  const results = useMemo(() => searchNodes(query), [query])
-  return (
-    <div className="mview">
-      <input
-        className="mview__search"
-        type="text"
-        placeholder="Search concepts…"
-        value={query}
-        autoFocus
-        spellCheck={false}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      {query.trim() && results.length === 0 && <p className="mview__empty">No matches.</p>}
-      <ul className="mlist">
-        {results.slice(0, 60).map((n) => (
-          <li key={n.id} className="mlist__item">
-            <button type="button" className="mrow__label mrow__label--flush" onClick={() => onOpen(n.id)}>
-              <span className="mrow__title">{n.title}</span>
-              <span className="mrow__kind">{n.kind}</span>
-            </button>
-          </li>
-        ))}
-      </ul>
     </div>
   )
 }

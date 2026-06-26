@@ -32,6 +32,12 @@ export const allKinds: NodeKind[] = [...new Set(MATH_NODES.map((n) => n.kind))].
   (a, b) => KIND_ORDER.indexOf(a) - KIND_ORDER.indexOf(b),
 )
 
+/** Foundations: nodes with no dependencies, sorted by title — the roots from
+ *  which the dependency list and the path search grow downward. */
+export const rootNodes: MathNode[] = MATH_NODES.filter(
+  (n) => n.dependencies.length === 0,
+).sort((a, b) => a.title.localeCompare(b.title))
+
 /** id → nodes that depend on it (the reverse of `dependencies`). */
 export const dependentsById: ReadonlyMap<string, MathNode[]> = MATH_NODES.reduce(
   (map, node) => {
@@ -44,6 +50,28 @@ export const dependentsById: ReadonlyMap<string, MathNode[]> = MATH_NODES.reduce
   },
   new Map<string, MathNode[]>(),
 )
+
+/**
+ * Every transitive dependency of the given ids — i.e. every node lying on some
+ * path from a foundation down to them (the inputs themselves are excluded).
+ * Used by the path search to expand exactly the chain leading to a match.
+ */
+export function ancestorsOf(ids: Iterable<string>): Set<string> {
+  const seen = new Set<string>()
+  const stack: string[] = []
+  for (const id of ids) {
+    const node = nodeById.get(id)
+    if (node) stack.push(...node.dependencies)
+  }
+  while (stack.length > 0) {
+    const cur = stack.pop() as string
+    if (seen.has(cur)) continue
+    seen.add(cur)
+    const node = nodeById.get(cur)
+    if (node) stack.push(...node.dependencies)
+  }
+  return seen
+}
 
 /**
  * Greedy subsequence match: every char of `q` appears in `haystack` in order.

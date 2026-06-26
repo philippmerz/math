@@ -1,12 +1,5 @@
 import { useState } from 'react'
-import { MATH_NODES } from '../data/nodes'
-import { dependentsById, nodeById } from '../data/graph'
-
-// Foundations: nodes nothing else is needed for. The list grows downward from
-// here, each row revealing what's built directly on it.
-const ROOTS = MATH_NODES.filter((n) => n.dependencies.length === 0).sort((a, b) =>
-  a.title.localeCompare(b.title),
-)
+import { dependentsById, nodeById, rootNodes as ROOTS } from '../data/graph'
 
 type Props = {
   onOpen: (id: string) => void

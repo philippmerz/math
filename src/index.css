@@ -1580,3 +1580,21 @@ body {
   margin: 0;
   padding: 0;
 }
+
+/* ---- path search: the chain to a match, with the path dimmed ---- */
+.mview__hint {
+  margin: 6px 2px 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.mlist--path .mrow__title {
+  color: var(--muted);
+}
+.mlist--path .mrow__label.is-match .mrow__title {
+  color: var(--fg);
+  font-weight: 700;
+}
+.mlist--path .mrow__label.is-match .mrow__kind {
+  color: var(--fg);
+}
