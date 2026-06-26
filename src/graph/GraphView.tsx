@@ -4,6 +4,7 @@ import {
   Controls,
   MarkerType,
   ReactFlow,
+  ViewportPortal,
   useNodesState,
   useReactFlow,
   type Edge,
@@ -11,12 +12,15 @@ import {
 } from '@xyflow/react'
 import { ConceptNode } from './ConceptNode'
 import {
+  layoutClusters,
   layoutEdges,
   layoutNodes,
   NODE_HEIGHT,
   NODE_WIDTH,
   type ConceptNode as ConceptNodeType,
 } from './layout'
+
+const CLUSTER_PAD = 26
 import { nodeById } from '../data/graph'
 import type { Theme } from '../hooks/useTheme'
 
@@ -145,6 +149,23 @@ export function GraphView({ theme, selectedId, matchIds, onSelect, onAreaChange 
       nodesConnectable={false}
       proOptions={{ hideAttribution: true }}
     >
+      <ViewportPortal>
+        {layoutClusters.map((c) => (
+          <div
+            key={c.id}
+            className="cluster-hull"
+            style={{
+              position: 'absolute',
+              left: c.x - CLUSTER_PAD,
+              top: c.y - CLUSTER_PAD,
+              width: c.width + CLUSTER_PAD * 2,
+              height: c.height + CLUSTER_PAD * 2,
+            }}
+          >
+            <span className="cluster-hull__label">{c.area}</span>
+          </div>
+        ))}
+      </ViewportPortal>
       <Background gap={28} size={1} color={theme === 'dark' ? '#141414' : '#ececec'} />
       <Controls showInteractive={false} position="bottom-right" />
     </ReactFlow>

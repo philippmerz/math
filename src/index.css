@@ -57,6 +57,28 @@ body {
   display: none;
 }
 
+/* ---- Area cluster hulls (clustering experiment) ----------------------- */
+
+.cluster-hull {
+  border: 1px dashed var(--hairline);
+  border-radius: 18px;
+  background: rgba(127, 127, 127, 0.045);
+  pointer-events: none;
+}
+
+.cluster-hull__label {
+  position: absolute;
+  top: -9px;
+  left: 16px;
+  padding: 0 8px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--bg);
+  white-space: nowrap;
+}
+
 .concept-node {
   width: 220px;
   min-height: 50px;
