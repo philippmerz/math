@@ -1,6 +1,5 @@
 import type { MathNode } from '../types'
 
-/** Complex Analysis — 7 nodes. */
 export const COMPLEX_ANALYSIS_NODES: MathNode[] = [
   {
     id: 'holomorphic-function',

@@ -1,6 +1,5 @@
 import type { MathNode } from '../types'
 
-/** Differential Equations — 7 nodes. */
 export const DIFFERENTIAL_EQUATIONS_NODES: MathNode[] = [
   {
     id: 'differential-equation',

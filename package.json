@@ -9,7 +9,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "check": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/check-graph.ts",
+    "check": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/check-graph.ts && node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/check-render.ts",
+    "check:graph": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/check-graph.ts",
+    "check:render": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/check-render.ts",
     "preview": "vite preview"
   },
   "dependencies": {

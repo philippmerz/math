@@ -1,0 +1,151 @@
+import type { MathNode } from '../types'
+
+export const NUMBER_THEORY_NODES: MathNode[] = [
+  {
+    id: 'divisibility',
+    label: 'Divisibility',
+    title: 'Divisibility',
+    kind: 'definition',
+    tags: ['Number Theory'],
+    dependencies: ['integers'],
+    definition: String.raw`An integer $a$ **divides** $b$, written $a \mid b$, when $b = a k$ for some integer $k$. Divisibility is the multiplicative backbone of $\mathbb{Z}$ — reflexive, transitive, and additive ($a \mid b$ and $a \mid c$ imply $a \mid (b + c)$) — and the relation from which primes, gcds, and congruences are defined.`,
+  },
+  {
+    id: 'prime-number',
+    label: 'Prime Number',
+    title: 'Prime Number',
+    kind: 'definition',
+    tags: ['Number Theory'],
+    dependencies: ['divisibility'],
+    definition: String.raw`A **prime** is an integer $p > 1$ whose only positive divisors are $1$ and $p$. Primes are the multiplicative atoms of $\mathbb{Z}$: by the fundamental theorem of arithmetic every integer above $1$ factors into primes, uniquely up to order. An integer above $1$ that is not prime is **composite**.`,
+  },
+  {
+    id: 'infinitude-of-primes',
+    label: 'Infinitude of Primes',
+    title: 'Infinitude of Primes',
+    kind: 'theorem',
+    tags: ['Number Theory'],
+    dependencies: ['prime-number'],
+    definition: String.raw`**Euclid's theorem**: there are infinitely many primes. The classic argument: from any finite list $p_1, \dots, p_n$, the number $p_1 \cdots p_n + 1$ has a prime factor outside the list, so no finite list is complete. The primes thin out but never stop.`,
+  },
+  {
+    id: 'gcd',
+    label: 'GCD & LCM',
+    title: 'Greatest Common Divisor',
+    kind: 'definition',
+    tags: ['Number Theory'],
+    dependencies: ['divisibility'],
+    definition: String.raw`The **greatest common divisor** $\gcd(a, b)$ of two integers, not both zero, is the largest integer dividing both; the **least common multiple** $\operatorname{lcm}(a, b)$ is their smallest positive common multiple, related by $\gcd(a, b)\,\operatorname{lcm}(a, b) = |ab|$. Integers are **coprime** when $\gcd(a, b) = 1$.`,
+  },
+  {
+    id: 'euclidean-algorithm',
+    label: 'Euclidean Algorithm',
+    title: 'Euclidean Algorithm',
+    kind: 'definition',
+    tags: ['Number Theory'],
+    dependencies: ['gcd'],
+    definition: String.raw`The **Euclidean algorithm** computes $\gcd(a, b)$ by repeated division: replace $(a, b)$ with $(b,\ a \bmod b)$ until the remainder is $0$, leaving the gcd. Fast (logarithmic in the inputs) and ancient, its extended form also returns the Bézout coefficients.`,
+  },
+  {
+    id: 'bezout-identity',
+    label: "Bézout's Identity",
+    title: "Bézout's Identity",
+    kind: 'theorem',
+    tags: ['Number Theory'],
+    dependencies: ['gcd'],
+    definition: String.raw`**Bézout's identity**: for integers $a, b$ not both zero there exist integers $x, y$ with
+$$a x + b y = \gcd(a, b),$$
+and $\gcd(a, b)$ is the smallest positive integer expressible in this form. It underlies modular inverses, linear Diophantine equations, and much of elementary number theory.`,
+  },
+  {
+    id: 'modular-arithmetic',
+    label: 'Modular Arithmetic',
+    title: 'Modular Arithmetic',
+    kind: 'definition',
+    tags: ['Number Theory'],
+    dependencies: ['divisibility', 'ring'],
+    definition: String.raw`**Modular arithmetic** computes with integers up to a modulus $n$: $a \equiv b \pmod{n}$ means $n \mid (a - b)$. Congruence respects $+$, $-$, and $\times$, so the residue classes form the ring $\mathbb{Z}/n\mathbb{Z}$ — "clock arithmetic." A class is invertible exactly when it is coprime to $n$.`,
+  },
+  {
+    id: 'eulers-totient',
+    label: "Euler's Totient",
+    title: "Euler's Totient Function",
+    kind: 'definition',
+    tags: ['Number Theory'],
+    dependencies: ['modular-arithmetic', 'gcd'],
+    definition: String.raw`**Euler's totient** $\varphi(n)$ counts the integers in $\{1, \dots, n\}$ coprime to $n$ — equivalently, the units of $\mathbb{Z}/n\mathbb{Z}$. It is multiplicative, $\varphi(mn) = \varphi(m)\varphi(n)$ for coprime $m, n$, with $\varphi(p) = p - 1$ for primes, and it gives the order of the group of units mod $n$.`,
+  },
+  {
+    id: 'fermats-little-theorem',
+    label: "Fermat's Little Theorem",
+    title: "Fermat's Little Theorem",
+    kind: 'theorem',
+    tags: ['Number Theory'],
+    dependencies: ['modular-arithmetic', 'prime-number'],
+    definition: String.raw`**Fermat's little theorem**: for a prime $p$ and any integer $a$,
+$$a^p \equiv a \pmod{p}, \qquad \text{and}\quad a^{p-1} \equiv 1 \pmod{p}\ \text{ when } p \nmid a.$$
+It is a workhorse of primality testing and the special case $n = p$ of Euler's theorem.`,
+  },
+  {
+    id: 'eulers-theorem',
+    label: "Euler's Theorem",
+    title: "Euler's Theorem (Number Theory)",
+    kind: 'theorem',
+    tags: ['Number Theory'],
+    dependencies: ['eulers-totient', 'modular-arithmetic'],
+    definition: String.raw`**Euler's theorem** generalizes Fermat's: if $\gcd(a, n) = 1$ then
+$$a^{\varphi(n)} \equiv 1 \pmod{n}.$$
+Raising a unit to the totient returns $1$ — equivalently, its order divides $\varphi(n)$ (Lagrange's theorem in the group $(\mathbb{Z}/n\mathbb{Z})^\times$). It is the arithmetic that makes RSA work.`,
+  },
+  {
+    id: 'chinese-remainder-theorem',
+    label: 'Chinese Remainder Thm',
+    title: 'Chinese Remainder Theorem',
+    kind: 'theorem',
+    tags: ['Number Theory'],
+    dependencies: ['modular-arithmetic'],
+    definition: String.raw`The **Chinese remainder theorem**: for pairwise coprime moduli $n_1, \dots, n_k$ with product $N$, a system $x \equiv a_i \pmod{n_i}$ has a unique solution modulo $N$. Equivalently,
+$$\mathbb{Z}/N\mathbb{Z} \;\cong\; \mathbb{Z}/n_1\mathbb{Z} \times \cdots \times \mathbb{Z}/n_k\mathbb{Z},$$
+splitting computation modulo $N$ into independent coprime components.`,
+  },
+  {
+    id: 'quadratic-reciprocity',
+    label: 'Quadratic Reciprocity',
+    title: 'Quadratic Reciprocity',
+    kind: 'theorem',
+    tags: ['Number Theory'],
+    dependencies: ['modular-arithmetic', 'prime-number'],
+    definition: String.raw`The **law of quadratic reciprocity** (Gauss) links whether $p$ is a square mod $q$ to whether $q$ is a square mod $p$, for distinct odd primes:
+$$\left(\frac{p}{q}\right)\left(\frac{q}{p}\right) = (-1)^{\frac{p-1}{2}\cdot\frac{q-1}{2}},$$
+written with the Legendre symbol. A deep and surprising symmetry, it is the cornerstone of the theory of quadratic residues.`,
+  },
+  {
+    id: 'diophantine-equation',
+    label: 'Diophantine Equation',
+    title: 'Diophantine Equation',
+    kind: 'definition',
+    tags: ['Number Theory'],
+    dependencies: ['bezout-identity'],
+    definition: String.raw`A **Diophantine equation** is a polynomial equation sought in integer (or rational) solutions, such as $ax + by = c$ or $x^n + y^n = z^n$. Linear ones are settled by Bézout's identity ($ax + by = c$ is solvable exactly when $\gcd(a, b) \mid c$); the general problem is vast, and deciding integer solvability is undecidable (Hilbert's tenth problem) — running from Pell's equation to Fermat's Last Theorem.`,
+  },
+  {
+    id: 'prime-number-theorem',
+    label: 'Prime Number Theorem',
+    title: 'Prime Number Theorem',
+    kind: 'theorem',
+    tags: ['Number Theory'],
+    dependencies: ['prime-number'],
+    definition: String.raw`The **prime number theorem**: the count of primes up to $x$, written $\pi(x)$, satisfies
+$$\pi(x) \sim \frac{x}{\ln x} \qquad (x \to \infty),$$
+so primes have density about $1/\ln x$ near $x$. Proved through the complex analysis of the Riemann zeta function, it is the central result on the distribution of primes.`,
+  },
+  {
+    id: 'rsa-cryptosystem',
+    label: 'RSA',
+    title: 'RSA Cryptosystem',
+    kind: 'definition',
+    tags: ['Number Theory'],
+    dependencies: ['eulers-theorem', 'prime-number'],
+    definition: String.raw`**RSA** turns the hardness of factoring into public-key cryptography. With $n = pq$ a product of two large primes and exponents satisfying $e d \equiv 1 \pmod{\varphi(n)}$, encryption is $c = m^e \bmod n$ and decryption $m = c^d \bmod n$; the round trip recovers $m$ because $m^{ed} \equiv m \pmod{n}$. Its security rests on factoring $n$ being infeasible.`,
+  },
+]

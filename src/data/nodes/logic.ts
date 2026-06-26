@@ -1,6 +1,5 @@
 import type { MathNode } from '../types'
 
-/** Logic — 14 nodes. */
 export const LOGIC_NODES: MathNode[] = [
   {
     id: 'proposition',

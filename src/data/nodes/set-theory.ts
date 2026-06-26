@@ -1,6 +1,5 @@
 import type { MathNode } from '../types'
 
-/** Set Theory — 37 nodes. */
 export const SET_THEORY_NODES: MathNode[] = [
   {
     id: 'set',

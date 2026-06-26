@@ -1,6 +1,5 @@
 import type { MathNode } from '../types'
 
-/** Measure Theory — 14 nodes. */
 export const MEASURE_THEORY_NODES: MathNode[] = [
   {
     id: 'sigma-algebra',

@@ -1,6 +1,5 @@
 import type { MathNode } from '../types'
 
-/** Analysis — 32 nodes. */
 export const ANALYSIS_NODES: MathNode[] = [
   {
     id: 'absolute-value',

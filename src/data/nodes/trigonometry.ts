@@ -1,6 +1,5 @@
 import type { MathNode } from '../types'
 
-/** Trigonometry — 8 nodes. */
 export const TRIGONOMETRY_NODES: MathNode[] = [
   {
     id: 'angle-measure',

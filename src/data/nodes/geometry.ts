@@ -1,6 +1,5 @@
 import type { MathNode } from '../types'
 
-/** Geometry — 12 nodes. */
 export const GEOMETRY_NODES: MathNode[] = [
   {
     id: 'point',

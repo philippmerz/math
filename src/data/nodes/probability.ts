@@ -1,6 +1,5 @@
 import type { MathNode } from '../types'
 
-/** Probability — 13 nodes. */
 export const PROBABILITY_NODES: MathNode[] = [
   {
     id: 'probability-space',

@@ -1,6 +1,5 @@
 import type { MathNode } from '../types'
 
-/** Multivariable Calculus — 17 nodes. */
 export const MULTIVARIABLE_CALCULUS_NODES: MathNode[] = [
   {
     id: 'vector-field',

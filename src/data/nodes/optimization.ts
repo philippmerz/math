@@ -1,6 +1,5 @@
 import type { MathNode } from '../types'
 
-/** Optimization — 8 nodes. */
 export const OPTIMIZATION_NODES: MathNode[] = [
   {
     id: 'critical-point',

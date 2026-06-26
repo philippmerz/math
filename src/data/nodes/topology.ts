@@ -1,6 +1,5 @@
 import type { MathNode } from '../types'
 
-/** Topology — 7 nodes. */
 export const TOPOLOGY_NODES: MathNode[] = [
   {
     id: 'metric-space',

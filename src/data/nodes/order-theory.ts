@@ -1,6 +1,5 @@
 import type { MathNode } from '../types'
 
-/** Order Theory — 4 nodes. */
 export const ORDER_THEORY_NODES: MathNode[] = [
   {
     id: 'partial-order',

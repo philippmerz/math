@@ -1,6 +1,5 @@
 import type { MathNode } from '../types'
 
-/** Linear Algebra — 14 nodes. */
 export const LINEAR_ALGEBRA_NODES: MathNode[] = [
   {
     id: 'vector-space',
