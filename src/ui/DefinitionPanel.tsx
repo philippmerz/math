@@ -20,17 +20,14 @@ function Markdown({ children }: { children: string }) {
 /** The formal section(s) a node carries, in reading order, by kind. */
 function formalSections(node: MathNode): { label: string; md: string }[] {
   const out: { label: string; md: string }[] = []
+  if (node.kind === 'primitive') return out // description only
   if (node.kind === 'definition') {
     if (node.definition) out.push({ label: 'Definition', md: node.definition })
-    if (node.proof) out.push({ label: 'Proof', md: node.proof })
-  } else if (node.kind === 'axiom') {
-    if (node.statement) out.push({ label: 'Statement', md: node.statement })
-    if (node.proof) out.push({ label: 'Proof', md: node.proof })
-  } else if (node.kind === 'theorem') {
-    if (node.statement) out.push({ label: 'Statement', md: node.statement })
-    if (node.proof) out.push({ label: 'Proof', md: node.proof })
+  } else if (node.statement) {
+    // axiom + every proven statement (theorem / lemma / corollary / proposition)
+    out.push({ label: 'Statement', md: node.statement })
   }
-  // primitive: description only
+  if (node.proof) out.push({ label: 'Proof', md: node.proof })
   return out
 }
 

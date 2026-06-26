@@ -19,7 +19,15 @@ export const frequentTags: string[] = (() => {
 })()
 
 /** Distinct node kinds present, foundational order first — the type-filter vocabulary. */
-const KIND_ORDER: NodeKind[] = ['primitive', 'axiom', 'definition', 'theorem']
+const KIND_ORDER: NodeKind[] = [
+  'primitive',
+  'axiom',
+  'definition',
+  'lemma',
+  'proposition',
+  'theorem',
+  'corollary',
+]
 export const allKinds: NodeKind[] = [...new Set(MATH_NODES.map((n) => n.kind))].sort(
   (a, b) => KIND_ORDER.indexOf(a) - KIND_ORDER.indexOf(b),
 )

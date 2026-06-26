@@ -6,7 +6,10 @@ const KIND_LABEL: Record<NodeKind, string> = {
   primitive: 'Primitives',
   axiom: 'Axioms',
   definition: 'Definitions',
+  lemma: 'Lemmas',
+  proposition: 'Propositions',
   theorem: 'Theorems',
+  corollary: 'Corollaries',
 }
 
 type Props = {

@@ -7,7 +7,10 @@ const SECTIONS: { kind: NodeKind; label: string }[] = [
   { kind: 'primitive', label: 'Primitives' },
   { kind: 'axiom', label: 'Axioms' },
   { kind: 'definition', label: 'Definitions' },
+  { kind: 'lemma', label: 'Lemmas' },
+  { kind: 'proposition', label: 'Propositions' },
   { kind: 'theorem', label: 'Theorems' },
+  { kind: 'corollary', label: 'Corollaries' },
 ]
 
 /**

@@ -1,9 +1,17 @@
 /**
- * The four classical categories of mathematical content. Like `axiom` and
- * `theorem`, `definition` names a *kind of statement*, not an object — so it sits
- * naturally alongside the others.
+ * The categories of mathematical content. `definition` names a *kind of
+ * statement* (not an object), like `axiom`; the last four are all proven
+ * statements that differ only in role (see {@link ProvenNode}). Ordered
+ * foundational → derived.
  */
-export type NodeKind = 'primitive' | 'axiom' | 'definition' | 'theorem'
+export type NodeKind =
+  | 'primitive'
+  | 'axiom'
+  | 'definition'
+  | 'lemma'
+  | 'proposition'
+  | 'theorem'
+  | 'corollary'
 
 /** Fields shared by every node, whatever its kind. */
 interface BaseNode {
@@ -49,10 +57,16 @@ export interface DefinitionNode extends BaseNode {
   proof?: string
 }
 
-/** A theorem: a formal statement together with its proof. */
-export interface TheoremNode extends BaseNode {
-  kind: 'theorem'
-  /** The formal statement of the theorem. Markdown with LaTeX. */
+/**
+ * A proven statement. Theorem, lemma, corollary, and proposition are all
+ * fundamentally the same — a `statement` and its `proof` — and share this one
+ * shape, differing only by `kind`, which marks the role in the chain: a *lemma*
+ * is an auxiliary step, a *proposition* a minor standalone result, a *theorem* a
+ * milestone, a *corollary* an easy consequence of one.
+ */
+export interface ProvenNode extends BaseNode {
+  kind: 'theorem' | 'lemma' | 'proposition' | 'corollary'
+  /** The formal statement. Markdown with LaTeX. */
   statement: string
   /** A proof of the statement within the ambient theory. Markdown with LaTeX. */
   proof: string
@@ -60,6 +74,8 @@ export interface TheoremNode extends BaseNode {
 
 /**
  * A single concept in the knowledge graph, discriminated by `kind`. The graph is
- * the set of all `MathNode`s; the edges are induced by `dependencies`.
+ * the set of all `MathNode`s; the edges are induced by `dependencies` (which
+ * gathers everything the node is directly based on — concepts, axioms, and the
+ * lemmas/results its proof leans on).
  */
-export type MathNode = PrimitiveNode | AxiomNode | DefinitionNode | TheoremNode
+export type MathNode = PrimitiveNode | AxiomNode | DefinitionNode | ProvenNode
