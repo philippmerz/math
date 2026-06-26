@@ -25,9 +25,18 @@ type Props = {
   onToggleTheme: () => void
   layoutMode: LayoutMode
   onLayoutChange: (mode: LayoutMode) => void
+  showConstructions: boolean
+  onSetShowConstructions: (show: boolean) => void
 }
 
-export function SettingsMenu({ theme, onToggleTheme, layoutMode, onLayoutChange }: Props) {
+export function SettingsMenu({
+  theme,
+  onToggleTheme,
+  layoutMode,
+  onLayoutChange,
+  showConstructions,
+  onSetShowConstructions,
+}: Props) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -104,6 +113,31 @@ export function SettingsMenu({ theme, onToggleTheme, layoutMode, onLayoutChange 
                 <span className="settings__option-desc">{l.desc}</span>
               </button>
             ))}
+          </section>
+
+          <section className="settings__section">
+            <span className="settings__heading">Constructions</span>
+            <div className="settings__seg">
+              <button
+                type="button"
+                className={`settings__seg-btn${!showConstructions ? ' is-active' : ''}`}
+                onClick={() => onSetShowConstructions(false)}
+              >
+                Collapsed
+              </button>
+              <button
+                type="button"
+                className={`settings__seg-btn${showConstructions ? ' is-active' : ''}`}
+                onClick={() => onSetShowConstructions(true)}
+              >
+                Shown
+              </button>
+            </div>
+            <span className="settings__hint">
+              Equivalent constructions (e.g. ℝ via Dedekind cuts vs. Cauchy sequences) fold under
+              one node. Expand a single one with its <strong>+</strong> badge, or reveal them all
+              here.
+            </span>
           </section>
         </div>
     </div>

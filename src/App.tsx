@@ -10,6 +10,7 @@ import { useLayout } from './hooks/useLayout'
 import type { LayoutMode } from './graph/layout'
 import type { NodeKind } from './data/types'
 import { nodeById, searchNodes } from './data/graph'
+import { collapsedConstructionIds } from './data/variants'
 
 // The panel pulls in react-markdown + MathJax; load it only when first opened.
 const DefinitionPanel = lazy(() =>
@@ -49,7 +50,30 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem(LAYOUT_KEY, layoutMode)
   }, [layoutMode])
-  const { layout, loading } = useLayout(layoutMode)
+
+  // Isomorphic constructions collapse under their canonical node by default;
+  // `expanded` tracks individually-opened canonicals, `showAllConstructions` is
+  // the global override. `revealTarget`/`revealNonce` tell the camera what to
+  // frame after the relayout.
+  const [showAllConstructions, setShowAllConstructions] = useState(false)
+  const [expanded, setExpanded] = useState<ReadonlySet<string>>(() => new Set())
+  const [revealTarget, setRevealTarget] = useState<string | null>(null)
+  const [revealNonce, setRevealNonce] = useState(0)
+  const toggleExpand = useCallback((id: string) => {
+    setExpanded((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+    setRevealTarget(id)
+    setRevealNonce((n) => n + 1)
+  }, [])
+  const hidden = useMemo(
+    () => collapsedConstructionIds(expanded, showAllConstructions),
+    [expanded, showAllConstructions],
+  )
+  const { layout, loading } = useLayout(layoutMode, hidden)
 
   const results = useMemo(() => searchNodes(query), [query])
   const matchIds = useMemo(
@@ -75,11 +99,17 @@ export default function App() {
         <GraphView
           theme={theme}
           layout={layout}
+          layoutMode={layoutMode}
           selectedId={selectedId}
           matchIds={matchIds}
           focusTag={focusTag}
           kindFilter={kindFilter}
           focusNodeId={focusNodeId}
+          expanded={expanded}
+          showAllConstructions={showAllConstructions}
+          onToggleExpand={toggleExpand}
+          revealTarget={revealTarget}
+          revealNonce={revealNonce}
           onSelect={setSelectedId}
           onAreaChange={onAreaChange}
         />
@@ -125,6 +155,8 @@ export default function App() {
               onToggleTheme={toggleTheme}
               layoutMode={layoutMode}
               onLayoutChange={setLayoutMode}
+              showConstructions={showAllConstructions}
+              onSetShowConstructions={setShowAllConstructions}
             />
           </div>
         </header>

@@ -87,6 +87,7 @@ body {
 }
 
 .concept-node {
+  position: relative;
   width: 220px;
   min-height: 50px;
   padding: 6px 12px;
@@ -110,6 +111,32 @@ body {
   font-weight: 600;
   line-height: 1.2;
   text-align: center;
+}
+
+/* "+N" badge on a canonical with collapsed constructions; click to expand. */
+.concept-node__badge {
+  position: absolute;
+  top: -9px;
+  right: -9px;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 5px;
+  display: grid;
+  place-items: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--bg);
+  background: var(--fg);
+  border: 2px solid var(--bg);
+  border-radius: 999px;
+  cursor: pointer;
+  z-index: 2;
+  transition: transform 100ms ease;
+}
+
+.concept-node__badge:hover {
+  transform: scale(1.1);
 }
 
 /* selection → inverted fill */
@@ -385,6 +412,18 @@ body {
   font-size: 11px;
   line-height: 1.35;
   color: var(--muted);
+}
+
+.settings__hint {
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.settings__hint strong {
+  color: var(--fg);
+  font-weight: 700;
 }
 
 .settings__clear {

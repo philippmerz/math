@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Background,
   Controls,
@@ -15,9 +15,11 @@ import {
   NODE_HEIGHT,
   NODE_WIDTH,
   type ConceptNode as ConceptNodeType,
+  type LayoutMode,
   type LayoutResult,
 } from './layout'
 import { nodeById } from '../data/graph'
+import { isoGroupByCanonical } from '../data/variants'
 import type { Theme } from '../hooks/useTheme'
 
 const CLUSTER_PAD = 26
@@ -62,6 +64,7 @@ const nodeTypes = { concept: ConceptNode }
 type Props = {
   theme: Theme
   layout: LayoutResult
+  layoutMode: LayoutMode
   selectedId: string | null
   /** ids matching the current search, or null when the search is empty. */
   matchIds: ReadonlySet<string> | null
@@ -71,6 +74,14 @@ type Props = {
   kindFilter: ReadonlySet<string>
   /** When the search narrows to one node, glide the camera onto it. */
   focusNodeId: string | null
+  /** Canonicals whose constructions are individually expanded. */
+  expanded: ReadonlySet<string>
+  /** When set, all constructions are revealed and per-node badges are hidden. */
+  showAllConstructions: boolean
+  onToggleExpand: (canonicalId: string) => void
+  /** The canonical just expanded/collapsed; framed after the relayout. */
+  revealTarget: string | null
+  revealNonce: number
   onSelect: (id: string | null) => void
   /** Reports the dominant area currently in view (null when zoomed out). */
   onAreaChange: (area: string | null) => void
@@ -79,11 +90,17 @@ type Props = {
 export function GraphView({
   theme,
   layout,
+  layoutMode,
   selectedId,
   matchIds,
   focusTag,
   kindFilter,
   focusNodeId,
+  expanded,
+  showAllConstructions,
+  onToggleExpand,
+  revealTarget,
+  revealNonce,
   onSelect,
   onAreaChange,
 }: Props) {
@@ -96,12 +113,34 @@ export function GraphView({
     [onAreaChange, rf, layout],
   )
 
-  // Swap in the new positions and re-fit whenever the layout engine changes.
+  // Swap in the new positions whenever the layout changes (engine or visibility).
   useEffect(() => {
     setNodes(layout.nodes)
+  }, [layout, setNodes])
+
+  // Re-fit the whole graph on a "global" view change — engine swap or the
+  // show-all-constructions toggle. (The initial fit is handled by `fitView`.)
+  const didMount = useRef(false)
+  useEffect(() => {
+    if (!didMount.current) {
+      didMount.current = true
+      return
+    }
     const id = window.setTimeout(() => rf.fitView({ padding: 0.2, duration: 400 }), 60)
     return () => window.clearTimeout(id)
-  }, [layout, setNodes, rf])
+  }, [layoutMode, showAllConstructions, rf])
+
+  // After expanding/collapsing one canonical, frame it and any revealed
+  // constructions, so focus stays put rather than re-fitting the whole graph.
+  useEffect(() => {
+    if (!revealTarget) return
+    const ids = [
+      revealTarget,
+      ...(isoGroupByCanonical.get(revealTarget)?.variants ?? []),
+    ].map((id) => ({ id }))
+    const t = window.setTimeout(() => rf.fitView({ nodes: ids, padding: 0.4, duration: 500 }), 90)
+    return () => window.clearTimeout(t)
+  }, [revealNonce, revealTarget, rf])
 
   // Report once after the initial fitView settles, then on every camera move.
   useEffect(() => {
@@ -122,12 +161,37 @@ export function GraphView({
         (kindFilter.size > 0 && !(n != null && kindFilter.has(n.kind)))
       )
     }
-    return nodes.map((n) => ({
-      ...n,
-      selected: n.id === selectedId,
-      className: isDimmed(n.id) ? 'is-dimmed' : undefined,
-    }))
-  }, [nodes, selectedId, matchIds, focusTag, kindFilter])
+    return nodes.map((n) => {
+      // A canonical with collapsible constructions carries an expand badge,
+      // unless the global "show all constructions" override is on.
+      const group = showAllConstructions ? undefined : isoGroupByCanonical.get(n.id)
+      const data = group
+        ? {
+            ...n.data,
+            expand: {
+              count: group.variants.length,
+              expanded: expanded.has(n.id),
+              onToggle: () => onToggleExpand(n.id),
+            },
+          }
+        : n.data
+      return {
+        ...n,
+        data,
+        selected: n.id === selectedId,
+        className: isDimmed(n.id) ? 'is-dimmed' : undefined,
+      }
+    })
+  }, [
+    nodes,
+    selectedId,
+    matchIds,
+    focusTag,
+    kindFilter,
+    showAllConstructions,
+    expanded,
+    onToggleExpand,
+  ])
 
   const stroke = theme === 'dark' ? '#ffffff' : '#000000'
   const dimStroke = theme === 'dark' ? '#555555' : '#c4c4c4'
@@ -139,9 +203,15 @@ export function GraphView({
         const touches = (id: string | null) => id != null && (e.source === id || e.target === id)
         const active = touches(hoveredId) || touches(selectedId)
         const color = active ? stroke : dimStroke
+        // A construction → canonical edge is an isomorphism, drawn dashed.
+        const iso = (e.data as { iso?: boolean } | undefined)?.iso
         return {
           ...e,
-          style: { stroke: color, strokeWidth: active ? 2 : 1.2 },
+          style: {
+            stroke: color,
+            strokeWidth: active ? 2 : 1.2,
+            ...(iso ? { strokeDasharray: '6 4' } : {}),
+          },
           markerEnd: { type: MarkerType.ArrowClosed, color, width: 16, height: 16 },
           zIndex: active ? 1 : 0,
           // no click action on edges → drop the hit-area so pans can start on them

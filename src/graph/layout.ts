@@ -2,6 +2,7 @@ import dagre from '@dagrejs/dagre'
 import { Position, type Edge, type Node } from '@xyflow/react'
 import type { MathNode, NodeKind } from '../data/types'
 import { MATH_NODES } from '../data/nodes'
+import { canonicalOfVariant } from '../data/variants'
 
 export const NODE_WIDTH = 220
 export const NODE_HEIGHT = 56
@@ -9,6 +10,8 @@ export const NODE_HEIGHT = 56
 export type ConceptNodeData = {
   label: string
   kind: NodeKind
+  /** Present on a canonical with collapsible constructions; drives the expand badge. */
+  expand?: { count: number; expanded: boolean; onToggle: () => void }
 }
 
 export type ConceptNode = Node<ConceptNodeData, 'concept'>
@@ -35,10 +38,21 @@ export type LayoutMode = 'flow' | 'grouped' | 'compact'
 const primaryArea = (n: MathNode) => n.tags[0] ?? 'Other'
 const clusterId = (area: string) => `cluster:${area}`
 
-function buildEdges(): Edge[] {
-  return MATH_NODES.flatMap((node) =>
-    node.dependencies.map((dep) => ({ id: `${dep}->${node.id}`, source: dep, target: node.id })),
-  )
+const visibleNodes = (hidden: ReadonlySet<string>): MathNode[] =>
+  hidden.size === 0 ? MATH_NODES : MATH_NODES.filter((n) => !hidden.has(n.id))
+
+function buildEdges(nodes: MathNode[]): Edge[] {
+  const visible = new Set(nodes.map((n) => n.id))
+  const edges: Edge[] = []
+  for (const node of nodes) {
+    for (const dep of node.dependencies) {
+      if (!visible.has(dep)) continue
+      // A construction → canonical edge is an isomorphism, not a prerequisite.
+      const iso = canonicalOfVariant.get(dep) === node.id
+      edges.push({ id: `${dep}->${node.id}`, source: dep, target: node.id, data: { iso } })
+    }
+  }
+  return edges
 }
 
 function rfNode(node: MathNode, x: number, y: number): ConceptNode {
@@ -59,7 +73,8 @@ function rfNode(node: MathNode, x: number, y: number): ConceptNode {
 
 type DagreBox = { x: number; y: number; width: number; height: number }
 
-function dagreLayout(clustered: boolean): LayoutResult {
+function dagreLayout(clustered: boolean, nodes: MathNode[]): LayoutResult {
+  const visible = new Set(nodes.map((n) => n.id))
   const g = new dagre.graphlib.Graph({ compound: clustered })
   g.setDefaultEdgeLabel(() => ({}))
   g.setGraph({
@@ -74,7 +89,7 @@ function dagreLayout(clustered: boolean): LayoutResult {
   })
 
   const areas: string[] = []
-  for (const node of MATH_NODES) {
+  for (const node of nodes) {
     if (clustered) {
       const area = primaryArea(node)
       if (!areas.includes(area)) {
@@ -85,13 +100,15 @@ function dagreLayout(clustered: boolean): LayoutResult {
     g.setNode(node.id, { width: NODE_WIDTH, height: NODE_HEIGHT })
     if (clustered) g.setParent(node.id, clusterId(primaryArea(node)))
   }
-  for (const node of MATH_NODES) {
-    for (const dep of node.dependencies) g.setEdge(dep, node.id)
+  for (const node of nodes) {
+    for (const dep of node.dependencies) {
+      if (visible.has(dep)) g.setEdge(dep, node.id)
+    }
   }
 
   dagre.layout(g)
 
-  const nodes = MATH_NODES.map((node) => {
+  const rfNodes = nodes.map((node) => {
     const { x, y } = g.node(node.id) as DagreBox // dagre reports the centre
     return rfNode(node, x - NODE_WIDTH / 2, y - NODE_HEIGHT / 2)
   })
@@ -110,29 +127,36 @@ function dagreLayout(clustered: boolean): LayoutResult {
       })
     : []
 
-  return { nodes, edges: buildEdges(), clusters }
+  return { nodes: rfNodes, edges: buildEdges(nodes), clusters }
 }
 
-export const FLOW_LAYOUT = dagreLayout(false)
-export const GROUPED_LAYOUT = dagreLayout(true)
+/** Synchronous dagre layout for a mode; used directly and as the ELK fallback. */
+export function dagreLayoutFor(mode: LayoutMode, hidden: ReadonlySet<string>): LayoutResult {
+  return dagreLayout(mode !== 'flow', visibleNodes(hidden))
+}
 
 // ── ELK ──────────────────────────────────────────────────────────────────
 // `compact`: a hierarchical (nested) layered layout — each area is a group
-// node, so ELK groups them tightly. Loaded and computed lazily (async), cached.
+// node, so ELK groups them tightly. Loaded and computed lazily (async), cached
+// per visible-node set.
 
 type ElkBox = { id: string; x: number; y: number; width: number; height: number; children?: ElkBox[] }
 
-let elkCache: LayoutResult | null = null
+const elkCache = new Map<string, LayoutResult>()
 
-export async function elkLayout(): Promise<LayoutResult> {
-  if (elkCache) return elkCache
+export async function elkLayout(hidden: ReadonlySet<string>): Promise<LayoutResult> {
+  const nodes = visibleNodes(hidden)
+  const key = nodes.map((n) => n.id).join(',') // MATH_NODES order is stable
+  const cached = elkCache.get(key)
+  if (cached) return cached
 
   const ELK = (await import('elkjs/lib/elk.bundled.js')).default
   const elk = new ELK()
+  const visible = new Set(nodes.map((n) => n.id))
 
   const areas: string[] = []
   const byArea = new Map<string, MathNode[]>()
-  for (const n of MATH_NODES) {
+  for (const n of nodes) {
     const a = primaryArea(n)
     if (!byArea.has(a)) {
       byArea.set(a, [])
@@ -157,14 +181,16 @@ export async function elkLayout(): Promise<LayoutResult> {
       layoutOptions: { 'elk.padding': '[top=32,left=20,bottom=20,right=20]' },
       children: byArea.get(area)!.map((n) => ({ id: n.id, width: NODE_WIDTH, height: NODE_HEIGHT })),
     })),
-    edges: MATH_NODES.flatMap((n) =>
-      n.dependencies.map((d) => ({ id: `${d}->${n.id}`, sources: [d], targets: [n.id] })),
+    edges: nodes.flatMap((n) =>
+      n.dependencies
+        .filter((d) => visible.has(d))
+        .map((d) => ({ id: `${d}->${n.id}`, sources: [d], targets: [n.id] })),
     ),
   }
 
   const res = (await elk.layout(graph)) as { children?: ElkBox[] }
-  const nodeById = new Map(MATH_NODES.map((n) => [n.id, n]))
-  const nodes: ConceptNode[] = []
+  const byId = new Map(nodes.map((n) => [n.id, n]))
+  const rfNodes: ConceptNode[] = []
   const clusters: ClusterBox[] = []
 
   for (const group of res.children ?? []) {
@@ -177,19 +203,13 @@ export async function elkLayout(): Promise<LayoutResult> {
       height: group.height,
     })
     for (const child of group.children ?? []) {
-      const mn = nodeById.get(child.id)
+      const mn = byId.get(child.id)
       // ELK child coords are relative to the parent group.
-      if (mn) nodes.push(rfNode(mn, group.x + child.x, group.y + child.y))
+      if (mn) rfNodes.push(rfNode(mn, group.x + child.x, group.y + child.y))
     }
   }
 
-  elkCache = { nodes, edges: buildEdges(), clusters }
-  return elkCache
-}
-
-/** Resolve a layout for the given mode (dagre modes are synchronous & cached). */
-export async function getLayout(mode: LayoutMode): Promise<LayoutResult> {
-  if (mode === 'flow') return FLOW_LAYOUT
-  if (mode === 'grouped') return GROUPED_LAYOUT
-  return elkLayout()
+  const result: LayoutResult = { nodes: rfNodes, edges: buildEdges(nodes), clusters }
+  elkCache.set(key, result)
+  return result
 }
