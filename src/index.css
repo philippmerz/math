@@ -107,6 +107,7 @@ body {
 .cluster-hull__label.area-tag--linked {
   pointer-events: auto;
   background: var(--bg);
+  border: none;
 }
 .cluster-hull__label.area-tag--linked:hover {
   color: var(--fg);

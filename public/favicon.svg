@@ -3,13 +3,8 @@
     :root { --c: #000; }
     @media (prefers-color-scheme: dark) { :root { --c: #fff; } }
   </style>
-  <g stroke="var(--c)" stroke-width="2" fill="none">
-    <line x1="16" y1="8" x2="8" y2="23" />
-    <line x1="16" y1="8" x2="24" y2="23" />
-  </g>
-  <g fill="var(--c)">
-    <circle cx="16" cy="7" r="4" />
-    <circle cx="8" cy="25" r="4" />
-    <circle cx="24" cy="25" r="4" />
+  <g stroke="var(--c)" stroke-width="5" stroke-linecap="round" fill="none">
+    <line x1="9" y1="5" x2="9" y2="27" />
+    <line x1="9" y1="16" x2="25" y2="16" />
   </g>
 </svg>
