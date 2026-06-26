@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Theme } from '../hooks/useTheme'
 import type { LayoutMode } from '../graph/layout'
+import { nodeById } from '../data/graph'
 
 const LAYOUTS: { mode: LayoutMode; title: string; desc: string }[] = [
   {
@@ -139,6 +140,10 @@ export function SettingsMenu({
               here.
             </span>
           </section>
+
+          <p className="settings__note">
+            Prefer a plain list? <a href="#/index">Index of all {nodeById.size} concepts →</a>
+          </p>
         </div>
     </div>
   )
