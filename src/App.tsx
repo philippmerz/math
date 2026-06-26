@@ -5,6 +5,7 @@ import { GraphView } from './graph/GraphView'
 import { SearchBox } from './ui/SearchBox'
 import { FilterMenu } from './ui/FilterMenu'
 import { FrequentTags } from './ui/FrequentTags'
+import { AreaTag } from './ui/AreaTag'
 import { SettingsMenu } from './ui/SettingsMenu'
 import { useTheme } from './hooks/useTheme'
 import { useLayout } from './hooks/useLayout'
@@ -120,7 +121,7 @@ export default function App() {
         <header className="toolbar">
           <div className="toolbar__brand">
             <span className="toolbar__title">Mathematics Graph</span>
-            {viewArea && <span className="toolbar__subtitle">{viewArea}</span>}
+            {viewArea && <AreaTag tag={viewArea} className="toolbar__subtitle" />}
           </div>
           <SearchBox
             query={query}

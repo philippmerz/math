@@ -3,6 +3,7 @@ import remarkMath from 'remark-math'
 import rehypeMathjax from 'rehype-mathjax'
 import type { MathNode } from '../data/types'
 import { dependentsById, nodeById } from '../data/graph'
+import { AreaTag } from './AreaTag'
 
 // Module-scope so the plugin arrays keep a stable identity across renders.
 const remarkPlugins = [remarkMath]
@@ -52,9 +53,7 @@ export function DefinitionPanel({ node, onClose, onNavigate }: Props) {
       {node.tags.length > 0 && (
         <div className="panel__tags">
           {node.tags.map((tag) => (
-            <span key={tag} className="panel__tag">
-              {tag}
-            </span>
+            <AreaTag key={tag} tag={tag} className="panel__tag" />
           ))}
         </div>
       )}

@@ -624,6 +624,30 @@ body {
   border-radius: 999px;
 }
 
+/* Easter egg: an area label with a curated link becomes quietly clickable,
+   but otherwise looks identical to the plain label it replaces — the only
+   tell is the pointer cursor and a faint warming on hover. */
+.area-tag--linked {
+  appearance: none;
+  font-family: inherit;
+  background: none;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.panel__tag.area-tag--linked:hover {
+  color: var(--fg);
+  border-color: var(--muted);
+}
+.toolbar__subtitle.area-tag--linked {
+  align-self: flex-start;
+  padding: 0;
+  border: none;
+  text-align: left;
+}
+.toolbar__subtitle.area-tag--linked:hover {
+  color: var(--fg);
+}
+
 .panel__body {
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 15.5px;
