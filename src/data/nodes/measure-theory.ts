@@ -49,7 +49,7 @@ It assigns a consistent size — for instance length, area, volume, or probabili
     kind: 'definition',
     tags: ['Measure Theory'],
     dependencies: ['null-set'],
-    definition: String.raw`A property holds **almost everywhere** (a.e.) when it fails only on a null set — the points where it fails are contained in a set of measure zero. Functions equal a.e. are interchangeable for integration, so the theory works with equivalence classes modulo null sets. This tolerance of negligible exceptions is the source of Lebesgue theory's clean convergence theorems.`,
+    definition: String.raw`A property holds **almost everywhere** (a.e.) when the set of points where it fails is contained in a null set. Functions equal a.e. are interchangeable for integration, so the theory works with equivalence classes modulo null sets. This tolerance of negligible exceptions is the source of Lebesgue theory's clean convergence theorems.`,
   },
   {
     id: 'borel-sigma-algebra',
@@ -116,9 +116,9 @@ Increasing limits pass through the integral — the basic licence to interchange
     kind: 'theorem',
     tags: ['Measure Theory'],
     dependencies: ['lebesgue-integral', 'almost-everywhere'],
-    definition: String.raw`The **dominated convergence theorem**: if $f_n \to f$ almost everywhere and $|f_n| \le g$ for some integrable $g$, then $f$ is integrable and
+    definition: String.raw`The **dominated convergence theorem**: if measurable functions $f_n \to f$ almost everywhere and $|f_n| \le g$ for some integrable $g$, then $f$ is integrable and
 $$\lim_{n} \int f_n \, d\mu = \int f \, d\mu.$$
-A single integrable dominating function licenses swapping limit and integral — the most-used such theorem in analysis and probability.`,
+A single integrable dominating function licenses swapping limit and integral — one of the most-used such theorems in analysis and probability.`,
   },
   {
     id: 'fatous-lemma',
@@ -129,7 +129,7 @@ A single integrable dominating function licenses swapping limit and integral —
     dependencies: ['lebesgue-integral'],
     definition: String.raw`**Fatou's lemma**: for non-negative measurable $f_n$,
 $$\int \liminf_{n} f_n \, d\mu \;\le\; \liminf_{n} \int f_n \, d\mu.$$
-Mass can leak away in the limit but never appear from nowhere. This one-directional inequality underlies both the monotone and dominated convergence theorems.`,
+Mass can leak away in the limit but never appear from nowhere. This one-directional inequality follows from the monotone convergence theorem and in turn yields the dominated convergence theorem.`,
   },
   {
     id: 'fubinis-theorem',
@@ -138,8 +138,8 @@ Mass can leak away in the limit but never appear from nowhere. This one-directio
     kind: 'theorem',
     tags: ['Measure Theory'],
     dependencies: ['lebesgue-integral', 'measure'],
-    definition: String.raw`**Fubini's theorem**: for a function integrable on a product space, the double integral equals either iterated integral,
+    definition: String.raw`**Fubini's theorem**: for $\sigma$-finite measure spaces and a function $f$ integrable on the product space, the double integral equals either iterated integral,
 $$\int_{X \times Y} f \, d(\mu \times \nu) = \int_X\!\Bigl(\int_Y f \, d\nu\Bigr) d\mu = \int_Y\!\Bigl(\int_X f \, d\mu\Bigr) d\nu.$$
-The order of integration may be swapped once $f$ is integrable (Tonelli's theorem gives the same for non-negative $f$).`,
+The order may be swapped once $f$ is integrable; for non-negative measurable $f$, Tonelli's theorem gives the same.`,
   },
 ]

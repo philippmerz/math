@@ -29,7 +29,7 @@ export const OPTIMIZATION_NODES: MathNode[] = [
     dependencies: ['partial-derivative'],
     definition: String.raw`The **gradient** of a differentiable scalar function of several variables is the vector of its partial derivatives,
 $$\nabla f = \Bigl(\tfrac{\partial f}{\partial x_1}, \dots, \tfrac{\partial f}{\partial x_n}\Bigr).$$
-Where it is nonzero it points in the direction of steepest increase, with magnitude the maximal rate of change, and is orthogonal to the level sets of $f$ — the basis of gradient-based optimization. (These geometric facts rely on differentiability, not merely on the partials existing.)`,
+Where it is nonzero it points in the direction of steepest increase, with magnitude the maximal rate of change, and is orthogonal to the level sets of $f$ — the basis of gradient-based optimization.`,
   },
   {
     id: 'convex-set',
@@ -91,6 +91,6 @@ Then $f$ cannot improve along the constraint surface, so $\nabla f$ has no compo
     kind: 'theorem',
     tags: ['Optimization'],
     dependencies: ['lagrange-multipliers', 'convex-function'],
-    definition: String.raw`The **Karush–Kuhn–Tucker conditions** extend Lagrange multipliers to *inequality* constraints. At an optimum (under a constraint qualification) they require stationarity of the Lagrangian, primal and dual feasibility, and **complementary slackness** $\lambda_i\,g_i = 0$. For convex problems they are sufficient as well as necessary — the cornerstone of constrained convex optimization.`,
+    definition: String.raw`The **Karush–Kuhn–Tucker conditions** extend Lagrange multipliers to *inequality* constraints. At an optimum (under a constraint qualification) they require stationarity of the Lagrangian, primal and dual feasibility, and **complementary slackness** $\lambda_i\,g_i = 0$. For convex problems they are also sufficient — any KKT point is then a global optimum — the cornerstone of constrained convex optimization.`,
   },
 ]

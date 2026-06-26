@@ -135,7 +135,7 @@ It is the cornerstone of principal component analysis, quadratic forms, and the 
     dependencies: ['inner-product-space'],
     definition: String.raw`The **Cauchy–Schwarz inequality**: in any inner product space,
 $$|\langle u, v\rangle| \le \|u\|\,\|v\|,$$
-with equality exactly when $u$ and $v$ are linearly dependent. It is what makes $\langle u, v\rangle / (\|u\|\,\|v\|)$ a valid cosine, it yields the triangle inequality for the norm, and it recurs throughout analysis and probability.`,
+with equality exactly when $u$ and $v$ are linearly dependent. In a real inner product space it makes $\langle u, v\rangle / (\|u\|\,\|v\|)$ a valid cosine; it yields the triangle inequality for the norm, and recurs throughout analysis and probability.`,
   },
   {
     id: 'cayley-hamilton',
@@ -144,6 +144,6 @@ with equality exactly when $u$ and $v$ are linearly dependent. It is what makes 
     kind: 'theorem',
     tags: ['Linear Algebra'],
     dependencies: ['eigenvalue-eigenvector', 'matrix'],
-    definition: String.raw`The **Cayley–Hamilton theorem**: every square matrix satisfies its own characteristic polynomial — if $p(\lambda) = \det(\lambda I - A)$, then $p(A) = 0$. It expresses high powers of $A$ in terms of lower ones, and underlies the minimal polynomial and the calculus of matrix functions.`,
+    definition: String.raw`The **Cayley–Hamilton theorem**: every square matrix satisfies its own characteristic polynomial — if $p(\lambda) = \det(\lambda I - A)$, then $p(A) = 0$. It expresses high powers of $A$ in terms of lower ones, shows the minimal polynomial divides the characteristic polynomial, and underlies the calculus of matrix functions.`,
   },
 ]

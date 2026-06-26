@@ -106,7 +106,7 @@ its **degree** the largest $k$ with $a_k \neq 0$ (the zero polynomial having deg
     kind: 'definition',
     tags: ['Algebra'],
     dependencies: ['real-numbers', 'field'],
-    definition: String.raw`The **complex numbers** $\mathbb{C} = \mathbb{R}[i]$ adjoin a square root of $-1$ to $\mathbb{R}$: numbers $a + bi$ with $i^2 = -1$, added componentwise and multiplied by distributing. They form a field — the *algebraic closure* of $\mathbb{R}$, in which every polynomial factors completely — at the cost of order, since $\mathbb{C}$ cannot be an ordered field.`,
+    definition: String.raw`The **complex numbers** $\mathbb{C} = \mathbb{R}[i]$ adjoin a square root of $-1$ to $\mathbb{R}$: numbers $a + bi$ with $a, b \in \mathbb{R}$ and $i^2 = -1$, added componentwise and multiplied by distributing. They form a field — the *algebraic closure* of $\mathbb{R}$, in which every non-constant polynomial factors into linear factors — at the cost of order, since $\mathbb{C}$ cannot be an ordered field.`,
   },
   {
     id: 'fundamental-theorem-of-arithmetic',
@@ -115,9 +115,9 @@ its **degree** the largest $k$ with $a_k \neq 0$ (the zero polynomial having deg
     kind: 'theorem',
     tags: ['Algebra'],
     dependencies: ['integers'],
-    definition: String.raw`The **fundamental theorem of arithmetic**: every integer greater than $1$ factors into primes, uniquely up to order:
-$$n = p_1^{a_1} \cdots p_k^{a_k}.$$
-Existence and uniqueness together make the primes the multiplicative atoms of $\mathbb{Z}$ — the prototype of unique factorization in a ring.`,
+    definition: String.raw`The **fundamental theorem of arithmetic**: every integer greater than $1$ factors into primes, uniquely up to order — as a product of powers of distinct primes,
+$$n = p_1^{a_1} \cdots p_k^{a_k}, \qquad p_1 < \cdots < p_k.$$
+Existence and uniqueness together make the primes the multiplicative atoms of $\mathbb{Z}$ — the prototype of unique factorization in an integral domain.`,
   },
   {
     id: 'lagrange-theorem-groups',

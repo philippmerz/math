@@ -342,7 +342,7 @@ It is what makes the informal "$\dots$" rigorous, and it is the basis for defini
     kind: 'definition',
     tags: ['Set Theory'],
     dependencies: ['function'],
-    definition: String.raw`The **cardinality** $|A|$ of a set measures its size by *bijection*: $|A| = |B|$ when a bijection $A \to B$ exists, and $|A| \le |B|$ when an injection $A \hookrightarrow B$ does. For finite sets it is the number of elements; for infinite sets it opens a hierarchy of *transfinite* sizes, the cardinal numbers.`,
+    definition: String.raw`The **cardinality** $|A|$ of a set measures its size by *bijection*: $|A| = |B|$ when a bijection $A \to B$ exists, and $|A| \le |B|$ when an injection $A \hookrightarrow B$ does. For finite sets it is the number of elements; for infinite sets it opens a hierarchy of *transfinite* sizes — the infinite cardinal numbers.`,
   },
   {
     id: 'countable-uncountable',
@@ -362,7 +362,7 @@ It is what makes the informal "$\dots$" rigorous, and it is the basis for defini
     dependencies: ['power-set', 'cardinality'],
     definition: String.raw`**Cantor's theorem**: no set maps onto its power set, so
 $$|A| < |\mathcal{P}(A)|$$
-for every set $A$. There is no largest cardinality — iterating $\mathcal{P}$ builds an endless tower of infinities — and the same diagonal argument shows $\mathbb{R}$ is uncountable.`,
+for every set $A$. There is no largest cardinality — iterating $\mathcal{P}$ builds an endless tower of infinities — and the same diagonal argument shows $\mathbb{R}$ is uncountable (indeed $|\mathcal{P}(\mathbb{N})| = |\mathbb{R}|$).`,
   },
   {
     id: 'cantor-schroder-bernstein',
@@ -371,7 +371,7 @@ for every set $A$. There is no largest cardinality — iterating $\mathcal{P}$ b
     kind: 'theorem',
     tags: ['Set Theory'],
     dependencies: ['cardinality'],
-    definition: String.raw`The **Cantor–Schröder–Bernstein theorem**: if there are injections $A \hookrightarrow B$ and $B \hookrightarrow A$, then a bijection $A \leftrightarrow B$ exists — so $|A| \le |B|$ and $|B| \le |A|$ together give $|A| = |B|$. It makes cardinal comparison a genuine (antisymmetric) order, and it needs no axiom of choice.`,
+    definition: String.raw`The **Cantor–Schröder–Bernstein theorem**: if there are injections $A \hookrightarrow B$ and $B \hookrightarrow A$, then a bijection $A \to B$ exists — so $|A| \le |B|$ and $|B| \le |A|$ together give $|A| = |B|$. It makes cardinal comparison a genuine (antisymmetric) order, and it needs no axiom of choice.`,
   },
   {
     id: 'zorns-lemma',

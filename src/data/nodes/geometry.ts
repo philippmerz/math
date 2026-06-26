@@ -96,7 +96,7 @@ A **ray** from $A$ through $B$ keeps the endpoint $A$ but extends without bound 
     dependencies: ['point', 'congruence'],
     definition: String.raw`A **circle** with centre $O$ is, synthetically, the set of all points $P$ whose segment $\overline{OP}$ is congruent to a fixed segment — the **radius**; equivalently, in a metric setting, all points at distance $r$ from $O$:
 $$\{\,P : |OP| = r\,\}.$$
-In **Euclidean** geometry the ratio of any circle's circumference to its diameter is the constant $\pi$ — a specifically Euclidean fact, as the ratio is not constant in non-Euclidean geometries.`,
+In **Euclidean** geometry the ratio of any circle's circumference to its diameter is the constant $\pi$.`,
   },
   {
     id: 'pythagorean-theorem',

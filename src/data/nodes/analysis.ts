@@ -260,9 +260,9 @@ Stronger than pointwise convergence, it preserves continuity and permits exchang
     kind: 'definition',
     tags: ['Analysis'],
     dependencies: ['absolute-value'],
-    definition: String.raw`A **contraction** on $\mathbb{R}$ (or a subset) is a map $T$ that shrinks the distance between any two points by at least a fixed factor:
-$$|T(x) - T(y)| \le k\,|x - y| \qquad (0 \le k < 1).$$
-The constant $k < 1$ is essential — it forces $|T(x) - T(y)| < |x - y|$ for $x \neq y$. Iterating a contraction drives points together geometrically fast — the mechanism behind fixed-point existence-and-uniqueness proofs. (The same definition works in any metric space, once a distance is available.)`,
+    definition: String.raw`A **contraction** on $\mathbb{R}$ (or a subset) is a map $T$ with a fixed factor $k < 1$ bounding how far apart it leaves points:
+$$|T(x) - T(y)| \le k\,|x - y| \quad \text{for all } x, y \qquad (0 \le k < 1).$$
+Because $k < 1$, iterating a contraction drives points together geometrically fast — the mechanism behind fixed-point existence-and-uniqueness proofs. The same definition works in any metric space, with $|x - y|$ replaced by a distance.`,
   },
   {
     id: 'banach-fixed-point',
@@ -286,7 +286,7 @@ Constructive and quantitative, it yields existence/uniqueness for differential a
     dependencies: ['derivative'],
     definition: String.raw`A **partial derivative** of a function $f$ of several variables is its derivative in one coordinate direction, holding the others fixed:
 $$\frac{\partial f}{\partial x_i}(a) = \lim_{h \to 0} \frac{f(a + h\,e_i) - f(a)}{h},$$
-where $e_i$ is the $i$-th standard basis vector. Each partial measures change along one axis only. When $f$ is (totally) differentiable, the partials assemble into the entries of its derivative as a linear map — the Jacobian; their mere existence, however, does not even guarantee continuity.`,
+where $e_i$ is the $i$-th standard basis vector. Each partial measures change along one coordinate axis; when $f$ is differentiable, together they form the entries of its derivative as a linear map — the Jacobian.`,
   },
   {
     id: 'jacobian',
@@ -317,7 +317,7 @@ which represents the **total derivative** — the linear map best approximating 
     kind: 'definition',
     tags: ['Analysis'],
     dependencies: ['real-numbers'],
-    definition: String.raw`A set is **compact** when every open cover has a finite subcover — a finiteness property that tames the infinite. Compact sets behave like finite ones for analysis: a continuous function on one attains its extrema and is uniformly continuous. In $\mathbb{R}^n$, compact means exactly *closed and bounded* (Heine–Borel).`,
+    definition: String.raw`A set is **compact** when every open cover has a finite subcover — a finiteness property that tames the infinite. Compact sets behave like finite ones for analysis: every continuous **real-valued** function on a non-empty one attains its extrema, and (in a metric space) is uniformly continuous. In $\mathbb{R}^n$, compact means exactly *closed and bounded* (Heine–Borel).`,
   },
   {
     id: 'rolles-theorem',
@@ -334,7 +334,7 @@ which represents the **total derivative** — the linear map best approximating 
     title: 'Intermediate Value Theorem',
     kind: 'theorem',
     tags: ['Analysis'],
-    dependencies: ['continuity'],
+    dependencies: ['continuity', 'completeness'],
     definition: String.raw`The **intermediate value theorem**: a function continuous on $[a, b]$ takes every value between $f(a)$ and $f(b)$. In particular, if $f(a)$ and $f(b)$ have opposite signs it has a root in $(a, b)$. It is the precise form of "no gaps," and it rests on the completeness of $\mathbb{R}$.`,
   },
   {

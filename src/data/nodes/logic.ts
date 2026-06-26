@@ -105,9 +105,9 @@ Together with logical axioms it generates formal proofs — a proof being a fini
     kind: 'theorem',
     tags: ['Logic'],
     dependencies: ['first-order-logic'],
-    definition: String.raw`**Gödel's completeness theorem**: in first-order logic, every *semantically valid* statement is *provable* — truth in all models coincides with derivability from the axioms.
+    definition: String.raw`**Gödel's completeness theorem**: in first-order logic, a formula is provable from a set of premises if and only if it holds in every model of them — derivability and semantic entailment coincide.
 $$\Gamma \models \varphi \quad\Longleftrightarrow\quad \Gamma \vdash \varphi.$$
-It welds semantics to syntax, guaranteeing the proof system can derive everything that is true in every model.`,
+The proof system derives exactly the formulas true in every model of $\Gamma$ (with $\Gamma$ empty, every valid sentence is provable).`,
   },
   {
     id: 'compactness-theorem',
@@ -125,7 +125,7 @@ It welds semantics to syntax, guaranteeing the proof system can derive everythin
     kind: 'theorem',
     tags: ['Logic'],
     dependencies: ['first-order-logic', 'natural-numbers'],
-    definition: String.raw`**Gödel's incompleteness theorems**: any consistent, effectively axiomatized theory strong enough to encode arithmetic (1) has a true statement it cannot prove, and (2) cannot prove its own consistency. They set hard limits on formalization, ending Hilbert's program of a complete, self-certifying foundation for mathematics.`,
+    definition: String.raw`**Gödel's incompleteness theorems**: any consistent, effectively axiomatized theory strong enough to encode arithmetic (1) has a true statement it cannot prove; and any such theory that can also formalize its own provability (PA-strength, more than (1) needs) (2) cannot prove its own consistency. They set hard limits on formalization, ending Hilbert's program of a complete, self-certifying foundation for mathematics.`,
   },
   {
     id: 'lowenheim-skolem',
@@ -134,6 +134,6 @@ It welds semantics to syntax, guaranteeing the proof system can derive everythin
     kind: 'theorem',
     tags: ['Logic'],
     dependencies: ['first-order-logic', 'cardinality'],
-    definition: String.raw`The **Löwenheim–Skolem theorem**: a first-order theory with an infinite model has models of *every* infinite cardinality. First-order logic thus cannot pin down the size of an infinite structure — the source of *Skolem's paradox*, that countable models of set theory exist even though they prove uncountable sets exist.`,
+    definition: String.raw`The **Löwenheim–Skolem theorem**: a *countable* first-order theory with an infinite model has models of *every* infinite cardinality. First-order logic thus cannot pin down the size of an infinite structure — the source of *Skolem's paradox*, that set theory, though it proves uncountable sets exist, itself has countable models.`,
   },
 ]
