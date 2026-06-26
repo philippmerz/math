@@ -11,7 +11,7 @@ const LAYOUTS: { mode: LayoutMode; title: string; desc: string }[] = [
   {
     mode: 'grouped',
     title: 'Grouped by field',
-    desc: 'Each field boxed in its own region. Clear separation, roomier.',
+    desc: 'Still flows top-down, but each field is boxed in its own region. Roomier.',
   },
   {
     mode: 'compact',
