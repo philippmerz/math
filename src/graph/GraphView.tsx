@@ -23,6 +23,7 @@ import { nodeById } from '../data/graph'
 import { isoGroupByCanonical } from '../data/variants'
 import { planIntro, useIntroTour, type IntroPlan } from '../hooks/useIntroTour'
 import { useDoubleTapZoom } from '../hooks/useDoubleTapZoom'
+import { usePanMomentum } from '../hooks/usePanMomentum'
 import type { Theme } from '../hooks/useTheme'
 
 const CLUSTER_PAD = 26
@@ -123,6 +124,8 @@ export function GraphView({
   useIntroTour(introPlan)
   // Touch: double-tap and drag to zoom about the tap point.
   useDoubleTapZoom()
+  // Momentum: panning keeps gliding after release, decaying like Google Maps.
+  const momentum = usePanMomentum()
 
   const reportArea = useCallback(
     () => onAreaChange(areaInView(rf.getViewport(), layout.nodes)),
@@ -287,7 +290,11 @@ export function GraphView({
         onNodeMouseEnter={(e, node) => setTip({ id: node.id, x: e.clientX, y: e.clientY })}
         onNodeMouseMove={(e, node) => setTip({ id: node.id, x: e.clientX, y: e.clientY })}
         onNodeMouseLeave={() => setTip(null)}
-        onMoveEnd={reportArea}
+        onMove={momentum.onMove}
+        onMoveEnd={(e, vp) => {
+          momentum.onMoveEnd(e, vp)
+          reportArea()
+        }}
         nodeTypes={nodeTypes}
         colorMode={theme}
         defaultViewport={introPlan?.start}
