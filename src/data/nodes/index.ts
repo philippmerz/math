@@ -39,6 +39,10 @@ import { ALGEBRAIC_NUMBER_THEORY_NODES } from './algebraic-number-theory.ts'
 import { ANALYTIC_NUMBER_THEORY_NODES } from './analytic-number-theory.ts'
 import { DYNAMICAL_SYSTEMS_NODES } from './dynamical-systems.ts'
 import { NUMERICAL_ANALYSIS_NODES } from './numerical-analysis.ts'
+import { CONVEX_ANALYSIS_NODES } from './convex-analysis.ts'
+import { CALCULUS_OF_VARIATIONS_NODES } from './calculus-of-variations.ts'
+import { MODEL_THEORY_NODES } from './model-theory.ts'
+import { MACHINE_LEARNING_THEORY_NODES } from './machine-learning-theory.ts'
 
 /**
  * The full node corpus, assembled from one file per mathematical area so the
@@ -87,4 +91,8 @@ export const MATH_NODES: MathNode[] = [
   ...ANALYTIC_NUMBER_THEORY_NODES,
   ...DYNAMICAL_SYSTEMS_NODES,
   ...NUMERICAL_ANALYSIS_NODES,
+  ...CONVEX_ANALYSIS_NODES,
+  ...CALCULUS_OF_VARIATIONS_NODES,
+  ...MODEL_THEORY_NODES,
+  ...MACHINE_LEARNING_THEORY_NODES,
 ]

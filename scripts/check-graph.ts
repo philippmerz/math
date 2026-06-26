@@ -16,19 +16,35 @@ const VALID_KINDS: ReadonlySet<NodeKind> = new Set([
   'primitive',
   'axiom',
   'definition',
+  'lemma',
+  'proposition',
   'theorem',
+  'corollary',
 ])
 
 const problems: string[] = []
 const fail = (msg: string) => problems.push(msg)
+const hasText = (v: unknown): v is string => typeof v === 'string' && v.length > 0
 
 // 1. Shape and unique ids.
 const ids = new Set<string>()
 for (const n of MATH_NODES) {
   const id = n?.id ?? '<no id>'
-  for (const field of ['id', 'label', 'title', 'definition'] as const) {
+  for (const field of ['id', 'label', 'title'] as const) {
     if (typeof n[field] !== 'string' || n[field].length === 0) {
       fail(`[field] node "${id}" has missing/empty "${field}"`)
+    }
+  }
+  // Every node needs explanatory prose: a `description` (the migrated schema) or,
+  // for areas not yet migrated, the old prose-bearing `definition`.
+  const m = n as Record<string, unknown>
+  if (!hasText(m.description) && !hasText(m.definition)) {
+    fail(`[field] node "${id}" has neither "description" nor "definition"`)
+  }
+  // The optional/kind-specific prose fields, when present, must be non-empty strings.
+  for (const field of ['description', 'definition', 'statement', 'proof'] as const) {
+    if (m[field] !== undefined && !hasText(m[field])) {
+      fail(`[field] node "${id}" has empty "${field}"`)
     }
   }
   if (!VALID_KINDS.has(n.kind)) fail(`[kind] node "${id}" has invalid kind "${n.kind}"`)

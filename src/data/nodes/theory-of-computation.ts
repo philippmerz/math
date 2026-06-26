@@ -1,23 +1,61 @@
 import type { MathNode } from '../types'
 
 export const THEORY_OF_COMPUTATION_NODES: MathNode[] = [
+  // ── Languages and the regular layer ─────────────────────────────────────────
   {
     id: 'formal-language',
     label: 'Formal Language',
     title: 'Formal Language',
     kind: 'definition',
     tags: ['Theory of Computation'],
-    dependencies: ['set'],
-    definition: String.raw`A **formal language** is a set of strings — finite sequences of symbols — over a finite **alphabet** $\Sigma$. The set of all strings is $\Sigma^*$, and a language is any subset $L \subseteq \Sigma^*$. Reducing computation to the question *which strings belong to $L$?* makes problems precise enough to ask what a machine can decide.`,
+    dependencies: ['set', 'natural-numbers', 'function'],
+    description: String.raw`To ask precisely what a machine can compute, one first makes the *inputs* precise. Fix a finite **alphabet** of symbols; a **string** is a finite sequence of them, and a **language** is any set of strings. Phrasing a decision problem as "which strings belong to the language $L$?" reduces computation to membership, sharp enough to ask which languages a given model can recognize.`,
+    definition: String.raw`An **alphabet** $\Sigma$ is a finite non-empty set, whose elements are **symbols**. A **string** (or word) over $\Sigma$ of length $n \in \mathbb{N}$ is a function $w : \{0, 1, \dots, n-1\} \to \Sigma$; the unique string of length $0$ is the **empty string** $\varepsilon$. Write $\Sigma^{*}$ for the set of all strings over $\Sigma$, with **concatenation** $u \cdot v$ (juxtaposition of sequences) making $(\Sigma^{*}, \cdot, \varepsilon)$ a monoid. A **formal language** over $\Sigma$ is any subset $L \subseteq \Sigma^{*}$.`,
   },
   {
     id: 'finite-automaton',
     label: 'Finite Automaton',
-    title: 'Finite Automaton',
+    title: 'Deterministic Finite Automaton',
+    kind: 'definition',
+    tags: ['Theory of Computation'],
+    dependencies: ['formal-language', 'function'],
+    description: String.raw`A **deterministic finite automaton** (DFA) is the simplest machine: it reads a string left to right, holding only a single state from a finite set, and at the end accepts or rejects. It has no memory beyond its current state — the whole of its "knowledge" is one of finitely many positions. This is exactly the computation available with bounded memory, and it is the base case for the entire hierarchy of models.`,
+    definition: String.raw`A **deterministic finite automaton** (DFA) over an alphabet $\Sigma$ is a tuple $M = (Q, \Sigma, \delta, q_0, F)$ where $Q$ is a finite set of **states**, $\delta : Q \times \Sigma \to Q$ is the **transition function**, $q_0 \in Q$ is the **start state**, and $F \subseteq Q$ is the set of **accepting states**. Extend $\delta$ to $\hat\delta : Q \times \Sigma^{*} \to Q$ by $\hat\delta(q, \varepsilon) = q$ and $\hat\delta(q, wa) = \delta(\hat\delta(q, w), a)$. The machine **accepts** $w \in \Sigma^{*}$ iff $\hat\delta(q_0, w) \in F$, and the language it **recognizes** is $L(M) = \{\,w \in \Sigma^{*} : \hat\delta(q_0, w) \in F\,\}$.`,
+  },
+  {
+    id: 'nondeterministic-finite-automaton',
+    label: 'NFA',
+    title: 'Nondeterministic Finite Automaton',
+    kind: 'definition',
+    tags: ['Theory of Computation'],
+    dependencies: ['finite-automaton', 'power-set'],
+    description: String.raw`A **nondeterministic finite automaton** (NFA) relaxes the DFA by allowing several (or no) successor states for a given state and symbol, and silent $\varepsilon$-moves. It accepts a string if *some* run reaches an accepting state. NFAs are often dramatically smaller and easier to build than DFAs, yet, as the subset construction shows, they recognize exactly the same languages — a first taste of how nondeterminism can be a convenience without being extra power.`,
+    definition: String.raw`A **nondeterministic finite automaton** (NFA) over $\Sigma$ is a tuple $N = (Q, \Sigma, \Delta, q_0, F)$ exactly as a DFA except that the transition is a function $\Delta : Q \times (\Sigma \cup \{\varepsilon\}) \to \mathcal{P}(Q)$ returning a *set* of states. For $S \subseteq Q$ let $E(S)$ be its **$\varepsilon$-closure**, the least superset of $S$ closed under $\varepsilon$-transitions. Extend $\Delta$ to strings by $\hat\Delta(\varepsilon) = E(\{q_0\})$ and $\hat\Delta(wa) = E\bigl(\bigcup_{q \in \hat\Delta(w)} \Delta(q, a)\bigr)$. Then $N$ **accepts** $w$ iff $\hat\Delta(w) \cap F \neq \varnothing$, and $L(N) = \{\,w : \hat\Delta(w) \cap F \neq \varnothing\,\}$.`,
+  },
+  {
+    id: 'nfa-dfa-equivalence',
+    label: 'Subset Construction',
+    title: 'NFA–DFA Equivalence (Subset Construction)',
+    kind: 'theorem',
+    tags: ['Theory of Computation'],
+    dependencies: ['nondeterministic-finite-automaton', 'finite-automaton', 'power-set', 'function'],
+    description: String.raw`Nondeterminism adds no power to finite automata: every language recognized by an NFA is recognized by a DFA. The construction tracks, deterministically, the *set* of states the NFA could currently be in — a single DFA state per subset of NFA states. The price is at most exponential blow-up in the number of states, but the recognized language is unchanged.`,
+    statement: String.raw`For every NFA $N = (Q, \Sigma, \Delta, q_0, F)$ there is a DFA $M$ with $L(M) = L(N)$. (Since every DFA is trivially an NFA, NFAs and DFAs recognize the same class of languages.)`,
+    proof: String.raw`Define a DFA $M = (Q', \Sigma, \delta', q_0', F')$ with state set $Q' = \mathcal{P}(Q)$ — a finite set, since $Q$ is finite and a **power set** of a finite set is finite. Put $q_0' = E(\{q_0\})$, accepting states $F' = \{\,S \subseteq Q : S \cap F \neq \varnothing\,\}$, and transition
+$$\delta'(S, a) = E\Bigl(\bigcup_{q \in S} \Delta(q, a)\Bigr).$$
+This is a genuine **function** $Q' \times \Sigma \to Q'$, so $M$ is a DFA. By induction on $|w|$ we show $\hat{\delta'}(q_0', w) = \hat\Delta(w)$, where $\hat\Delta$ is the NFA's extended transition from the definition of the **nondeterministic finite automaton**. Base: $\hat{\delta'}(q_0', \varepsilon) = q_0' = E(\{q_0\}) = \hat\Delta(\varepsilon)$. Step: assuming $\hat{\delta'}(q_0', w) = \hat\Delta(w) =: S$,
+$$\hat{\delta'}(q_0', wa) = \delta'(S, a) = E\Bigl(\bigcup_{q \in S} \Delta(q, a)\Bigr) = \hat\Delta(wa).$$
+Hence $M$ accepts $w$ iff $\hat{\delta'}(q_0', w) \in F'$, i.e. $\hat\Delta(w) \cap F \neq \varnothing$, i.e. $N$ accepts $w$. Therefore $L(M) = L(N)$. $\square$`,
+  },
+  {
+    id: 'regular-expression',
+    label: 'Regular Expression',
+    title: 'Regular Expression',
     kind: 'definition',
     tags: ['Theory of Computation'],
     dependencies: ['formal-language'],
-    definition: String.raw`A **finite automaton** reads a string left to right through finitely many states, accepting or rejecting at the end. The deterministic (DFA) and nondeterministic (NFA) variants recognize the same class — the **regular languages** — and it is the simplest model of computation, with no memory beyond its current state.`,
+    description: String.raw`A **regular expression** describes a language algebraically rather than mechanically: by combining symbols with union $+$, concatenation, and the Kleene star $*$ (zero or more repetitions). It is the declarative counterpart of the finite automaton, and the two turn out to describe exactly the same languages.`,
+    definition: String.raw`The **regular expressions** over an alphabet $\Sigma$ are generated inductively: $\varnothing$, $\varepsilon$, and each $a \in \Sigma$ are regular expressions; and if $r, s$ are regular expressions then so are $(r + s)$, $(r s)$, and $(r^{*})$. Each denotes a language $L(\cdot) \subseteq \Sigma^{*}$ by $L(\varnothing) = \varnothing$, $L(\varepsilon) = \{\varepsilon\}$, $L(a) = \{a\}$, $L(r + s) = L(r) \cup L(s)$, $L(rs) = \{\,uv : u \in L(r),\, v \in L(s)\,\}$, and $L(r^{*}) = \bigcup_{n \ge 0} L(r)^n$ where $L(r)^0 = \{\varepsilon\}$ and $L(r)^{n+1} = L(r)^n L(r)$.`,
   },
   {
     id: 'regular-language',
@@ -25,9 +63,47 @@ export const THEORY_OF_COMPUTATION_NODES: MathNode[] = [
     title: 'Regular Language',
     kind: 'definition',
     tags: ['Theory of Computation'],
-    dependencies: ['finite-automaton'],
-    definition: String.raw`A **regular language** is one recognized by a finite automaton — equivalently, described by a **regular expression** (Kleene's theorem). Regular languages are closed under union, concatenation, and star, and are exactly those needing only finite memory; the **pumping lemma** shows, for instance, that $\{0^n 1^n : n \ge 0\}$ is not regular.`,
+    dependencies: ['finite-automaton', 'kleenes-theorem', 'nondeterministic-finite-automaton', 'nfa-dfa-equivalence'],
+    description: String.raw`A **regular language** is one recognized by a finite automaton — equivalently, by Kleene's theorem, one denoted by a regular expression. These are exactly the languages needing only finite memory. They form a robust class, closed under the Boolean operations as well as concatenation and star; the pumping lemma shows the limits, for instance that $\{0^n 1^n : n \ge 0\}$ is *not* regular because counting requires unbounded memory.`,
+    definition: String.raw`A language $L \subseteq \Sigma^{*}$ is **regular** iff $L = L(M)$ for some DFA $M$ — equivalently, by **Kleene's theorem**, iff $L = L(r)$ for some regular expression $r$, and (by the subset construction) iff $L = L(N)$ for some NFA $N$. The class of regular languages over $\Sigma$ is denoted $\mathrm{REG}$.`,
   },
+  {
+    id: 'kleenes-theorem',
+    label: "Kleene's Theorem",
+    title: "Kleene's Theorem",
+    kind: 'theorem',
+    tags: ['Theory of Computation'],
+    dependencies: ['regular-expression', 'nondeterministic-finite-automaton', 'finite-automaton', 'nfa-dfa-equivalence'],
+    description: String.raw`Kleene's theorem is the cornerstone equivalence of the regular world: the languages described by regular expressions are exactly those recognized by finite automata. One direction compiles an expression into an automaton by structural recursion; the other reads an automaton's accepted language off as an expression via state elimination.`,
+    statement: String.raw`A language $L \subseteq \Sigma^{*}$ is denoted by some regular expression if and only if $L = L(M)$ for some finite automaton $M$.`,
+    proof: String.raw`**(Expression $\Rightarrow$ automaton.)** By induction on the structure of a regular expression we build, for each $r$, an NFA $N_r$ with a single start state $i_r$, a single accepting state $f_r$, no transition into $i_r$ and none out of $f_r$, such that $L(N_r) = L(r)$; we verify the equality at each step directly from the run/$\varepsilon$-closure semantics of the **nondeterministic finite automaton**, where a string $u$ is accepted iff there is a path from the start state to an accepting state spelling $u$ (its non-$\varepsilon$ labels read in order). *Base.* $N_\varnothing$ is two states $i, f$ with no transitions, so no path reaches $f$ and $L(N_\varnothing) = \varnothing = L(\varnothing)$. $N_\varepsilon$ has an $\varepsilon$-move $i \to f$, so the only accepted string is $\varepsilon$, giving $L(N_\varepsilon) = \{\varepsilon\} = L(\varepsilon)$. $N_a$ has $i \xrightarrow{a} f$, so the accepted strings are exactly $\{a\} = L(a)$. *Union.* For $r + s$ add a fresh start $i$ with $\varepsilon$-moves to $i_r$ and $i_s$, and a fresh accept $f$ with $\varepsilon$-moves from $f_r$ and $f_s$. Because nothing enters $i_r, i_s$ from outside their copies and nothing leaves $f_r, f_s$, every accepting path factors as $i \to i_x \rightsquigarrow f_x \to f$ for exactly one $x \in \{r, s\}$, spelling a string of $L(N_x) = L(x)$; hence the accepted set is $L(r) \cup L(s) = L(r + s)$. *Concatenation.* For $rs$ identify (via an $\varepsilon$-move) $f_r$ with $i_s$, keeping start $i_r$ and accept $f_s$. The disjointness of the two copies forces every accepting path to cross $f_r \to i_s$ exactly once, so it splits as a path through $N_r$ spelling $u \in L(r)$ followed by a path through $N_s$ spelling $v \in L(s)$; the accepted set is therefore $\{uv : u \in L(r),\, v \in L(s)\} = L(rs)$. *Star.* For $r^{*}$ add a fresh start $i$ and a fresh accept $f$ with $\varepsilon$-moves $i \to f$ (accepting $\varepsilon$), $i \to i_r$, $f_r \to f$, and $f_r \to i_r$ (loop back), so that the invariant (no edge into $i$, none out of $f$) is preserved. Any accepting path from $i$ to $f$ is either $i \to f$ (spelling $\varepsilon$) or a concatenation of $k \ge 1$ traversals through $N_r$, the $j$-th spelling some $u_j \in L(r)$, joined by loop-back $\varepsilon$-moves and ended by $f_r \to f$; conversely every such concatenation is an accepting path. Hence the accepted set is $\bigcup_{k \ge 0} L(r)^k = L(r^{*})$. This completes the induction, so $L(N_r) = L(r)$. By the **subset construction** $N_r$ converts to a DFA recognizing the same language $L(r)$.
+
+**(Automaton $\Rightarrow$ expression.)** Given a DFA $M$, add a fresh start state $s$ and a fresh single accept state $t$ joined by $\varepsilon$-moves, then **eliminate** the original states one at a time. Eliminating a state $x$ replaces, for every pair $(p, q)$ with $p \neq x \neq q$, the transition label $r_{pq}$ by $r_{pq} + r_{px}\,(r_{xx})^{*}\,r_{xq}$, where the labels are regular expressions and $r_{xx}$ is the self-loop label; the added term $r_{px}\,(r_{xx})^{*}\,r_{xq}$ denotes exactly the strings of paths that route through $x$ (enter $x$, loop on $x$ zero or more times, then leave to $q$), so this records, in the direct $p \to q$ label, all strings of paths from $p$ to $q$ that may pass through $x$, and $x$ can be deleted without losing any string. The invariant maintained throughout is that each label $r_{pq}$ on the reduced graph denotes precisely the set of strings spelling paths from $p$ to $q$ in the original automaton whose intermediate states all lie among the already-eliminated states. When only $s$ and $t$ remain, every original state has been eliminated, so the single label $r_{st}$ denotes exactly $L(M)$. Both directions established, the classes coincide. $\square$`,
+  },
+  {
+    id: 'pumping-lemma-regular',
+    label: 'Pumping Lemma',
+    title: 'Pumping Lemma for Regular Languages',
+    kind: 'lemma',
+    tags: ['Theory of Computation'],
+    dependencies: ['regular-language', 'finite-automaton', 'pigeonhole-principle'],
+    description: String.raw`The **pumping lemma** captures the price of finite memory: a long enough accepted string must drive the automaton through some state twice, and the loop in between can be repeated ("pumped") any number of times with the string still accepted. Its contrapositive is the standard tool for proving a language *not* regular — exhibit a string that cannot be pumped.`,
+    statement: String.raw`If $L$ is regular, there is a **pumping length** $p \ge 1$ such that every $w \in L$ with $|w| \ge p$ factors as $w = xyz$ with (i) $|y| \ge 1$, (ii) $|xy| \le p$, and (iii) $xy^{i}z \in L$ for every $i \ge 0$.`,
+    proof: String.raw`Since $L$ is **regular**, fix a DFA $M = (Q, \Sigma, \delta, q_0, F)$ with $L(M) = L$, and set $p = |Q|$. Let $w = a_1 a_2 \cdots a_n \in L$ with $n \ge p$, and let $q_i = \hat\delta(q_0, a_1 \cdots a_i)$ be the state after $i$ symbols, so $q_0, q_1, \dots, q_p$ is a list of $p+1$ states. As $M$ has only $p$ states, by the pigeonhole principle two of $q_0, \dots, q_p$ coincide: $q_j = q_k$ with $0 \le j < k \le p$. Put $x = a_1 \cdots a_j$, $y = a_{j+1} \cdots a_k$, $z = a_{k+1} \cdots a_n$. Then $|y| = k - j \ge 1$ and $|xy| = k \le p$, giving (i), (ii). Because $\hat\delta(q_0, x) = q_j = q_k = \hat\delta(q_0, xy)$, reading $y$ returns $M$ to the same state, so reading $y$ any number of times does too; hence $\hat\delta(q_0, xy^{i}) = q_j$ for all $i \ge 0$, and $\hat\delta(q_0, xy^{i}z) = \hat\delta(q_j, z) = \hat\delta(q_0, w) \in F$. Thus $xy^{i}z \in L$ for every $i \ge 0$, which is (iii). $\square$`,
+  },
+  {
+    id: 'non-regularity-anbn',
+    label: '0ⁿ1ⁿ Not Regular',
+    title: 'The Language 0ⁿ1ⁿ Is Not Regular',
+    kind: 'corollary',
+    tags: ['Theory of Computation'],
+    dependencies: ['pumping-lemma-regular'],
+    description: String.raw`The canonical witness that finite memory is genuinely limited: matching an unknown number of $0$s against the same number of $1$s cannot be done by any finite automaton. It is the prototype application of the pumping lemma and the cleanest separation of the regular languages from the context-free ones.`,
+    statement: String.raw`The language $L = \{\,0^n 1^n : n \ge 0\,\}$ over $\Sigma = \{0, 1\}$ is not regular.`,
+    proof: String.raw`Suppose $L$ were regular and let $p$ be a pumping length from the **pumping lemma**. Take $w = 0^p 1^p \in L$, which has $|w| = 2p \ge p$. Any factorization $w = xyz$ with $|xy| \le p$ has $xy$ lying entirely within the initial block of $0$s, so $y = 0^m$ with $m = |y| \ge 1$. Pumping with $i = 2$ gives $xy^2 z = 0^{p+m} 1^p$, which has more $0$s than $1$s (as $m \ge 1$) and so is not in $L$ — contradicting clause (iii) of the lemma. Hence $L$ is not regular. $\square$`,
+  },
+
+  // ── Context-free languages ──────────────────────────────────────────────────
   {
     id: 'context-free-grammar',
     label: 'Context-Free Grammar',
@@ -35,16 +111,53 @@ export const THEORY_OF_COMPUTATION_NODES: MathNode[] = [
     kind: 'definition',
     tags: ['Theory of Computation'],
     dependencies: ['formal-language'],
-    definition: String.raw`A **context-free grammar** generates strings by recursive production rules, defining the **context-free languages** — those recognized by pushdown automata (a finite control plus a stack). They capture nested, recursive structure such as balanced parentheses and most programming-language syntax, sitting strictly between the regular and the decidable.`,
+    description: String.raw`A **context-free grammar** generates strings by rewriting: starting from a designated symbol, it repeatedly replaces a single nonterminal by one of its right-hand sides until only terminals remain. "Context-free" means a nonterminal may be rewritten regardless of its surroundings. Grammars capture nested, recursive structure — balanced parentheses, arithmetic expressions, the bulk of programming-language syntax — and define the **context-free languages**.`,
+    definition: String.raw`A **context-free grammar** is a tuple $G = (V, \Sigma, R, S)$ where $V$ is a finite set of **nonterminals** (variables), $\Sigma$ is the **terminal** alphabet disjoint from $V$, $S \in V$ is the **start symbol**, and $R \subseteq V \times (V \cup \Sigma)^{*}$ is a finite set of **production rules**, a rule $(A, \alpha)$ written $A \to \alpha$. For $\beta, \gamma \in (V \cup \Sigma)^{*}$ write $\beta \Rightarrow \gamma$ ("derives in one step") when $\gamma$ results from $\beta$ by replacing one occurrence of some nonterminal $A$ with $\alpha$ for a rule $A \to \alpha$; let $\Rightarrow^{*}$ be its reflexive–transitive closure. The language **generated** by $G$ is $L(G) = \{\,w \in \Sigma^{*} : S \Rightarrow^{*} w\,\}$, and a language is **context-free** iff it equals $L(G)$ for some such $G$.`,
   },
+  {
+    id: 'pushdown-automaton',
+    label: 'Pushdown Automaton',
+    title: 'Pushdown Automaton',
+    kind: 'definition',
+    tags: ['Theory of Computation'],
+    dependencies: ['nondeterministic-finite-automaton', 'context-free-grammar'],
+    description: String.raw`A **pushdown automaton** is a finite automaton equipped with one unbounded **stack** — last-in, first-out memory. The stack lets it remember an arbitrary depth of nesting (matching opening against closing brackets, for instance) that a finite automaton cannot. The nondeterministic pushdown automata recognize exactly the context-free languages, the machine-side characterization matching grammars.`,
+    definition: String.raw`A (nondeterministic) **pushdown automaton** (PDA) is a tuple $P = (Q, \Sigma, \Gamma, \Delta, q_0, Z_0, F)$ with $Q$ a finite state set, $\Sigma$ the input alphabet, $\Gamma$ the **stack alphabet**, $q_0 \in Q$ the start state, $Z_0 \in \Gamma$ the initial stack symbol, $F \subseteq Q$ the accepting states, and a finite transition relation $\Delta \subseteq (Q \times (\Sigma \cup \{\varepsilon\}) \times \Gamma) \times (Q \times \Gamma^{*})$. A **configuration** is a triple (state, remaining input, stack contents); $P$ moves between configurations according to $\Delta$, popping the top stack symbol and pushing a string in its place. $P$ **accepts** $w$ iff some run starting at $(q_0, w, Z_0)$ consumes all of $w$ and ends in a state of $F$.`,
+  },
+  {
+    id: 'cfg-pda-equivalence',
+    label: 'CFG ↔ PDA',
+    title: 'Context-Free Grammars and Pushdown Automata Coincide',
+    kind: 'theorem',
+    tags: ['Theory of Computation'],
+    dependencies: ['context-free-grammar', 'pushdown-automaton'],
+    description: String.raw`The defining equivalence of the context-free world, parallel to Kleene's theorem for the regular one: a language is generated by a context-free grammar exactly when it is accepted by a (nondeterministic) pushdown automaton. The grammar's recursion is simulated by the automaton's stack, and conversely.`,
+    statement: String.raw`A language $L \subseteq \Sigma^{*}$ is context-free if and only if $L = L(P)$ for some nondeterministic pushdown automaton $P$.`,
+    proof: String.raw`**(Grammar $\Rightarrow$ PDA.)** Given a **context-free grammar** $G = (V, \Sigma, R, S)$, build a PDA that uses its stack to carry out a leftmost derivation, with acceptance by **final state** (as in the definition of the **pushdown automaton**). Use a fresh bottom marker $\bot \notin V \cup \Sigma$ and three states: a start state $q_{\mathrm{start}}$, a working state $q_{\mathrm{work}}$, and an accepting state $q_{\mathrm{acc}} \in F$. From $q_{\mathrm{start}}$ an $\varepsilon$-move (reading no input) pushes $S$ above $\bot$ and goes to $q_{\mathrm{work}}$, so the stack reads $S$ over $\bot$. In $q_{\mathrm{work}}$ the transitions are: if a nonterminal $A$ is on top, pop it and (nondeterministically) push the right-hand side $\alpha$ of some rule $A \to \alpha$, top symbol first ($\varepsilon$-move, reading no input); if a terminal $a$ is on top, pop it while reading the matching input symbol $a$. Finally an $\varepsilon$-move that pops $\bot$ goes to $q_{\mathrm{acc}}$. Since $\bot$ surfaces only after every grammar symbol has been removed, $q_{\mathrm{acc}}$ is reachable on $w$ exactly when a leftmost derivation $S \Rightarrow^{*} w$ has been completed and all of $w$ consumed; as $q_{\mathrm{acc}}$ is the sole accepting state, the PDA accepts $w$ (by final state) iff $S \Rightarrow^{*} w$, so it accepts precisely $L(G)$.
+
+**(PDA $\Rightarrow$ grammar.)** Given a PDA $P$, first put it in a normal form (one accepting state; it empties its stack just before accepting; and every move either pushes exactly one symbol or pops exactly one symbol) — a routine transformation that adds a bottom marker and intermediate states without changing the accepted language. Introduce nonterminals $A_{pq}$ intended to generate exactly the input strings that take $P$ from state $p$ with a given symbol on top to state $q$ having popped that same symbol (and the net stack below unchanged). Productions mirror the moves: $A_{pq} \to a\,A_{rs}\,b$ when from $p$, reading $a$, the move pushes a symbol that the move into $q$ from $s$, reading $b$, later pops (this is the case where the symbol pushed at the very first move of the run is the one popped at its very last move); $A_{pq} \to A_{pr} A_{rq}$ for the complementary case, splitting the run at an intermediate state $r$ where the stack first returns to its starting height (so the first-pushed symbol is popped strictly before the end); and $A_{pp} \to \varepsilon$. An induction on run length / derivation length shows $A_{pq} \Rightarrow^{*} w$ iff $w$ drives $P$ from $p$ to $q$ with the stated stack discipline, so $A_{q_0 q_{\mathrm{acc}}}$ generates $L(P)$. The classes therefore coincide. $\square$`,
+  },
+
+  // ── Computability ───────────────────────────────────────────────────────────
   {
     id: 'turing-machine',
     label: 'Turing Machine',
     title: 'Turing Machine',
     kind: 'definition',
     tags: ['Theory of Computation'],
-    dependencies: ['formal-language'],
-    definition: String.raw`A **Turing machine** is a finite control reading and writing an unbounded tape — the standard model of unrestricted computation. Despite its simplicity it captures everything a digital computer can do: a language is **decidable** if some machine halts on every input with the correct yes/no answer, and **recognizable** if a machine halts and accepts exactly the yes-instances.`,
+    dependencies: ['formal-language', 'function'],
+    description: String.raw`A **Turing machine** is a finite control reading and writing symbols on an unbounded tape, moving a head one cell at a time. Despite its austerity it is the standard model of *unrestricted* computation: anything a digital computer can do, a Turing machine can do. It splits languages into the **decidable** (a machine halts on every input with the right answer) and the merely **recognizable** (a machine halts and accepts exactly the yes-instances, but may loop on the no-instances).`,
+    definition: String.raw`A **Turing machine** is a tuple $M = (Q, \Sigma, \Gamma, \delta, q_0, q_{\mathrm{acc}}, q_{\mathrm{rej}})$ where $Q$ is a finite state set; $\Sigma$ is the input alphabet; $\Gamma \supseteq \Sigma$ is the tape alphabet containing a blank symbol $\sqcup \in \Gamma \setminus \Sigma$; $q_0, q_{\mathrm{acc}}, q_{\mathrm{rej}} \in Q$ are the start, accept, and reject states with $q_{\mathrm{acc}} \neq q_{\mathrm{rej}}$; and $\delta : (Q \setminus \{q_{\mathrm{acc}}, q_{\mathrm{rej}}\}) \times \Gamma \to Q \times \Gamma \times \{L, R\}$ is the transition function. On input $w$ the machine starts with $w$ on an otherwise-blank tape, head at the left, in state $q_0$, and repeatedly applies $\delta$. It **halts** on entering $q_{\mathrm{acc}}$ (accepting) or $q_{\mathrm{rej}}$ (rejecting), and may run forever. $L(M) = \{\,w \in \Sigma^{*} : M \text{ halts in } q_{\mathrm{acc}} \text{ on } w\,\}$.`,
+  },
+  {
+    id: 'nondeterministic-turing-machine',
+    label: 'Nondeterministic TM',
+    title: 'Nondeterministic Turing Machine',
+    kind: 'definition',
+    tags: ['Theory of Computation'],
+    dependencies: ['turing-machine', 'power-set'],
+    description: String.raw`A **nondeterministic Turing machine** (NTM) relaxes the Turing machine by allowing several possible moves at each step rather than one. It accepts an input if *some* sequence of choices leads to the accept state. NTMs recognize exactly the same languages as deterministic machines (a deterministic machine can search all choice sequences), so they add no power to computability; their importance is in *complexity*, where the class $\mathrm{NP}$ is exactly what they decide in polynomial time and the tableau of an NTM computation drives the Cook–Levin theorem.`,
+    definition: String.raw`A **nondeterministic Turing machine** is a tuple $N = (Q, \Sigma, \Gamma, \delta, q_0, q_{\mathrm{acc}}, q_{\mathrm{rej}})$ exactly as a **Turing machine** except that the transition is a relation given as a function $\delta : (Q \setminus \{q_{\mathrm{acc}}, q_{\mathrm{rej}}\}) \times \Gamma \to \mathcal{P}(Q \times \Gamma \times \{L, R\})$ returning a *set* of allowed moves. A **configuration** records the state, tape contents, and head position; one configuration **yields** another if the latter results from applying some move in $\delta$ to the former. $N$ **accepts** $w$ iff some finite sequence of configurations, starting from the initial configuration on $w$ and each yielding the next, reaches a configuration in state $q_{\mathrm{acc}}$. The language recognized is $L(N) = \{\,w \in \Sigma^{*} : N \text{ accepts } w\,\}$.`,
   },
   {
     id: 'church-turing-thesis',
@@ -53,25 +166,19 @@ export const THEORY_OF_COMPUTATION_NODES: MathNode[] = [
     kind: 'definition',
     tags: ['Theory of Computation'],
     dependencies: ['turing-machine', 'lambda-calculus'],
-    definition: String.raw`The **Church–Turing thesis** holds that every function computable by any effective procedure is computable by a Turing machine. Not a theorem but a claim about the informal notion of *computation*, it is supported by the convergence of independently devised models — Turing machines, the lambda calculus, the recursive functions — on exactly the same class of computable functions.`,
+    description: String.raw`The **Church–Turing thesis** identifies the informal idea of an *effective procedure* with the precise notion of Turing-computability. It is not a theorem — one side is informal — but a foundational thesis, supported overwhelmingly by the fact that every independently proposed model of computation (Turing machines, the lambda calculus, general recursive functions, register machines) defines exactly the same class of computable functions.`,
+    definition: String.raw`The **Church–Turing thesis** asserts: a partial function $f : \Sigma^{*} \rightharpoonup \Sigma^{*}$ is computable by some effective (mechanical, finitely specified) procedure if and only if it is computed by some **Turing machine**. The supporting evidence consists of equivalence theorems — each proved separately — establishing that the Turing-computable functions, the functions definable in the **lambda calculus**, and the general recursive functions are one and the same class. As a claim about the informal notion of effectiveness it is not subject to proof, only to confirmation or refutation by example.`,
   },
   {
     id: 'decidability',
     label: 'Decidability',
-    title: 'Decidability',
+    title: 'Decidability & Recognizability',
     kind: 'definition',
     tags: ['Theory of Computation'],
     dependencies: ['turing-machine'],
-    definition: String.raw`**Decidability** classifies problems by what an algorithm can settle: a language is **decidable** if some Turing machine halts on every input with the correct yes/no answer, and **recognizable** (semi-decidable) if some machine accepts exactly the yes-instances (rejecting or looping on the rest). Every decidable language is recognizable, and a language is **undecidable** precisely when no decider exists — which includes recognizable-but-undecidable problems like the halting problem. A language is decidable iff both it and its complement are recognizable.`,
-  },
-  {
-    id: 'halting-problem',
-    label: 'Halting Problem',
-    title: 'Halting Problem',
-    kind: 'theorem',
-    tags: ['Theory of Computation'],
-    dependencies: ['decidability'],
-    definition: String.raw`The **halting problem** — decide whether a given program halts on a given input — is **undecidable**, by Turing's diagonal argument: a machine that could predict halting could be made to contradict itself. It is the prototypical undecidable problem, the computational twin of Gödel's incompleteness, and the root of countless undecidability proofs by reduction.`,
+    description: String.raw`**Decidability** sorts problems by what an algorithm can settle. A language is **decidable** if some Turing machine halts on every input and answers membership correctly; it is **recognizable** (semi-decidable) if some machine accepts exactly the yes-instances but may loop on the no-instances. Every decidable language is recognizable, and a language is decidable exactly when both it and its complement are recognizable — so undecidability comes in degrees, the halting problem being recognizable but not decidable.`,
+    definition: String.raw`A language $L \subseteq \Sigma^{*}$ is **Turing-recognizable** (recursively enumerable) iff $L = L(M)$ for some Turing machine $M$. It is **decidable** (recursive) iff there is a Turing machine that **halts on every input** with $L(M) = L$ — i.e. it accepts every $w \in L$ and rejects (does not loop on) every $w \notin L$. $L$ is **undecidable** iff no such decider exists. The **complement** is $\overline{L} = \Sigma^{*} \setminus L$.`,
+    proof: String.raw`**Closure characterization:** $L$ is decidable iff both $L$ and $\overline{L}$ are recognizable. ($\Rightarrow$) A decider for $L$ is in particular a recognizer for $L$; swapping its accept and reject states gives a decider, hence recognizer, for $\overline{L}$. ($\Leftarrow$) Given recognizers $M_1$ for $L$ and $M_2$ for $\overline{L}$, build $M$ that on input $w$ simulates $M_1$ and $M_2$ **in parallel** (alternating their steps). Every $w$ lies in exactly one of $L, \overline{L}$, so exactly one simulation eventually accepts; $M$ halts at that point, accepting if $M_1$ accepted and rejecting if $M_2$ accepted. Thus $M$ halts on every input and decides $L$. $\square$`,
   },
   {
     id: 'reduction',
@@ -79,17 +186,39 @@ export const THEORY_OF_COMPUTATION_NODES: MathNode[] = [
     title: 'Reduction',
     kind: 'definition',
     tags: ['Theory of Computation'],
-    dependencies: ['decidability'],
-    definition: String.raw`A **reduction** transforms one problem into another so that a solution to the second yields a solution to the first. If $A$ reduces to $B$ and $B$ is decidable, then so is $A$; contrapositively, reducing the halting problem to $B$ proves $B$ undecidable. Reductions are the basic tool for transferring decidability and hardness between problems.`,
+    dependencies: ['decidability', 'turing-machine', 'church-turing-thesis'],
+    description: String.raw`A **reduction** from problem $A$ to problem $B$ is a computable translation of $A$-instances into $B$-instances that preserves the yes/no answer. If $A$ reduces to $B$, then $B$ is "at least as hard": a decider for $B$ yields a decider for $A$, and contrapositively, if $A$ is undecidable then so is $B$. Reductions are the standard mechanism for spreading both decidability and hardness across problems.`,
+    definition: String.raw`A **many-one (mapping) reduction** from $A \subseteq \Sigma^{*}$ to $B \subseteq \Sigma^{*}$, written $A \le_m B$, is a total **computable** function $f : \Sigma^{*} \to \Sigma^{*}$ (computable by a Turing machine that halts on all inputs, per the **Church–Turing thesis**) such that for all $w$, $\;w \in A \iff f(w) \in B$.`,
+    proof: String.raw`**Transfer of decidability:** if $A \le_m B$ via $f$ and $B$ is **decidable**, then $A$ is decidable. Let $M_B$ decide $B$ and let $M_f$ compute $f$ (both halt on every input). The machine that, on input $w$, runs $M_f$ to produce $f(w)$ and then runs $M_B$ on $f(w)$ halts on every input, and accepts iff $f(w) \in B$ iff $w \in A$. So it decides $A$. Contrapositively, if $A$ is **undecidable** and $A \le_m B$, then $B$ is undecidable. $\square$`,
   },
+  {
+    id: 'halting-problem',
+    label: 'Halting Problem',
+    title: 'Undecidability of the Halting Problem',
+    kind: 'theorem',
+    tags: ['Theory of Computation'],
+    dependencies: ['decidability', 'turing-machine'],
+    description: String.raw`The **halting problem** asks, given a program and an input, whether the program eventually halts. Turing proved it **undecidable**: no algorithm decides halting for all program–input pairs. The proof is a diagonal argument — a hypothetical halting-decider can be turned against itself to produce a contradiction. It is the prototype undecidable problem and the source of countless undecidability results by reduction.`,
+    statement: String.raw`Encoding each Turing machine $M$ as a string $\langle M\rangle$, the language
+$$\mathrm{HALT} = \{\,\langle M\rangle \# w : M \text{ halts on input } w\,\}$$
+is undecidable. (The closely related $A_{\mathrm{TM}} = \{\langle M\rangle\# w : M \text{ accepts } w\}$ is undecidable by the same argument.)`,
+    proof: String.raw`Suppose, toward a contradiction, that some Turing machine $H$ **decides** $\mathrm{HALT}$: $H$ halts on every input, accepting $\langle M\rangle \# w$ if $M$ halts on $w$ and rejecting otherwise. Using $H$, build a machine $D$ that on input $\langle M\rangle$ does the following: run $H$ on $\langle M\rangle \# \langle M\rangle$; if $H$ accepts (so $M$ halts on input $\langle M\rangle$), then $D$ deliberately **loops** forever; if $H$ rejects (so $M$ does not halt on $\langle M\rangle$), then $D$ halts. $D$ is a legitimate Turing machine, since $H$ is, so it has an encoding $\langle D\rangle$.
+
+Now run $D$ on its own encoding $\langle D\rangle$. By construction:
+$$D \text{ halts on } \langle D\rangle \iff H \text{ rejects } \langle D\rangle\#\langle D\rangle \iff D \text{ does not halt on } \langle D\rangle.$$
+This is a contradiction: $D$ halts on $\langle D\rangle$ iff it does not. Hence no decider $H$ exists, and $\mathrm{HALT}$ is **undecidable**. $\square$`,
+  },
+
+  // ── Complexity ──────────────────────────────────────────────────────────────
   {
     id: 'time-complexity',
     label: 'Time Complexity',
     title: 'Time Complexity & Big-O',
     kind: 'definition',
     tags: ['Theory of Computation'],
-    dependencies: ['turing-machine', 'function'],
-    definition: String.raw`**Time complexity** counts the steps an algorithm takes as a function of input size $n$, recorded up to constant factors and lower-order terms by **big-O** notation — $O(n)$, $O(n \log n)$, $O(2^n)$. Worst-case asymptotic running time abstracts away the hardware, letting algorithms be compared and complexity classes defined.`,
+    dependencies: ['turing-machine', 'function', 'natural-numbers'],
+    description: String.raw`**Time complexity** measures an algorithm by the number of steps it takes as a function of input size $n$, in the worst case, recorded only up to constant factors and lower-order terms via **big-O** notation. Abstracting away the machine and the constants lets algorithms be compared meaningfully and lets complexity classes be defined by growth rate — $O(n)$, $O(n \log n)$, $O(2^n)$.`,
+    definition: String.raw`A **Turing machine** $M$ that halts on all inputs **runs in time** $t : \mathbb{N} \to \mathbb{N}$ if for every input $w$, $M$ halts within $t(|w|)$ steps. For $f, g : \mathbb{N} \to \mathbb{N}$, write $f = O(g)$ (big-O) iff there exist constants $c > 0$ and $n_0 \in \mathbb{N}$ with $f(n) \le c\,g(n)$ for all $n \ge n_0$. The **worst-case time complexity** of $M$ is the least such $t$ up to $O(\cdot)$. For a time-bound $t$, $\mathrm{TIME}(t) = \{\,L : L \text{ is decided by some machine running in time } O(t)\,\}$.`,
   },
   {
     id: 'p-vs-np',
@@ -97,8 +226,22 @@ export const THEORY_OF_COMPUTATION_NODES: MathNode[] = [
     title: 'P versus NP',
     kind: 'definition',
     tags: ['Theory of Computation'],
-    dependencies: ['time-complexity'],
-    definition: String.raw`**P** is the class of problems solvable in polynomial time; **NP**, those whose yes-instances admit polynomial-time *checkable* certificates. Whether $\mathrm{P} = \mathrm{NP}$ — is everything quickly verifiable also quickly solvable? — is the central open question of computer science and a Clay Millennium Prize problem; it is widely believed that $\mathrm{P} \neq \mathrm{NP}$.`,
+    dependencies: ['time-complexity', 'decidability', 'nondeterministic-turing-machine'],
+    description: String.raw`**P** is the class of decision problems solvable in polynomial time; **NP** is the class whose yes-instances have polynomial-length certificates that are *checkable* in polynomial time. The question whether $\mathrm{P} = \mathrm{NP}$ — is everything efficiently verifiable also efficiently solvable? — is the central open problem of theoretical computer science and a Clay Millennium Prize problem. It is widely conjectured that $\mathrm{P} \neq \mathrm{NP}$.`,
+    definition: String.raw`$\mathrm{P} = \bigcup_{k \ge 1} \mathrm{TIME}(n^k)$ is the class of languages **decidable** in polynomial time. A language $L$ is in $\mathrm{NP}$ iff there is a polynomial $p$ and a polynomial-time decidable **verifier** relation $V \subseteq \Sigma^{*} \times \Sigma^{*}$ such that
+$$w \in L \iff \exists\, c \in \Sigma^{*}\,\bigl(|c| \le p(|w|) \ \wedge\ (w, c) \in V\bigr),$$
+the string $c$ being a **certificate** (witness). Equivalently $\mathrm{NP}$ is the class decidable in polynomial time by a **nondeterministic Turing machine**. Clearly $\mathrm{P} \subseteq \mathrm{NP}$ (take the verifier to ignore $c$ and run the decider); whether the inclusion is strict is the **P vs NP** problem.`,
+  },
+  {
+    id: 'polynomial-time-reduction',
+    label: 'Poly-Time Reduction',
+    title: 'Polynomial-Time Reduction',
+    kind: 'definition',
+    tags: ['Theory of Computation'],
+    dependencies: ['reduction', 'p-vs-np'],
+    description: String.raw`A **polynomial-time reduction** is a mapping reduction whose translating function can be computed in polynomial time. It is the fine-grained version of reduction used in complexity theory: it transfers not just decidability but *efficient* decidability, and it is what "$A$ is no harder than $B$" means within P and NP. NP-completeness is built on it.`,
+    definition: String.raw`A **polynomial-time many-one reduction** from $A$ to $B$, written $A \le_p B$, is a **reduction** $f : \Sigma^{*} \to \Sigma^{*}$ ($w \in A \iff f(w) \in B$) that is moreover computable by a Turing machine running in time polynomial in $|w|$.`,
+    proof: String.raw`**Closure of $\mathrm{P}$ downward under $\le_p$:** if $A \le_p B$ and $B \in \mathrm{P}$, then $A \in \mathrm{P}$. Let $f$ be computable in time $O(|w|^a)$ and let $M_B$ decide $B$ in time $O(m^b)$. On input $w$, compute $f(w)$ then run $M_B$. Computing $f(w)$ takes $O(|w|^a)$ steps, and a machine cannot write more than its step count, so $|f(w)| = O(|w|^a)$; thus $M_B$ runs for $O\bigl((|w|^a)^b\bigr) = O(|w|^{ab})$ steps. Total time is polynomial, and the combined machine accepts iff $f(w) \in B$ iff $w \in A$, so $A \in \mathrm{P}$. By the same composition $\le_p$ is transitive. $\square$`,
   },
   {
     id: 'np-completeness',
@@ -106,8 +249,10 @@ export const THEORY_OF_COMPUTATION_NODES: MathNode[] = [
     title: 'NP-Completeness',
     kind: 'definition',
     tags: ['Theory of Computation'],
-    dependencies: ['p-vs-np', 'reduction'],
-    definition: String.raw`A problem is **NP-complete** if it lies in NP and every NP problem reduces to it in polynomial time — the hardest problems in NP, all equivalent under polynomial reduction. A polynomial algorithm for any one would prove $\mathrm{P} = \mathrm{NP}$. Thousands are known: Boolean satisfiability, graph coloring, the Hamiltonian cycle and travelling-salesman decision problems.`,
+    dependencies: ['p-vs-np', 'polynomial-time-reduction'],
+    description: String.raw`A problem is **NP-complete** if it lies in NP and *every* NP problem reduces to it in polynomial time — the hardest problems in NP, all interreducible. A polynomial-time algorithm for any single NP-complete problem would collapse $\mathrm{P} = \mathrm{NP}$. Thousands are known: Boolean satisfiability, graph $3$-coloring, the Hamiltonian-cycle and travelling-salesman decision problems, subset-sum.`,
+    definition: String.raw`A language $B$ is **NP-hard** iff $A \le_p B$ for every $A \in \mathrm{NP}$. It is **NP-complete** iff it is NP-hard and also $B \in \mathrm{NP}$.`,
+    proof: String.raw`**If any NP-complete $B$ is in $\mathrm{P}$, then $\mathrm{P} = \mathrm{NP}$.** Always $\mathrm{P} \subseteq \mathrm{NP}$. Conversely, suppose $B$ is NP-complete and $B \in \mathrm{P}$. For any $A \in \mathrm{NP}$, NP-hardness gives $A \le_p B$; since $B \in \mathrm{P}$, the downward closure of $\mathrm{P}$ under **polynomial-time reduction** yields $A \in \mathrm{P}$. As $A$ was arbitrary, $\mathrm{NP} \subseteq \mathrm{P}$, so $\mathrm{P} = \mathrm{NP}$. $\square$`,
   },
   {
     id: 'cook-levin-theorem',
@@ -115,7 +260,11 @@ export const THEORY_OF_COMPUTATION_NODES: MathNode[] = [
     title: 'Cook–Levin Theorem',
     kind: 'theorem',
     tags: ['Theory of Computation'],
-    dependencies: ['np-completeness'],
-    definition: String.raw`Boolean satisfiability (**SAT**) is NP-complete — a polynomial-time verifier running on a certificate can be encoded as a propositional formula that is satisfiable exactly when an accepting certificate exists. It supplied the first NP-complete problem, the seed from which NP-completeness spreads to thousands of others by reduction.`,
+    dependencies: ['np-completeness', 'p-vs-np', 'turing-machine', 'nondeterministic-turing-machine'],
+    description: String.raw`The **Cook–Levin theorem** supplies the first NP-complete problem: Boolean satisfiability (**SAT**) is NP-complete. It is the seed from which NP-completeness propagates — once one NP-complete problem is in hand, any problem to which it polynomially reduces (and which lies in NP) is NP-complete too. The proof encodes the entire polynomial-time computation of an NP verifier as a propositional formula.`,
+    statement: String.raw`$\mathrm{SAT}$, the set of satisfiable Boolean formulas, is NP-complete. (The restriction $\mathrm{3SAT}$ to formulas in $3$-conjunctive-normal-form is likewise NP-complete.)`,
+    proof: String.raw`**$\mathrm{SAT} \in \mathrm{NP}$:** a satisfying truth assignment is a certificate of length linear in the formula, and evaluating a formula under an assignment is polynomial-time, so the verifier of the definition of **P vs NP** applies.
+
+**$\mathrm{SAT}$ is NP-hard:** let $A \in \mathrm{NP}$, decided by a **nondeterministic Turing machine** $N$ running in time $p(n)$ for a polynomial $p$. Given input $w$ of length $n$, a computation of $N$ on $w$ touches at most $p(n)$ tape cells over at most $p(n)$ steps, so it is described by a $p(n) \times p(n)$ **tableau** of configurations. Introduce Boolean variables $x_{i,j,s}$ meaning "cell $j$ at time $i$ holds symbol/state $s$." Build, in time polynomial in $n$, a formula $\varphi_w$ as a conjunction of clauses asserting: each cell holds exactly one symbol (consistency); the first row encodes the start configuration on $w$ (start); every $2 \times 3$ window of adjacent cells respects $N$'s transition relation (move); and some row contains the accept state (accept). By design, a truth assignment satisfies $\varphi_w$ iff it encodes an accepting computation of $N$ on $w$, so $\varphi_w \in \mathrm{SAT} \iff w \in A$. Thus $A \le_p \mathrm{SAT}$. Holding for every $A \in \mathrm{NP}$, this makes $\mathrm{SAT}$ NP-hard, and with membership in NP, **NP-complete**. ($\mathrm{3SAT}$ follows by the standard clause-splitting transformation preserving satisfiability and polynomial size.) $\square$`,
   },
 ]

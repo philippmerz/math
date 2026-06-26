@@ -3,6 +3,9 @@
 ### feature agent
 
 - arrow keys should navigate the search results when search bar is focused, enter should select the currently highlighted one
+- rename entire repo to 'turnstile'
+- remove '/' in search bar on mobile since there's no permanent keyboard there
+- sidebar expandable per border-drag on mobile
 
 ### content agent
 
