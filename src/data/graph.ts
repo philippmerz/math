@@ -1,4 +1,4 @@
-import type { MathNode } from './types'
+import type { MathNode, NodeKind } from './types'
 import { MATH_NODES } from './nodes'
 
 /** id → node, for O(1) lookup from the panel and search. */
@@ -6,10 +6,16 @@ export const nodeById: ReadonlyMap<string, MathNode> = new Map(
   MATH_NODES.map((n) => [n.id, n]),
 )
 
-/** Every distinct tag across the node set, sorted — the filter vocabulary. */
+/** Every distinct tag across the node set, sorted — the area-filter vocabulary. */
 export const allTags: string[] = [
   ...new Set(MATH_NODES.flatMap((n) => n.tags)),
 ].sort()
+
+/** Distinct node kinds present, foundational order first — the type-filter vocabulary. */
+const KIND_ORDER: NodeKind[] = ['primitive', 'axiom', 'definition', 'theorem']
+export const allKinds: NodeKind[] = [...new Set(MATH_NODES.map((n) => n.kind))].sort(
+  (a, b) => KIND_ORDER.indexOf(a) - KIND_ORDER.indexOf(b),
+)
 
 /** id → nodes that depend on it (the reverse of `dependencies`). */
 export const dependentsById: ReadonlyMap<string, MathNode[]> = MATH_NODES.reduce(

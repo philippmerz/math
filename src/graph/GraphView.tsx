@@ -67,6 +67,8 @@ type Props = {
   matchIds: ReadonlySet<string> | null
   /** When set, nodes outside this area are greyed out. */
   focusTag: string | null
+  /** Kinds to show; when non-empty, nodes of other kinds are greyed out. */
+  kindFilter: ReadonlySet<string>
   /** When the search narrows to one node, glide the camera onto it. */
   focusNodeId: string | null
   onSelect: (id: string | null) => void
@@ -80,6 +82,7 @@ export function GraphView({
   selectedId,
   matchIds,
   focusTag,
+  kindFilter,
   focusNodeId,
   onSelect,
   onAreaChange,
@@ -111,15 +114,20 @@ export function GraphView({
   const tipNode = tip ? nodeById.get(tip.id) ?? null : null
 
   const displayNodes = useMemo(() => {
-    const isDimmed = (id: string) =>
-      (matchIds != null && !matchIds.has(id)) ||
-      (focusTag != null && !(nodeById.get(id)?.tags.includes(focusTag) ?? false))
+    const isDimmed = (id: string) => {
+      const n = nodeById.get(id)
+      return (
+        (matchIds != null && !matchIds.has(id)) ||
+        (focusTag != null && !(n?.tags.includes(focusTag) ?? false)) ||
+        (kindFilter.size > 0 && !(n != null && kindFilter.has(n.kind)))
+      )
+    }
     return nodes.map((n) => ({
       ...n,
       selected: n.id === selectedId,
       className: isDimmed(n.id) ? 'is-dimmed' : undefined,
     }))
-  }, [nodes, selectedId, matchIds, focusTag])
+  }, [nodes, selectedId, matchIds, focusTag, kindFilter])
 
   const stroke = theme === 'dark' ? '#ffffff' : '#000000'
   const dimStroke = theme === 'dark' ? '#555555' : '#c4c4c4'
