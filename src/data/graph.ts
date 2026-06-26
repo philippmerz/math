@@ -11,6 +11,13 @@ export const allTags: string[] = [
   ...new Set(MATH_NODES.flatMap((n) => n.tags)),
 ].sort()
 
+/** The busiest areas, most-nodes first — a short inline shortcut bar. */
+export const frequentTags: string[] = (() => {
+  const counts = new Map<string, number>()
+  for (const n of MATH_NODES) for (const t of n.tags) counts.set(t, (counts.get(t) ?? 0) + 1)
+  return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6).map(([t]) => t)
+})()
+
 /** Distinct node kinds present, foundational order first — the type-filter vocabulary. */
 const KIND_ORDER: NodeKind[] = ['primitive', 'axiom', 'definition', 'theorem']
 export const allKinds: NodeKind[] = [...new Set(MATH_NODES.map((n) => n.kind))].sort(

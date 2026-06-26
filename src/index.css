@@ -711,6 +711,25 @@ body {
   border-color: var(--fg);
 }
 
+/* ---- Frequent-area shortcut bar (bottom-left) ------------------------- */
+
+.freqbar {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  z-index: 6;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: min(60vw, 640px);
+  /* let clicks fall through the gaps to the canvas; chips re-enable below */
+  pointer-events: none;
+}
+
+.freqbar .filterbar__chip {
+  pointer-events: auto;
+}
+
 /* ---- Responsive ------------------------------------------------------- */
 
 @media (max-width: 560px) {
@@ -741,6 +760,19 @@ body {
     /* cover the toolbar for a clean full-screen reading view */
     z-index: 10;
     padding-top: 18px;
+  }
+  /* one scrollable row, full width */
+  .freqbar {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    max-width: none;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    pointer-events: auto;
+  }
+  .freqbar .filterbar__chip {
+    flex: 0 0 auto;
   }
   /* pinch-zoom replaces the +/- buttons on touch */
   .react-flow .react-flow__controls {

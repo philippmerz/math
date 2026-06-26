@@ -4,6 +4,7 @@ import '@xyflow/react/dist/style.css'
 import { GraphView } from './graph/GraphView'
 import { SearchBox } from './ui/SearchBox'
 import { FilterMenu } from './ui/FilterMenu'
+import { FrequentTags } from './ui/FrequentTags'
 import { SettingsMenu } from './ui/SettingsMenu'
 import { useTheme } from './hooks/useTheme'
 import { useLayout } from './hooks/useLayout'
@@ -160,6 +161,8 @@ export default function App() {
             />
           </div>
         </header>
+
+        <FrequentTags active={focusTag} onSelect={setFocusTag} />
 
         {selected && (
           <Suspense fallback={null}>
