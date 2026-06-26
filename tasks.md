@@ -27,6 +27,7 @@ RECOMMENDATION: A now, B later. UNIFYING THEME: iso-collapse + theorem-filter + 
 - fuzzy search (performance? maybe only as fallback if no direct hits)
 - move node into focus if only one search result
 - move majority of group into focus when selecting a tag
+- dragging only works when starting from background, not from an edge. but clicking on an edge has no action associated anyway, so we can just allow dragging from an edge anyway
 
 ### content agent
 

@@ -259,10 +259,10 @@ Stronger than pointwise convergence, it preserves continuity and permits exchang
     title: 'Contraction Mapping',
     kind: 'definition',
     tags: ['Analysis'],
-    dependencies: ['absolute-value'],
-    definition: String.raw`A **contraction** on $\mathbb{R}$ (or a subset) is a map $T$ with a fixed factor $k < 1$ bounding how far apart it leaves points:
-$$|T(x) - T(y)| \le k\,|x - y| \quad \text{for all } x, y \qquad (0 \le k < 1).$$
-Because $k < 1$, iterating a contraction drives points together geometrically fast — the mechanism behind fixed-point existence-and-uniqueness proofs. The same definition works in any metric space, with $|x - y|$ replaced by a distance.`,
+    dependencies: ['metric-space'],
+    definition: String.raw`A **contraction** on a metric space $(X, d)$ is a map $T$ with a fixed factor $k < 1$ bounding how far apart it leaves points:
+$$d\bigl(T(x), T(y)\bigr) \le k\,d(x, y) \quad \text{for all } x, y \qquad (0 \le k < 1).$$
+Because $k < 1$, iterating a contraction drives points together geometrically fast — the mechanism behind fixed-point existence-and-uniqueness proofs. On $\mathbb{R}$ the distance is $d(x, y) = |x - y|$.`,
   },
   {
     id: 'banach-fixed-point',
@@ -270,8 +270,8 @@ Because $k < 1$, iterating a contraction drives points together geometrically fa
     title: 'Banach Fixed-Point Theorem',
     kind: 'theorem',
     tags: ['Analysis'],
-    dependencies: ['contraction-mapping', 'cauchy-sequence'],
-    definition: String.raw`The **Banach fixed-point theorem**: a contraction $T$ on a non-empty *complete* space — one where every Cauchy sequence converges, such as $\mathbb{R}$ — has a unique fixed point $x^\ast = T(x^\ast)$, and the iterates converge to it from any start:
+    dependencies: ['contraction-mapping', 'metric-space', 'cauchy-sequence'],
+    definition: String.raw`The **Banach fixed-point theorem**: a contraction $T$ on a non-empty *complete* metric space — one where every Cauchy sequence converges, such as $\mathbb{R}$ — has a unique fixed point $x^\ast = T(x^\ast)$, and the iterates converge to it from any start:
 $$x_{n+1} = T(x_n), \qquad x_n \longrightarrow x^\ast.$$
 Constructive and quantitative, it yields existence/uniqueness for differential and integral equations (Picard–Lindelöf) and powers the inverse and implicit function theorems.`,
   },
