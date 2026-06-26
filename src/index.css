@@ -271,6 +271,21 @@ body {
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
   display: flex;
   flex-direction: column;
+  transform-origin: top right;
+  /* closed: faded + slightly lifted; visibility hide is delayed past the fade */
+  opacity: 0;
+  transform: translateY(-6px) scale(0.97);
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 140ms ease, transform 140ms ease, visibility 0s linear 140ms;
+}
+
+.settings__menu.is-open {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 140ms ease, transform 140ms ease;
 }
 
 .settings__section {

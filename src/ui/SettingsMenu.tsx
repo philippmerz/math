@@ -68,8 +68,7 @@ export function SettingsMenu({ theme, onToggleTheme, layoutMode, onLayoutChange 
         </svg>
       </button>
 
-      {open && (
-        <div className="settings__menu" role="menu">
+        <div className={`settings__menu${open ? ' is-open' : ''}`} role="menu" aria-hidden={!open}>
           <section className="settings__section">
             <span className="settings__heading">Theme</span>
             <div className="settings__seg">
@@ -107,7 +106,6 @@ export function SettingsMenu({ theme, onToggleTheme, layoutMode, onLayoutChange 
             ))}
           </section>
         </div>
-      )}
     </div>
   )
 }
