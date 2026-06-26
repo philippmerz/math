@@ -102,6 +102,15 @@ body {
   background: var(--bg);
   white-space: nowrap;
 }
+/* When the field has a curated link, the hull label is the easter egg too: it
+   re-enables pointer events (the hull itself is inert) and keeps its bg notch. */
+.cluster-hull__label.area-tag--linked {
+  pointer-events: auto;
+  background: var(--bg);
+}
+.cluster-hull__label.area-tag--linked:hover {
+  color: var(--fg);
+}
 
 .concept-node {
   position: relative;

@@ -18,16 +18,19 @@ export function AreaTag({ tag, className }: Props) {
   if (!links || links.length === 0) {
     return <span className={className}>{tag}</span>
   }
-  const open = () => {
-    const link = links[Math.floor(Math.random() * links.length)]
-    window.open(link.url, '_blank', 'noopener,noreferrer')
-  }
   return (
     <button
       type="button"
       className={`${className} area-tag--linked`}
       title="A curated gem for this area ↗"
-      onClick={open}
+      // Stop the press/click from reaching the graph pane (pan / deselect) when
+      // this label sits on a cluster hull.
+      onPointerDown={(e) => e.stopPropagation()}
+      onClick={(e) => {
+        e.stopPropagation()
+        const link = links[Math.floor(Math.random() * links.length)]
+        window.open(link.url, '_blank', 'noopener,noreferrer')
+      }}
     >
       {tag}
     </button>

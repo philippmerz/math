@@ -12,6 +12,7 @@ import {
 } from '@xyflow/react'
 import { ConceptNode } from './ConceptNode'
 import { NodeTip } from './NodeTip'
+import { AreaTag } from '../ui/AreaTag'
 import {
   NODE_HEIGHT,
   NODE_WIDTH,
@@ -341,7 +342,7 @@ export function GraphView({
                   background: `hsl(${hue} 65% 55% / 0.1)`,
                 }}
               >
-                <span className="cluster-hull__label">{c.area}</span>
+                <AreaTag tag={c.area} className="cluster-hull__label" />
               </div>
             )
           })}
