@@ -21,7 +21,7 @@ import {
 } from './layout'
 import { nodeById } from '../data/graph'
 import { isoGroupByCanonical } from '../data/variants'
-import { useIntroTour } from '../hooks/useIntroTour'
+import { planIntro, useIntroTour, type IntroPlan } from '../hooks/useIntroTour'
 import { useDoubleTapZoom } from '../hooks/useDoubleTapZoom'
 import type { Theme } from '../hooks/useTheme'
 
@@ -112,7 +112,15 @@ export function GraphView({
   const rf = useReactFlow()
 
   // A one-time cinematic pan across the graph on first load (desktop only).
-  useIntroTour(layout.nodes)
+  // Planned once, from the initial layout, so the camera can start already
+  // framed on the pan's beginning rather than fitting the whole graph first.
+  const [introPlan] = useState<IntroPlan | null>(() => {
+    const desktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (!desktop || reduced) return null
+    return planIntro(layout.nodes, window.innerWidth, window.innerHeight)
+  })
+  useIntroTour(introPlan)
   // Touch: double-tap and drag to zoom about the tap point.
   useDoubleTapZoom()
 
@@ -127,13 +135,18 @@ export function GraphView({
   }, [layout, setNodes])
 
   // Re-fit the whole graph on a "global" view change — engine swap or the
-  // show-all-constructions toggle. (The initial fit is handled by `fitView`.)
-  const didMount = useRef(false)
+  // show-all-constructions toggle. Compare against the previous values so that
+  // neither the initial mount nor StrictMode's double-invoked effect fires a
+  // spurious fit (which would otherwise stomp the intro's starting viewport).
+  const prevView = useRef({ layoutMode, showAllConstructions })
   useEffect(() => {
-    if (!didMount.current) {
-      didMount.current = true
+    if (
+      prevView.current.layoutMode === layoutMode &&
+      prevView.current.showAllConstructions === showAllConstructions
+    ) {
       return
     }
+    prevView.current = { layoutMode, showAllConstructions }
     const id = window.setTimeout(() => rf.fitView({ padding: 0.2, duration: 400 }), 60)
     return () => window.clearTimeout(id)
   }, [layoutMode, showAllConstructions, rf])
@@ -277,7 +290,8 @@ export function GraphView({
         onMoveEnd={reportArea}
         nodeTypes={nodeTypes}
         colorMode={theme}
-        fitView
+        defaultViewport={introPlan?.start}
+        fitView={!introPlan}
         fitViewOptions={{ padding: 0.2 }}
         minZoom={0.05}
         maxZoom={5}

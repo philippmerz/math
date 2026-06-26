@@ -21,7 +21,16 @@ type Props = {
 
 export function FilterMenu({ area, onAreaChange, kinds, onKindToggle, onClear }: Props) {
   const [open, setOpen] = useState(false)
+  const [tagQuery, setTagQuery] = useState('')
   const ref = useRef<HTMLDivElement>(null)
+
+  // Clear the area search each time the popover closes.
+  useEffect(() => {
+    if (!open) setTagQuery('')
+  }, [open])
+
+  const q = tagQuery.trim().toLowerCase()
+  const shownTags = q ? allTags.filter((t) => t.toLowerCase().includes(q)) : allTags
 
   useEffect(() => {
     if (!open) return
@@ -86,8 +95,16 @@ export function FilterMenu({ area, onAreaChange, kinds, onKindToggle, onClear }:
 
         <section className="settings__section">
           <span className="settings__heading">Area</span>
+          <input
+            type="text"
+            className="filter-search"
+            placeholder="Search areas…"
+            value={tagQuery}
+            onChange={(e) => setTagQuery(e.target.value)}
+            aria-label="Search areas"
+          />
           <div className="filter-chips">
-            {allTags.map((tag) => (
+            {shownTags.map((tag) => (
               <button
                 key={tag}
                 type="button"
@@ -98,6 +115,7 @@ export function FilterMenu({ area, onAreaChange, kinds, onKindToggle, onClear }:
                 {tag}
               </button>
             ))}
+            {shownTags.length === 0 && <span className="settings__hint">No areas match.</span>}
           </div>
         </section>
 

@@ -1,10 +1,21 @@
-import { useEffect, useRef } from 'react'
-import { useReactFlow } from '@xyflow/react'
+import { useEffect } from 'react'
+import { useReactFlow, type Viewport } from '@xyflow/react'
 import { NODE_HEIGHT, NODE_WIDTH, type ConceptNode } from '../graph/layout'
 
-type Pose = { cx: number; cy: number; zoom: number }
+// A very slow drift, for unhurried "landscape gazing". Speed is a near-constant
+// on-screen velocity; the duration cap just bounds an unattended run on a huge
+// graph (the user interrupts long before, and can always restart by reloading).
+const SPEED_PX_PER_SEC = 45
+const MIN_MS = 20000
+const MAX_MS = 180000
+const START_HOLD_MS = 700 // settle on the start view before drifting
+const RAMP_MS = 1200 // brief velocity ramp-in so the drift doesn't start with a jolt
+const ZOOM_MIN = 0.32
+const ZOOM_MAX = 0.85
 
-const easeInOutSine = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2
+export type IntroPlan = { start: Viewport; end: Viewport; durationMs: number }
+
+const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
 
 function contentBounds(nodes: ConceptNode[]) {
   let minX = Infinity
@@ -21,119 +32,106 @@ function contentBounds(nodes: ConceptNode[]) {
 }
 
 /**
- * A one-time cinematic intro, desktop only: after the graph settles, the camera
- * eases into a readable zoom and slowly drifts along the graph's long axis, so
- * every field scrolls past once. It bows out the instant the user does anything
- * deliberate — scroll, click/drag, or a key — but plain mouse movement leaves it
- * running. Skipped on touch devices and when the user prefers reduced motion.
+ * Plan a one-time intro: a readable zoom that fits the graph's short axis, then
+ * a slow drift from one end of the long axis to the other so every field passes
+ * by. Returns viewports (not centres) so the caller can drop the camera straight
+ * onto `start` via `defaultViewport` — no zoomed-out fit, no jumpy transition.
+ * Returns null when there's nothing to show.
  */
-export function useIntroTour(nodes: ConceptNode[]) {
+export function planIntro(nodes: ConceptNode[], vw: number, vh: number): IntroPlan | null {
+  if (nodes.length === 0) return null
+  const b = contentBounds(nodes)
+  const vertical = b.height >= b.width
+  const crossFit = vertical ? (vw * 0.92) / b.width : (vh * 0.92) / b.height
+  const zoom = clamp(crossFit, ZOOM_MIN, ZOOM_MAX)
+
+  const midX = (b.minX + b.maxX) / 2
+  const midY = (b.minY + b.maxY) / 2
+  const halfW = vw / 2 / zoom
+  const halfH = vh / 2 / zoom
+  // Centres at each end of the long axis (clamped so a small graph just centres).
+  const startC = vertical
+    ? { cx: midX, cy: Math.min(b.minY + halfH, midY) }
+    : { cx: Math.min(b.minX + halfW, midX), cy: midY }
+  const endC = vertical
+    ? { cx: midX, cy: Math.max(b.maxY - halfH, midY) }
+    : { cx: Math.max(b.maxX - halfW, midX), cy: midY }
+
+  const toViewport = (c: { cx: number; cy: number }): Viewport => ({
+    x: vw / 2 - c.cx * zoom,
+    y: vh / 2 - c.cy * zoom,
+    zoom,
+  })
+  const start = toViewport(startC)
+  const end = toViewport(endC)
+  const travelPx = Math.hypot(end.x - start.x, end.y - start.y)
+  const durationMs = clamp((travelPx / SPEED_PX_PER_SEC) * 1000, MIN_MS, MAX_MS)
+  return { start, end, durationMs }
+}
+
+/**
+ * Runs the planned intro drift (see {@link planIntro}). The camera already sits
+ * at `plan.start` (placed by the caller's `defaultViewport`), so this holds a
+ * beat, then drifts to `plan.end` with an own requestAnimationFrame loop at a
+ * fixed zoom — React Flow's own timed `setViewport` can't be used here because
+ * its d3 "fly-to" interpolation zooms out to cross a long distance, which would
+ * ruin the steady, zoomed-in gaze. It bows out the moment the user does
+ * something deliberate — scroll, click/drag, or a key — but plain mouse movement
+ * (idly hovering nodes) leaves it running. Pass `null` to do nothing.
+ */
+export function useIntroTour(plan: IntroPlan | null) {
   const rf = useReactFlow()
-  // The latest layout, read once when the tour fires — so a later layout swap
-  // (e.g. the async ELK engine) never restarts or cancels an in-flight tour.
-  const nodesRef = useRef(nodes)
-  nodesRef.current = nodes
 
   useEffect(() => {
-    const laid = nodesRef.current
-    if (laid.length === 0) return
-    const desktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (!desktop || reduced) return
-
-    const W = window.innerWidth
-    const H = window.innerHeight
-    const b = contentBounds(laid)
-
-    // Fit the cross-axis; scroll along the longer one. Clamp the zoom so it lands
-    // at a pleasant, readable level whatever the graph's size.
-    const vertical = b.height >= b.width
-    const crossFit = vertical ? (W * 0.92) / b.width : (H * 0.92) / b.height
-    const zoom = Math.min(0.85, Math.max(0.32, crossFit))
-
-    const halfW = W / 2 / zoom
-    const halfH = H / 2 / zoom
-    const midX = (b.minX + b.maxX) / 2
-    const midY = (b.minY + b.maxY) / 2
-    let start: Pose
-    let end: Pose
-    if (vertical) {
-      start = { cx: midX, cy: Math.min(b.minY + halfH, midY), zoom }
-      end = { cx: midX, cy: Math.max(b.maxY - halfH, midY), zoom }
-    } else {
-      start = { cx: Math.min(b.minX + halfW, midX), cy: midY, zoom }
-      end = { cx: Math.max(b.maxX - halfW, midX), cy: midY, zoom }
-    }
-
-    // Constant on-screen velocity, so the drift feels equally slow on any graph.
-    const travelPx = Math.hypot((end.cx - start.cx) * zoom, (end.cy - start.cy) * zoom)
-    const scrollMs = Math.min(30000, Math.max(9000, (travelPx / 55) * 1000))
-    const INTRO_MS = 1100
-    const HOLD_MS = 500
-
-    let raf = 0
-    let timer = 0
+    if (!plan) return
     let cancelled = false
+    let timer = 0
+    let raf = 0
 
-    const setPose = (p: Pose) => rf.setCenter(p.cx, p.cy, { zoom: p.zoom, duration: 0 })
-
-    const tween = (from: Pose, to: Pose, ms: number, done: () => void) => {
-      const t0 = performance.now()
-      const frame = (now: number) => {
-        if (cancelled) return
-        const e = easeInOutSine(Math.min(1, (now - t0) / ms))
-        setPose({
-          cx: from.cx + (to.cx - from.cx) * e,
-          cy: from.cy + (to.cy - from.cy) * e,
-          zoom: from.zoom + (to.zoom - from.zoom) * e,
-        })
-        if ((now - t0) / ms < 1) raf = requestAnimationFrame(frame)
-        else done()
-      }
-      raf = requestAnimationFrame(frame)
-    }
-
-    const onWheel = () => stop()
-    const onPointerDown = () => stop()
-    const onKeyDown = () => stop()
     const remove = () => {
-      window.removeEventListener('wheel', onWheel, true)
-      window.removeEventListener('pointerdown', onPointerDown, true)
-      window.removeEventListener('keydown', onKeyDown, true)
+      window.removeEventListener('wheel', stop, true)
+      window.removeEventListener('pointerdown', stop, true)
+      window.removeEventListener('keydown', stop, true)
     }
     function stop() {
       if (cancelled) return
       cancelled = true
-      cancelAnimationFrame(raf)
       clearTimeout(timer)
+      cancelAnimationFrame(raf)
       remove()
     }
 
     // Capture phase: React Flow stops propagation of its own pane events.
-    window.addEventListener('wheel', onWheel, { capture: true, passive: true })
-    window.addEventListener('pointerdown', onPointerDown, true)
-    window.addEventListener('keydown', onKeyDown, true)
+    window.addEventListener('wheel', stop, { capture: true, passive: true })
+    window.addEventListener('pointerdown', stop, true)
+    window.addEventListener('keydown', stop, true)
 
-    // Hold on the initial fit-all for a beat, then glide into the start pose and
-    // begin the slow scroll.
     timer = window.setTimeout(() => {
       if (cancelled) return
-      const fit = rf.getViewport()
-      const fitPose: Pose = {
-        cx: (W / 2 - fit.x) / fit.zoom,
-        cy: (H / 2 - fit.y) / fit.zoom,
-        zoom: fit.zoom,
+      const t0 = performance.now()
+      const { start, end, durationMs } = plan
+      const r = RAMP_MS / durationMs
+      const frame = (now: number) => {
+        if (cancelled) return
+        // Constant velocity (steady gazing), with a short ease-in so it doesn't
+        // start with a jolt. `e` is the eased fraction of the total travel.
+        const t = Math.min(1, (now - t0) / durationMs)
+        const e = t < r ? (t * t) / (2 * r) : t - r / 2
+        rf.setViewport({
+          x: start.x + (end.x - start.x) * e,
+          y: start.y + (end.y - start.y) * e,
+          zoom: start.zoom, // held constant — a steady pan, never a zoom-out
+        })
+        if (now - t0 < durationMs) raf = requestAnimationFrame(frame)
       }
-      tween(fitPose, start, INTRO_MS, () => {
-        tween(start, end, scrollMs, stop)
-      })
-    }, HOLD_MS)
+      raf = requestAnimationFrame(frame)
+    }, START_HOLD_MS)
 
     return () => {
       cancelled = true
-      cancelAnimationFrame(raf)
       clearTimeout(timer)
+      cancelAnimationFrame(raf)
       remove()
     }
-  }, [rf])
+  }, [rf, plan])
 }

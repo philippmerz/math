@@ -20,7 +20,7 @@ export function useDoubleTapZoom() {
 
   useEffect(() => {
     if (!window.matchMedia('(pointer: coarse)').matches) return
-    const root = document.querySelector('.react-flow')
+    const root = document.querySelector<HTMLElement>('.react-flow')
     if (!root) return
 
     let lastTapTime = 0
