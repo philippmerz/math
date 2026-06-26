@@ -141,10 +141,10 @@ export function SettingsMenu({
             </span>
           </section>
 
-          <p className="settings__note">
-            Prefer a plain list?{' '}
-            <a href="#/index">Index of all {nodeById.size}&nbsp;concepts&nbsp;→</a>
-          </p>
+          <div className="settings__note">
+            <a href="#/index">All {nodeById.size} concepts →</a>
+            <a href="#/links">Further reading →</a>
+          </div>
         </div>
     </div>
   )

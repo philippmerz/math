@@ -558,20 +558,25 @@ body {
 
 /* A quiet footnote at the bottom of the settings menu. */
 .settings__note {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
   margin: 0;
-  padding: 10px 8px 4px;
+  padding: 12px 8px 4px;
   border-top: 1px solid var(--hairline);
-  font-size: 11px;
-  line-height: 1.4;
-  color: var(--muted);
+  font-size: 12px;
 }
 .settings__note a {
-  color: var(--fg);
+  color: var(--muted);
   text-decoration: none;
-  border-bottom: 1px solid var(--hairline);
+  white-space: nowrap;
+  border-bottom: 1px solid transparent;
+  transition: color 120ms ease, border-color 120ms ease;
 }
 .settings__note a:hover {
-  border-bottom-color: var(--fg);
+  color: var(--fg);
+  border-bottom-color: var(--muted);
 }
 
 /* ---- Concept index (the #/index route) --------------------------------- */
@@ -656,6 +661,53 @@ body {
   text-transform: uppercase;
   color: var(--muted);
   text-align: right;
+}
+
+/* ---- Further-reading page (the #/links route) -------------------------- */
+.links__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.links__item {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--hairline);
+}
+.links__item:last-child {
+  border-bottom: none;
+}
+.links__link {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  text-decoration: none;
+  color: var(--fg);
+}
+.links__title {
+  font-size: 15.5px;
+  font-weight: 600;
+  border-bottom: 1px solid transparent;
+  transition: border-color 120ms ease;
+}
+.links__link:hover .links__title {
+  border-bottom-color: var(--muted);
+}
+.links__kind {
+  flex: none;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.links__blurb {
+  margin: 5px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
 }
 
 .settings__clear {
