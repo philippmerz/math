@@ -39,10 +39,12 @@ export function SettingsMenu({ theme, onToggleTheme, layoutMode, onLayoutChange 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false)
     }
-    document.addEventListener('mousedown', onDoc)
+    // Capture phase: React Flow stops propagation of pane pointer events, so a
+    // bubbling listener would miss clicks on the canvas.
+    document.addEventListener('mousedown', onDoc, true)
     document.addEventListener('keydown', onKey)
     return () => {
-      document.removeEventListener('mousedown', onDoc)
+      document.removeEventListener('mousedown', onDoc, true)
       document.removeEventListener('keydown', onKey)
     }
   }, [open])
