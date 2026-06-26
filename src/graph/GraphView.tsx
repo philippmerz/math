@@ -193,8 +193,8 @@ export function GraphView({
         colorMode={theme}
         fitView
         fitViewOptions={{ padding: 0.2 }}
-        minZoom={0.2}
-        maxZoom={2.5}
+        minZoom={0.05}
+        maxZoom={5}
         nodesDraggable={false}
         nodesConnectable={false}
         proOptions={{ hideAttribution: true }}

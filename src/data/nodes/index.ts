@@ -14,6 +14,7 @@ import { PROBABILITY_NODES } from './probability.ts'
 import { STATISTICS_NODES } from './statistics.ts'
 import { TOPOLOGY_NODES } from './topology.ts'
 import { COMPLEX_ANALYSIS_NODES } from './complex-analysis.ts'
+import { MULTIVARIABLE_CALCULUS_NODES } from './multivariable-calculus.ts'
 
 /**
  * The full node corpus, assembled from one file per mathematical area so the
@@ -37,4 +38,5 @@ export const MATH_NODES: MathNode[] = [
   ...STATISTICS_NODES,
   ...TOPOLOGY_NODES,
   ...COMPLEX_ANALYSIS_NODES,
+  ...MULTIVARIABLE_CALCULUS_NODES,
 ]

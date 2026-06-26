@@ -1,6 +1,6 @@
 import type { MathNode } from '../types'
 
-/** Optimization — 9 nodes. */
+/** Optimization — 8 nodes. */
 export const OPTIMIZATION_NODES: MathNode[] = [
   {
     id: 'critical-point',
@@ -19,17 +19,6 @@ export const OPTIMIZATION_NODES: MathNode[] = [
     tags: ['Optimization'],
     dependencies: ['continuity'],
     definition: String.raw`The **extreme value theorem**: a continuous function on a closed, bounded interval $[a, b]$ attains a maximum and a minimum. Existence is guaranteed before any calculus is done; if $f$ is also differentiable, the optimizers lie among the critical points, the endpoints, and any points where $f'$ fails to exist. (In general, $[a, b]$ is replaced by a nonempty compact set.)`,
-  },
-  {
-    id: 'gradient',
-    label: 'Gradient',
-    title: 'Gradient',
-    kind: 'definition',
-    tags: ['Optimization'],
-    dependencies: ['partial-derivative'],
-    definition: String.raw`The **gradient** of a differentiable scalar function of several variables is the vector of its partial derivatives,
-$$\nabla f = \Bigl(\tfrac{\partial f}{\partial x_1}, \dots, \tfrac{\partial f}{\partial x_n}\Bigr).$$
-Where it is nonzero it points in the direction of steepest increase, with magnitude the maximal rate of change, and is orthogonal to the level sets of $f$ — the basis of gradient-based optimization.`,
   },
   {
     id: 'convex-set',

@@ -1,6 +1,6 @@
 import type { MathNode } from '../types'
 
-/** Analysis — 35 nodes. */
+/** Analysis — 32 nodes. */
 export const ANALYSIS_NODES: MathNode[] = [
   {
     id: 'absolute-value',
@@ -274,39 +274,6 @@ Because $k < 1$, iterating a contraction drives points together geometrically fa
     definition: String.raw`The **Banach fixed-point theorem**: a contraction $T$ on a non-empty *complete* metric space — one where every Cauchy sequence converges, such as $\mathbb{R}$ — has a unique fixed point $x^\ast = T(x^\ast)$, and the iterates converge to it from any start:
 $$x_{n+1} = T(x_n), \qquad x_n \longrightarrow x^\ast.$$
 Constructive and quantitative, it yields existence/uniqueness for differential and integral equations (Picard–Lindelöf) and powers the inverse and implicit function theorems.`,
-  },
-
-  // ── Several variables ────────────────────────────────────────────────────
-  {
-    id: 'partial-derivative',
-    label: 'Partial Derivative',
-    title: 'Partial Derivative',
-    kind: 'definition',
-    tags: ['Analysis'],
-    dependencies: ['derivative'],
-    definition: String.raw`A **partial derivative** of a function $f$ of several variables is its derivative in one coordinate direction, holding the others fixed:
-$$\frac{\partial f}{\partial x_i}(a) = \lim_{h \to 0} \frac{f(a + h\,e_i) - f(a)}{h},$$
-where $e_i$ is the $i$-th standard basis vector. Each partial measures change along one coordinate axis; when $f$ is differentiable, together they form the entries of its derivative as a linear map — the Jacobian.`,
-  },
-  {
-    id: 'jacobian',
-    label: 'Jacobian',
-    title: 'Jacobian Matrix',
-    kind: 'definition',
-    tags: ['Analysis'],
-    dependencies: ['partial-derivative', 'matrix', 'determinant'],
-    definition: String.raw`The **Jacobian** of a differentiable map $F : \mathbb{R}^n \to \mathbb{R}^m$ at a point is the $m \times n$ matrix of its first partial derivatives,
-$$J_F = \Bigl[\,\frac{\partial F_i}{\partial x_j}\,\Bigr],$$
-which represents the **total derivative** — the linear map best approximating $F$ near the point. For $m = n$, $|\det J_F|$ measures local volume distortion, and $\det J_F \neq 0$ signals *local* invertibility.`,
-  },
-  {
-    id: 'implicit-function-theorem',
-    label: 'Implicit Function Theorem',
-    title: 'Implicit Function Theorem',
-    kind: 'theorem',
-    tags: ['Analysis'],
-    dependencies: ['jacobian', 'determinant', 'continuity'],
-    definition: String.raw`The **implicit function theorem**: if $F(x, y)$ is continuously differentiable, $F(a, b) = 0$, and the partial Jacobian $\partial F / \partial y$ is invertible at $(a, b)$ — for a single equation, $\partial F/\partial y \neq 0$ — — equivalently $\det(\partial F/\partial y) \neq 0$ — then near $a$ the equation $F(x, y) = 0$ has, for each $x$, a unique nearby solution $y = g(x)$ with $g(a) = b$ and $g$ differentiable. It guarantees that level sets are locally graphs; the inverse function theorem is its sibling.`,
   },
 
   // ── Compactness and the classical theorems ───────────────────────────────
