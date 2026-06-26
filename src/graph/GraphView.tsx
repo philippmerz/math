@@ -116,6 +116,9 @@ export function GraphView({
   // Planned once, from the initial layout, so the camera can start already
   // framed on the pan's beginning rather than fitting the whole graph first.
   const [introPlan] = useState<IntroPlan | null>(() => {
+    // A deep link (?field / ?node) should land on its target, not run the tour.
+    const params = new URLSearchParams(window.location.search)
+    if (params.has('field') || params.has('node')) return null
     const desktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (!desktop || reduced) return null

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ReactFlowProvider } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { GraphView } from './graph/GraphView'
@@ -11,7 +11,7 @@ import { useTheme } from './hooks/useTheme'
 import { useLayout } from './hooks/useLayout'
 import type { LayoutMode } from './graph/layout'
 import type { NodeKind } from './data/types'
-import { nodeById, searchNodes } from './data/graph'
+import { allTags, nodeById, searchNodes } from './data/graph'
 import { collapsedConstructionIds } from './data/variants'
 
 // The panel pulls in react-markdown + MathJax; load it only when first opened.
@@ -27,9 +27,34 @@ function initialLayout(): LayoutMode {
   return saved === 'flow' || saved === 'grouped' || saved === 'compact' ? saved : 'grouped'
 }
 
+// Shareable deep-link state lives in the URL query string (independent of the
+// hash route): `?field=<area>` opens focused on a field, `?node=<id>` opens its
+// details. Written with replaceState so it never adds history entries.
+const getParam = (key: string): string | null =>
+  new URLSearchParams(window.location.search).get(key)
+
+function setParam(key: string, value: string | null) {
+  const sp = new URLSearchParams(window.location.search)
+  if (value) sp.set(key, value)
+  else sp.delete(key)
+  const qs = sp.toString()
+  window.history.replaceState(
+    null,
+    '',
+    window.location.pathname + (qs ? `?${qs}` : '') + window.location.hash,
+  )
+}
+
 export default function App() {
   const [theme, toggleTheme] = useTheme()
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [selectedId, setSelectedId] = useState<string | null>(() => {
+    const id = getParam('node')
+    return id && nodeById.has(id) ? id : null
+  })
+  // Keep ?node in sync with the open details panel; closing it drops the param.
+  useEffect(() => {
+    setParam('node', selectedId)
+  }, [selectedId])
   const [query, setQuery] = useState('')
   const [viewArea, setViewArea] = useState<string | null>(null)
   const onAreaChange = useCallback((area: string | null) => setViewArea(area), [])
@@ -39,7 +64,26 @@ export default function App() {
   useEffect(() => {
     if (viewArea) setShownField(viewArea)
   }, [viewArea])
-  const [focusTag, setFocusTag] = useState<string | null>(null)
+  const [focusTag, setFocusTag] = useState<string | null>(() => {
+    const f = getParam('field')
+    return f && allTags.includes(f) ? f : null
+  })
+  // Keep ?field in sync with the focused field tag.
+  useEffect(() => {
+    setParam('field', focusTag)
+  }, [focusTag])
+  // Once the focused field has actually come into view, drop the focus (and its
+  // param) as soon as the user scrolls it back out — so the URL stays honest.
+  const fieldEngaged = useRef(false)
+  useEffect(() => {
+    fieldEngaged.current = false
+  }, [focusTag])
+  useEffect(() => {
+    if (!focusTag) return
+    const inView = viewArea?.split(' · ').includes(focusTag) ?? false
+    if (inView) fieldEngaged.current = true
+    else if (fieldEngaged.current) setFocusTag(null)
+  }, [viewArea, focusTag])
   const [kindFilter, setKindFilter] = useState<ReadonlySet<NodeKind>>(() => new Set())
   const toggleKind = useCallback((k: NodeKind) => {
     setKindFilter((prev) => {
