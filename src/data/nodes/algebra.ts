@@ -1,6 +1,6 @@
 import type { MathNode } from '../types'
 
-/** Algebra — 8 nodes. */
+/** Algebra — 9 nodes. */
 export const ALGEBRA_NODES: MathNode[] = [
   {
     id: 'natural-number-arithmetic',
@@ -87,5 +87,16 @@ so the class $[(a, b)]$ stands for the difference $a - b$. With the induced $+$ 
     definition: String.raw`The **rationals** $\mathbb{Q}$ extend $\mathbb{Z}$ by formally adjoining inverses of the non-zero integers. Take $\mathbb{Z} \times (\mathbb{Z} \setminus \{0\})$ modulo
 $$(a, b) \sim (c, d) \;:\Longleftrightarrow\; a\cdot d = b\cdot c,$$
 so $[(a, b)]$ is the fraction $a/b$. The quotient $\mathbb{Q}$ is an ordered field — the field of fractions of $\mathbb{Z}$, and the prime subfield embedded in every ordered field.`,
+  },
+  {
+    id: 'polynomial',
+    label: 'Polynomial',
+    title: 'Polynomial',
+    kind: 'definition',
+    tags: ['Algebra'],
+    dependencies: ['field', 'natural-number-arithmetic'],
+    definition: String.raw`A **polynomial** over a field $F$ is a finite formal expression
+$$p(x) = \sum_{k=0}^{n} a_k\,x^k, \qquad a_k \in F,$$
+its **degree** the largest $k$ with $a_k \neq 0$ (the zero polynomial having degree $-\infty$). Polynomials form a commutative ring $F[x]$, and over $\mathbb{R}$ each defines a smooth polynomial function — the simplest functions of analysis.`,
   },
 ]

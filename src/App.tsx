@@ -3,6 +3,7 @@ import { ReactFlowProvider } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { GraphView } from './graph/GraphView'
 import { SearchBox } from './ui/SearchBox'
+import { FilterBar } from './ui/FilterBar'
 import { ThemeToggle } from './ui/ThemeToggle'
 import { useTheme } from './hooks/useTheme'
 import { nodeById, searchNodes } from './data/graph'
@@ -20,6 +21,7 @@ export default function App() {
   const [query, setQuery] = useState('')
   const [viewArea, setViewArea] = useState<string | null>(null)
   const onAreaChange = useCallback((area: string | null) => setViewArea(area), [])
+  const [focusTag, setFocusTag] = useState<string | null>(null)
 
   const results = useMemo(() => searchNodes(query), [query])
   const matchIds = useMemo(
@@ -44,6 +46,7 @@ export default function App() {
           theme={theme}
           selectedId={selectedId}
           matchIds={matchIds}
+          focusTag={focusTag}
           onSelect={setSelectedId}
           onAreaChange={onAreaChange}
         />
@@ -78,6 +81,8 @@ export default function App() {
             <ThemeToggle theme={theme} onToggle={toggleTheme} />
           </div>
         </header>
+
+        <FilterBar active={focusTag} onSelect={setFocusTag} />
 
         {selected && (
           <Suspense fallback={null}>

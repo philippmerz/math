@@ -3,7 +3,10 @@ import { LOGIC_NODES } from './logic.ts'
 import { SET_THEORY_NODES } from './set-theory.ts'
 import { ORDER_THEORY_NODES } from './order-theory.ts'
 import { ALGEBRA_NODES } from './algebra.ts'
+import { LINEAR_ALGEBRA_NODES } from './linear-algebra.ts'
 import { ANALYSIS_NODES } from './analysis.ts'
+import { DIFFERENTIAL_EQUATIONS_NODES } from './differential-equations.ts'
+import { OPTIMIZATION_NODES } from './optimization.ts'
 import { GEOMETRY_NODES } from './geometry.ts'
 import { TRIGONOMETRY_NODES } from './trigonometry.ts'
 import { MEASURE_THEORY_NODES } from './measure-theory.ts'
@@ -19,7 +22,10 @@ export const MATH_NODES: MathNode[] = [
   ...SET_THEORY_NODES,
   ...ORDER_THEORY_NODES,
   ...ALGEBRA_NODES,
+  ...LINEAR_ALGEBRA_NODES,
   ...ANALYSIS_NODES,
+  ...DIFFERENTIAL_EQUATIONS_NODES,
+  ...OPTIMIZATION_NODES,
   ...GEOMETRY_NODES,
   ...TRIGONOMETRY_NODES,
   ...MEASURE_THEORY_NODES,

@@ -62,12 +62,21 @@ type Props = {
   selectedId: string | null
   /** ids matching the current search, or null when the search is empty. */
   matchIds: ReadonlySet<string> | null
+  /** When set, nodes outside this area are greyed out. */
+  focusTag: string | null
   onSelect: (id: string | null) => void
   /** Reports the dominant area currently in view (null when zoomed out). */
   onAreaChange: (area: string | null) => void
 }
 
-export function GraphView({ theme, selectedId, matchIds, onSelect, onAreaChange }: Props) {
+export function GraphView({
+  theme,
+  selectedId,
+  matchIds,
+  focusTag,
+  onSelect,
+  onAreaChange,
+}: Props) {
   // `nodes` carries React Flow's measured dimensions; we layer flags on top.
   const [nodes, , onNodesChange] = useNodesState<ConceptNodeType>(layoutNodes)
   const rf = useReactFlow()
@@ -84,24 +93,26 @@ export function GraphView({ theme, selectedId, matchIds, onSelect, onAreaChange 
   const [tip, setTip] = useState<{ id: string; x: number; y: number } | null>(null)
   const tipNode = tip ? nodeById.get(tip.id) ?? null : null
 
-  const displayNodes = useMemo(
-    () =>
-      nodes.map((n) => ({
-        ...n,
-        selected: n.id === selectedId,
-        className: matchIds && !matchIds.has(n.id) ? 'is-dimmed' : undefined,
-      })),
-    [nodes, selectedId, matchIds],
-  )
+  const displayNodes = useMemo(() => {
+    const isDimmed = (id: string) =>
+      (matchIds != null && !matchIds.has(id)) ||
+      (focusTag != null && !(nodeById.get(id)?.tags.includes(focusTag) ?? false))
+    return nodes.map((n) => ({
+      ...n,
+      selected: n.id === selectedId,
+      className: isDimmed(n.id) ? 'is-dimmed' : undefined,
+    }))
+  }, [nodes, selectedId, matchIds, focusTag])
 
   const stroke = theme === 'dark' ? '#ffffff' : '#000000'
   const dimStroke = theme === 'dark' ? '#555555' : '#c4c4c4'
-  // Edges touching the hovered node light up; the rest stay muted.
+  // Edges touching the hovered or selected node light up; the rest stay muted.
   const hoveredId = tip?.id ?? null
   const edges = useMemo<Edge[]>(
     () =>
       layoutEdges.map((e) => {
-        const active = hoveredId != null && (e.source === hoveredId || e.target === hoveredId)
+        const touches = (id: string | null) => id != null && (e.source === id || e.target === id)
+        const active = touches(hoveredId) || touches(selectedId)
         const color = active ? stroke : dimStroke
         return {
           ...e,
@@ -110,7 +121,7 @@ export function GraphView({ theme, selectedId, matchIds, onSelect, onAreaChange 
           zIndex: active ? 1 : 0,
         }
       }),
-    [stroke, dimStroke, hoveredId],
+    [stroke, dimStroke, hoveredId, selectedId],
   )
 
   // Glide the camera to the selected node whenever the selection changes.
