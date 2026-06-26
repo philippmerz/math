@@ -170,6 +170,12 @@ body {
   opacity: 0.16;
 }
 
+/* Keyboard focus ring (Tab cycles in-view nodes). */
+.react-flow__node.is-kbd-focus .concept-node {
+  border-color: var(--fg);
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--fg);
+}
+
 /* hide the connection handles — the graph is read-only */
 .concept-node .react-flow__handle {
   width: 1px;

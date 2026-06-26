@@ -24,6 +24,7 @@ import { isoGroupByCanonical } from '../data/variants'
 import { planIntro, useIntroTour, type IntroPlan } from '../hooks/useIntroTour'
 import { useDoubleTapZoom } from '../hooks/useDoubleTapZoom'
 import { usePanMomentum } from '../hooks/usePanMomentum'
+import { useKeyboardNav } from '../hooks/useKeyboardNav'
 import type { Theme } from '../hooks/useTheme'
 
 const CLUSTER_PAD = 26
@@ -129,6 +130,8 @@ export function GraphView({
   useDoubleTapZoom()
   // Momentum: panning keeps gliding after release, decaying like Google Maps.
   const momentum = usePanMomentum()
+  // Keyboard: arrows pan, ⌘/Ctrl +/- zoom, Tab cycles in-view nodes, Enter opens.
+  const kbdFocusId = useKeyboardNav(layout.nodes, onSelect)
 
   const reportArea = useCallback(
     () => onAreaChange(areaInView(rf.getViewport(), layout.nodes)),
@@ -202,11 +205,15 @@ export function GraphView({
             },
           }
         : n.data
+      const className =
+        [isDimmed(n.id) && 'is-dimmed', n.id === kbdFocusId && 'is-kbd-focus']
+          .filter(Boolean)
+          .join(' ') || undefined
       return {
         ...n,
         data,
         selected: n.id === selectedId,
-        className: isDimmed(n.id) ? 'is-dimmed' : undefined,
+        className,
       }
     })
   }, [
@@ -218,6 +225,7 @@ export function GraphView({
     showAllConstructions,
     expanded,
     onToggleExpand,
+    kbdFocusId,
   ])
 
   const stroke = theme === 'dark' ? '#ffffff' : '#000000'
@@ -307,6 +315,10 @@ export function GraphView({
         maxZoom={5}
         nodesDraggable={false}
         nodesConnectable={false}
+        nodesFocusable={false}
+        edgesFocusable={false}
+        // We run our own keyboard navigation (see useKeyboardNav).
+        disableKeyboardA11y
         proOptions={{ hideAttribution: true }}
       >
         <ViewportPortal>
