@@ -10,6 +10,10 @@
   --control-bg: #f6f6f7;
   --control-hover: #ededf0;
   --hairline: #e6e6e6;
+  /* card depth — real shadows in light, a faint ring in dark (where shadows
+     vanish against the black page) */
+  --node-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 4px 14px rgba(0, 0, 0, 0.06);
+  --node-shadow-hover: 0 3px 8px rgba(0, 0, 0, 0.09), 0 10px 28px rgba(0, 0, 0, 0.1);
   /* off-white so nodes read as cards against the pure-white page + faint hulls
      (mirrors dark mode, where the node fill is lighter than the #000 page) */
   --node-bg: #ededed;
@@ -27,6 +31,8 @@
   --control-bg: #19191b;
   --control-hover: #232327;
   --hairline: #2a2a2a;
+  --node-shadow: none;
+  --node-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.14);
   --node-bg: #1c1c1c;
   --panel-bg: #000000;
   --dot: #141414;
@@ -106,13 +112,15 @@ body {
   background: var(--node-bg);
   color: var(--fg);
   border: 1px solid var(--node-border);
-  border-radius: 7px;
+  border-radius: 8px;
+  box-shadow: var(--node-shadow);
   cursor: pointer;
-  transition: background 120ms ease, color 120ms ease, box-shadow 120ms ease;
+  transition: color 120ms ease, box-shadow 150ms ease, border-color 150ms ease;
 }
 
 .concept-node:hover {
-  box-shadow: 0 0 0 3px var(--hairline);
+  border-color: var(--muted);
+  box-shadow: var(--node-shadow-hover);
 }
 
 .concept-node__label {
@@ -454,6 +462,24 @@ body {
   /* keep chips clear of the scrollbar gutter */
   padding-right: 4px;
   margin-right: -4px;
+  /* soft fade at the scroll edges instead of a hard cut */
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 12px,
+    #000 calc(100% - 12px),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 12px,
+    #000 calc(100% - 12px),
+    transparent 100%
+  );
+  /* a little top/bottom padding so the first/last rows aren't clipped by the mask */
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 .settings__heading {
@@ -772,6 +798,24 @@ body {
   padding: 54px 22px 28px;
   overflow-y: auto;
   animation: panel-in 200ms ease;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+/* a slim, unobtrusive scrollbar for the reading panel */
+.panel::-webkit-scrollbar {
+  width: 11px;
+}
+.panel::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 999px;
+  border: 3px solid var(--panel-bg);
+  background-clip: padding-box;
+}
+.panel::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+  border: 3px solid var(--panel-bg);
+  background-clip: padding-box;
 }
 
 @keyframes panel-in {
@@ -799,13 +843,23 @@ body {
 }
 
 .panel__close {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
   background: none;
   border: none;
-  color: var(--fg);
-  font-size: 22px;
+  border-radius: 7px;
+  color: var(--muted);
+  font-size: 20px;
   line-height: 1;
   cursor: pointer;
-  padding: 0 4px;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.panel__close:hover {
+  background: var(--control-bg);
+  color: var(--fg);
 }
 
 /* A bottom-pinned close, surfaced only on touch-sized screens (see below). */
@@ -814,10 +868,11 @@ body {
 }
 
 .panel__title {
-  margin: 8px 0 10px;
-  font-size: 22px;
+  margin: 10px 0 12px;
+  font-size: 24px;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
 }
 
 .panel__tags {
