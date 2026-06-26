@@ -21,7 +21,7 @@ import {
 } from './layout'
 import { nodeById } from '../data/graph'
 import { isoGroupByCanonical } from '../data/variants'
-import { planIntro, useIntroTour, type IntroPlan } from '../hooks/useIntroTour'
+import { planFieldTour, useIntroTour, type IntroPlan } from '../hooks/useIntroTour'
 import { useDoubleTapZoom } from '../hooks/useDoubleTapZoom'
 import { usePanMomentum } from '../hooks/usePanMomentum'
 import { useKeyboardNav } from '../hooks/useKeyboardNav'
@@ -123,7 +123,7 @@ export function GraphView({
     const desktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (!desktop || reduced) return null
-    return planIntro(layout.nodes, window.innerWidth, window.innerHeight)
+    return planFieldTour(layout.clusters, window.innerWidth, window.innerHeight)
   })
   useIntroTour(introPlan)
   // Touch: double-tap and drag to zoom about the tap point.
