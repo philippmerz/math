@@ -64,8 +64,11 @@ function dagreLayout(clustered: boolean): LayoutResult {
   g.setDefaultEdgeLabel(() => ({}))
   g.setGraph({
     rankdir: 'TB',
-    nodesep: clustered ? 26 : 40,
-    ranksep: clustered ? 64 : 80,
+    // Grouped: bias taller-and-narrower (big ranksep, tight nodesep) so the
+    // top-to-bottom foundations → results cascade stays legible despite the
+    // horizontal spread that clustering introduces.
+    nodesep: clustered ? 22 : 40,
+    ranksep: clustered ? 100 : 80,
     marginx: 48,
     marginy: 48,
   })
