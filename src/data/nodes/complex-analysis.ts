@@ -30,7 +30,7 @@ Conversely, if $u$ and $v$ have continuous partials and satisfy them, $f$ is hol
     kind: 'theorem',
     tags: ['Complex Analysis'],
     dependencies: ['holomorphic-function'],
-    definition: String.raw`**Cauchy's integral theorem**: if $f$ is holomorphic on a simply connected domain, its contour integral around any closed loop there vanishes,
+    definition: String.raw`If $f$ is holomorphic on a simply connected domain, its contour integral around any closed loop there vanishes,
 $$\oint_\gamma f(z)\,dz = 0.$$
 Equivalently, on such a domain a holomorphic integral depends only on its endpoints, not the path taken. It is the result on which the rest of complex analysis is built.`,
   },
@@ -41,7 +41,7 @@ Equivalently, on such a domain a holomorphic integral depends only on its endpoi
     kind: 'theorem',
     tags: ['Complex Analysis'],
     dependencies: ['cauchy-integral-theorem'],
-    definition: String.raw`**Cauchy's integral formula**: if $f$ is holomorphic on and inside a simple closed contour $\gamma$ traversed once counterclockwise, then for any point $a$ inside $\gamma$,
+    definition: String.raw`If $f$ is holomorphic on and inside a simple closed contour $\gamma$ traversed once counterclockwise, then for any point $a$ inside $\gamma$,
 $$f(a) = \frac{1}{2\pi i} \oint_\gamma \frac{f(z)}{z - a}\,dz.$$
 Differentiating under the integral shows a holomorphic function is infinitely differentiable — its values on the curve fix the function and all derivatives within.`,
   },
@@ -74,6 +74,6 @@ Each **residue** $\operatorname{Res}(f, z_k)$ is the coefficient of $(z - z_k)^{
     kind: 'theorem',
     tags: ['Complex Analysis'],
     dependencies: ['holomorphic-function', 'cauchy-integral-formula'],
-    definition: String.raw`**Liouville's theorem**: every bounded *entire* function — one holomorphic on all of $\mathbb{C}$ — is constant. Holomorphy is rigid enough to leave no room for a non-constant bounded entire function, and a few lines from here give the fundamental theorem of algebra.`,
+    definition: String.raw`Every bounded *entire* function — one holomorphic on all of $\mathbb{C}$ — is constant. Holomorphy is rigid enough to leave no room for a non-constant bounded entire function, and a few lines from here give the fundamental theorem of algebra.`,
   },
 ]

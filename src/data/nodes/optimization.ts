@@ -17,7 +17,7 @@ export const OPTIMIZATION_NODES: MathNode[] = [
     kind: 'theorem',
     tags: ['Optimization'],
     dependencies: ['continuity'],
-    definition: String.raw`The **extreme value theorem**: a continuous function on a closed, bounded interval $[a, b]$ attains a maximum and a minimum. Existence is guaranteed before any calculus is done; if $f$ is also differentiable, the optimizers lie among the critical points, the endpoints, and any points where $f'$ fails to exist. (In general, $[a, b]$ is replaced by a nonempty compact set.)`,
+    definition: String.raw`A continuous function on a closed, bounded interval $[a, b]$ attains a maximum and a minimum. Existence is guaranteed before any calculus is done; if $f$ is also differentiable, the optimizers lie among the critical points, the endpoints, and any points where $f'$ fails to exist. (In general, $[a, b]$ is replaced by a nonempty compact set.)`,
   },
   {
     id: 'convex-set',

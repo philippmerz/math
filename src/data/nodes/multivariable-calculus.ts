@@ -116,7 +116,7 @@ It is the line integral one dimension up, and the quantity that divergence and c
     kind: 'theorem',
     tags: ['Multivariable Calculus'],
     dependencies: ['line-integral', 'multiple-integral', 'curl'],
-    definition: String.raw`**Green's theorem**: for a positively oriented, piecewise-smooth simple closed curve $C$ bounding a region $R$, with $P, Q$ having continuous partial derivatives on $R$,
+    definition: String.raw`For a positively oriented, piecewise-smooth simple closed curve $C$ bounding a region $R$, with $P, Q$ having continuous partial derivatives on $R$,
 $$\oint_C (P\,dx + Q\,dy) = \iint_R \Bigl(\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y}\Bigr) dA.$$
 The integrand on the right is the scalar curl; it is the planar case of both Stokes' and the divergence theorems.`,
   },
@@ -149,7 +149,7 @@ Net flux out is the sum of all interior sources — the basis of conservation la
     kind: 'theorem',
     tags: ['Multivariable Calculus'],
     dependencies: ['jacobian', 'determinant', 'continuity'],
-    definition: String.raw`The **implicit function theorem**: if $F(x, y)$ is continuously differentiable, $F(a, b) = 0$, and the partial Jacobian $\partial F/\partial y$ is invertible at $(a, b)$ — equivalently $\det(\partial F/\partial y) \neq 0$, which for one equation is just $\partial F/\partial y \neq 0$ — then near $a$ the equation $F(x, y) = 0$ has, for each $x$, a unique nearby solution $y = g(x)$ with $g(a) = b$ and $g$ differentiable. It guarantees that level sets are locally graphs; the inverse function theorem is its sibling.`,
+    definition: String.raw`If $F(x, y)$ is continuously differentiable, $F(a, b) = 0$, and the partial Jacobian $\partial F/\partial y$ is invertible at $(a, b)$ — equivalently $\det(\partial F/\partial y) \neq 0$, which for one equation is just $\partial F/\partial y \neq 0$ — then near $a$ the equation $F(x, y) = 0$ has, for each $x$, a unique nearby solution $y = g(x)$ with $g(a) = b$ and $g$ differentiable. It guarantees that level sets are locally graphs; the inverse function theorem is its sibling.`,
   },
   {
     id: 'manifold',

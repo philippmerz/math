@@ -53,7 +53,7 @@ export const NUMBER_THEORY_NODES: MathNode[] = [
     kind: 'theorem',
     tags: ['Number Theory'],
     dependencies: ['gcd'],
-    definition: String.raw`**Bézout's identity**: for integers $a, b$ not both zero there exist integers $x, y$ with
+    definition: String.raw`For integers $a, b$ not both zero there exist integers $x, y$ with
 $$a x + b y = \gcd(a, b),$$
 and $\gcd(a, b)$ is the smallest positive integer expressible in this form. It underlies modular inverses, linear Diophantine equations, and much of elementary number theory.`,
   },
@@ -82,7 +82,7 @@ and $\gcd(a, b)$ is the smallest positive integer expressible in this form. It u
     kind: 'theorem',
     tags: ['Number Theory'],
     dependencies: ['modular-arithmetic', 'prime-number'],
-    definition: String.raw`**Fermat's little theorem**: for a prime $p$ and any integer $a$,
+    definition: String.raw`For a prime $p$ and any integer $a$,
 $$a^p \equiv a \pmod{p}, \qquad \text{and}\quad a^{p-1} \equiv 1 \pmod{p}\ \text{ when } p \nmid a.$$
 It is a workhorse of primality testing and the special case $n = p$ of Euler's theorem.`,
   },
@@ -104,7 +104,7 @@ Raising a unit to the totient returns $1$ — equivalently, its order divides $\
     kind: 'theorem',
     tags: ['Number Theory'],
     dependencies: ['modular-arithmetic'],
-    definition: String.raw`The **Chinese remainder theorem**: for pairwise coprime moduli $n_1, \dots, n_k$ with product $N$, a system $x \equiv a_i \pmod{n_i}$ has a unique solution modulo $N$. Equivalently,
+    definition: String.raw`For pairwise coprime moduli $n_1, \dots, n_k$ with product $N$, a system $x \equiv a_i \pmod{n_i}$ has a unique solution modulo $N$. Equivalently,
 $$\mathbb{Z}/N\mathbb{Z} \;\cong\; \mathbb{Z}/n_1\mathbb{Z} \times \cdots \times \mathbb{Z}/n_k\mathbb{Z},$$
 splitting computation modulo $N$ into independent coprime components.`,
   },
@@ -135,7 +135,7 @@ written with the Legendre symbol. A deep and surprising symmetry, it is the corn
     kind: 'theorem',
     tags: ['Number Theory'],
     dependencies: ['prime-number'],
-    definition: String.raw`The **prime number theorem**: the count of primes up to $x$, written $\pi(x)$, satisfies
+    definition: String.raw`The count of primes up to $x$, written $\pi(x)$, satisfies
 $$\pi(x) \sim \frac{x}{\ln x} \qquad (x \to \infty),$$
 so primes have density about $1/\ln x$ near $x$. Proved through the complex analysis of the Riemann zeta function, it is the central result on the distribution of primes.`,
   },

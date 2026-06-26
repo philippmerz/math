@@ -178,7 +178,7 @@ It is the engine behind implicit differentiation and the change-of-variables rul
     kind: 'theorem',
     tags: ['Analysis'],
     dependencies: ['derivative', 'continuity'],
-    definition: String.raw`The **mean value theorem**: if $f$ is continuous on $[a, b]$ and differentiable on $(a, b)$, then for some $c \in (a, b)$
+    definition: String.raw`If $f$ is continuous on $[a, b]$ and differentiable on $(a, b)$, then for some $c \in (a, b)$
 $$f'(c) = \frac{f(b) - f(a)}{b - a}.$$
 The instantaneous rate equals the average rate somewhere. It is the bridge from the derivative to global behaviour — monotonicity, Taylor's remainder, and the fact that antiderivatives are unique up to a constant all flow from it.`,
   },
@@ -270,7 +270,7 @@ Because $k < 1$, iterating a contraction drives points together geometrically fa
     kind: 'theorem',
     tags: ['Analysis'],
     dependencies: ['contraction-mapping', 'metric-space', 'cauchy-sequence'],
-    definition: String.raw`The **Banach fixed-point theorem**: a contraction $T$ on a non-empty *complete* metric space — one where every Cauchy sequence converges, such as $\mathbb{R}$ — has a unique fixed point $x^\ast = T(x^\ast)$, and the iterates converge to it from any start:
+    definition: String.raw`A contraction $T$ on a non-empty *complete* metric space — one where every Cauchy sequence converges, such as $\mathbb{R}$ — has a unique fixed point $x^\ast = T(x^\ast)$, and the iterates converge to it from any start:
 $$x_{n+1} = T(x_n), \qquad x_n \longrightarrow x^\ast.$$
 Constructive and quantitative, it yields existence/uniqueness for differential and integral equations (Picard–Lindelöf) and powers the inverse and implicit function theorems.`,
   },
@@ -292,7 +292,7 @@ Constructive and quantitative, it yields existence/uniqueness for differential a
     kind: 'theorem',
     tags: ['Analysis'],
     dependencies: ['derivative', 'continuity'],
-    definition: String.raw`**Rolle's theorem**: if $f$ is continuous on $[a, b]$, differentiable on $(a, b)$, and $f(a) = f(b)$, then $f'(c) = 0$ for some $c \in (a, b)$. A level secant forces a horizontal tangent somewhere between. It is the special case from which the mean value theorem follows.`,
+    definition: String.raw`If $f$ is continuous on $[a, b]$, differentiable on $(a, b)$, and $f(a) = f(b)$, then $f'(c) = 0$ for some $c \in (a, b)$. A level secant forces a horizontal tangent somewhere between. It is the special case from which the mean value theorem follows.`,
   },
   {
     id: 'intermediate-value-theorem',
@@ -301,7 +301,7 @@ Constructive and quantitative, it yields existence/uniqueness for differential a
     kind: 'theorem',
     tags: ['Analysis'],
     dependencies: ['continuity', 'completeness'],
-    definition: String.raw`The **intermediate value theorem**: a function continuous on $[a, b]$ takes every value between $f(a)$ and $f(b)$. In particular, if $f(a)$ and $f(b)$ have opposite signs it has a root in $(a, b)$. It is the precise form of "no gaps," and it rests on the completeness of $\mathbb{R}$.`,
+    definition: String.raw`A function continuous on $[a, b]$ takes every value between $f(a)$ and $f(b)$. In particular, if $f(a)$ and $f(b)$ have opposite signs it has a root in $(a, b)$. It is the precise form of "no gaps," and it rests on the completeness of $\mathbb{R}$.`,
   },
   {
     id: 'bolzano-weierstrass',
@@ -310,7 +310,7 @@ Constructive and quantitative, it yields existence/uniqueness for differential a
     kind: 'theorem',
     tags: ['Analysis'],
     dependencies: ['sequence', 'completeness'],
-    definition: String.raw`The **Bolzano–Weierstrass theorem**: every bounded sequence in $\mathbb{R}^n$ has a convergent subsequence. A direct consequence of completeness, it is the sequential heart of compactness and the standard device for extracting limits in existence proofs.`,
+    definition: String.raw`Every bounded sequence in $\mathbb{R}^n$ has a convergent subsequence. A direct consequence of completeness, it is the sequential heart of compactness and the standard device for extracting limits in existence proofs.`,
   },
   {
     id: 'heine-borel',
@@ -319,7 +319,7 @@ Constructive and quantitative, it yields existence/uniqueness for differential a
     kind: 'theorem',
     tags: ['Analysis'],
     dependencies: ['compactness'],
-    definition: String.raw`The **Heine–Borel theorem**: a subset of $\mathbb{R}^n$ is **compact** (every open cover has a finite subcover) if and only if it is **closed and bounded**. It ties the abstract notion of compactness to a concrete, checkable condition on Euclidean space.`,
+    definition: String.raw`A subset of $\mathbb{R}^n$ is **compact** (every open cover has a finite subcover) if and only if it is **closed and bounded**. It ties the abstract notion of compactness to a concrete, checkable condition on Euclidean space.`,
   },
   {
     id: 'monotone-convergence-sequence',
@@ -328,7 +328,7 @@ Constructive and quantitative, it yields existence/uniqueness for differential a
     kind: 'theorem',
     tags: ['Analysis'],
     dependencies: ['limit-of-a-sequence', 'completeness'],
-    definition: String.raw`The **monotone convergence theorem** for sequences: a bounded monotone sequence of reals converges — increasing to its supremum, decreasing to its infimum. It converts the completeness of $\mathbb{R}$ into a practical convergence test that needs no advance knowledge of the limit.`,
+    definition: String.raw`A bounded monotone sequence of reals converges — increasing to its supremum, decreasing to its infimum. It converts the completeness of $\mathbb{R}$ into a practical convergence test that needs no advance knowledge of the limit.`,
   },
   {
     id: 'weierstrass-approximation',
@@ -337,6 +337,6 @@ Constructive and quantitative, it yields existence/uniqueness for differential a
     kind: 'theorem',
     tags: ['Analysis'],
     dependencies: ['continuity', 'polynomial', 'uniform-convergence'],
-    definition: String.raw`The **Weierstrass approximation theorem**: every continuous function on a closed interval $[a, b]$ is the uniform limit of polynomials — the polynomials are *dense* in $C[a, b]$. So any continuous function can be approximated arbitrarily well by the simplest ones, the foundation of approximation theory.`,
+    definition: String.raw`Every continuous function on a closed interval $[a, b]$ is the uniform limit of polynomials — the polynomials are *dense* in $C[a, b]$. So any continuous function can be approximated arbitrarily well by the simplest ones, the foundation of approximation theory.`,
   },
 ]

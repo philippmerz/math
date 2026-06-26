@@ -41,6 +41,6 @@ When it exists it is unique. The dual greatest lower bound is the **infimum** $\
     kind: 'theorem',
     tags: ['Order Theory'],
     dependencies: ['partial-order', 'supremum'],
-    definition: String.raw`The **Knaster–Tarski theorem**: an order-preserving map on a complete lattice has a fixed point — and its set of fixed points is itself a complete lattice, so least and greatest fixed points always exist. It is the foundation of recursive definitions and denotational semantics, and it gives a slick proof of Cantor–Schröder–Bernstein.`,
+    definition: String.raw`An order-preserving map on a complete lattice has a fixed point — and its set of fixed points is itself a complete lattice, so least and greatest fixed points always exist. It is the foundation of recursive definitions and denotational semantics, and it gives a slick proof of Cantor–Schröder–Bernstein.`,
   },
 ]

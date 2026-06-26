@@ -23,6 +23,22 @@ import { FUNCTIONAL_ANALYSIS_NODES } from './functional-analysis.ts'
 import { GRAPH_THEORY_NODES } from './graph-theory.ts'
 import { COMBINATORICS_NODES } from './combinatorics.ts'
 import { ALGEBRAIC_TOPOLOGY_NODES } from './algebraic-topology.ts'
+import { REPRESENTATION_THEORY_NODES } from './representation-theory.ts'
+import { COMMUTATIVE_ALGEBRA_NODES } from './commutative-algebra.ts'
+import { THEORY_OF_COMPUTATION_NODES } from './theory-of-computation.ts'
+import { HOMOLOGICAL_ALGEBRA_NODES } from './homological-algebra.ts'
+import { HARMONIC_ANALYSIS_NODES } from './harmonic-analysis.ts'
+import { PDE_NODES } from './partial-differential-equations.ts'
+import { ALGEBRAIC_GEOMETRY_NODES } from './algebraic-geometry.ts'
+import { STOCHASTIC_PROCESSES_NODES } from './stochastic-processes.ts'
+import { INFORMATION_THEORY_NODES } from './information-theory.ts'
+import { GAME_THEORY_NODES } from './game-theory.ts'
+import { DIFFERENTIAL_TOPOLOGY_NODES } from './differential-topology.ts'
+import { LIE_THEORY_NODES } from './lie-theory.ts'
+import { ALGEBRAIC_NUMBER_THEORY_NODES } from './algebraic-number-theory.ts'
+import { ANALYTIC_NUMBER_THEORY_NODES } from './analytic-number-theory.ts'
+import { DYNAMICAL_SYSTEMS_NODES } from './dynamical-systems.ts'
+import { NUMERICAL_ANALYSIS_NODES } from './numerical-analysis.ts'
 
 /**
  * The full node corpus, assembled from one file per mathematical area so the
@@ -55,4 +71,20 @@ export const MATH_NODES: MathNode[] = [
   ...GRAPH_THEORY_NODES,
   ...COMBINATORICS_NODES,
   ...ALGEBRAIC_TOPOLOGY_NODES,
+  ...REPRESENTATION_THEORY_NODES,
+  ...COMMUTATIVE_ALGEBRA_NODES,
+  ...THEORY_OF_COMPUTATION_NODES,
+  ...HOMOLOGICAL_ALGEBRA_NODES,
+  ...HARMONIC_ANALYSIS_NODES,
+  ...PDE_NODES,
+  ...ALGEBRAIC_GEOMETRY_NODES,
+  ...STOCHASTIC_PROCESSES_NODES,
+  ...INFORMATION_THEORY_NODES,
+  ...GAME_THEORY_NODES,
+  ...DIFFERENTIAL_TOPOLOGY_NODES,
+  ...LIE_THEORY_NODES,
+  ...ALGEBRAIC_NUMBER_THEORY_NODES,
+  ...ANALYTIC_NUMBER_THEORY_NODES,
+  ...DYNAMICAL_SYSTEMS_NODES,
+  ...NUMERICAL_ANALYSIS_NODES,
 ]

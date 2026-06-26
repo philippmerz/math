@@ -2,15 +2,26 @@ import type { MathNode } from '../types'
 
 export const GEOMETRY_NODES: MathNode[] = [
   {
+    id: 'euclidean-space',
+    label: 'Euclidean Space ℝⁿ',
+    title: 'Euclidean Space (ℝⁿ)',
+    kind: 'definition',
+    tags: ['Geometry'],
+    dependencies: ['real-numbers', 'cartesian-product'],
+    definition: String.raw`Built on ZFC, geometry has no primitive notions of its own: **Euclidean $n$-space** is the set $\mathbb{R}^n = \mathbb{R} \times \cdots \times \mathbb{R}$ of $n$-tuples of real numbers, carrying the Euclidean distance
+$$|x - y| = \sqrt{\sum_{i=1}^{n} (x_i - y_i)^2}.$$
+The plane ($n = 2$) and space ($n = 3$) are the familiar cases; points are tuples, lines and planes are solution sets of linear equations, and length, distance, and angle all flow from the **dot product**.`,
+  },
+  {
     id: 'euclidean-plane',
     label: 'Euclidean Plane ℝ²',
     title: 'Euclidean Plane (ℝ²)',
     kind: 'definition',
     tags: ['Geometry'],
-    dependencies: ['real-numbers', 'cartesian-product'],
-    definition: String.raw`Built on ZFC, plane geometry has no primitive notions of its own: the plane *is* the set $\mathbb{R}^2 = \mathbb{R} \times \mathbb{R}$ of coordinate pairs, equipped with the distance
+    dependencies: ['euclidean-space'],
+    definition: String.raw`The **Euclidean plane** is Euclidean space at $n = 2$: the set $\mathbb{R}^2 = \mathbb{R} \times \mathbb{R}$ of coordinate pairs, with distance
 $$d\bigl((x_1, y_1), (x_2, y_2)\bigr) = \sqrt{(x_1 - x_2)^2 + (y_1 - y_2)^2}.$$
-Points are pairs, lines are solution sets of linear equations, and Euclid's axioms hold as provable theorems — the analytic model that unites synthetic and coordinate geometry (and generalizes to $\mathbb{R}^n$).`,
+Here points are pairs and lines are solution sets of linear equations, so Euclid's axioms hold as provable theorems — uniting synthetic and coordinate geometry.`,
   },
   {
     id: 'point',
@@ -80,10 +91,10 @@ A **ray** from $A$ through $B$ instead allows all $t \ge 0$. Segments carry a le
     title: 'Angle',
     kind: 'definition',
     tags: ['Geometry'],
-    dependencies: ['line-segment'],
-    definition: String.raw`An **angle** is the figure formed by two rays sharing a common endpoint — the *vertex* — the rays being its *sides*. Its measure is recovered analytically from the dot product of the side directions $u, v$,
+    dependencies: ['line-segment', 'dot-product'],
+    definition: String.raw`An **angle** is the figure formed by two rays sharing a common endpoint — the *vertex* — the rays being its *sides*. Its measure comes from the **dot product** of the side directions $u, v$,
 $$\cos\theta = \frac{u \cdot v}{|u|\,|v|},$$
-classifying it, against the right angle, as acute, right, obtuse, or straight ($\theta = \pi$).`,
+a valid cosine by Cauchy–Schwarz, classifying it against the right angle as acute, right, obtuse, or straight ($\theta = \pi$).`,
   },
   {
     id: 'triangle',
@@ -121,7 +132,7 @@ In the Euclidean plane the ratio of any circle's circumference to its diameter i
     kind: 'theorem',
     tags: ['Geometry'],
     dependencies: ['triangle', 'parallel-postulate'],
-    definition: String.raw`The **Pythagorean theorem**: in a right triangle with legs $a, b$ and hypotenuse $c$,
+    definition: String.raw`In a right triangle with legs $a, b$ and hypotenuse $c$,
 $$a^2 + b^2 = c^2.$$
 In the coordinate plane it follows from the dot product — it is exactly the statement that the legs meet at a right angle — and over the remaining axioms it is equivalent to the parallel postulate. It is the source of the Euclidean distance formula.`,
   },

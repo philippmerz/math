@@ -104,7 +104,7 @@ Natural transformations are the morphisms between functors, making the functors 
     kind: 'theorem',
     tags: ['Category Theory'],
     dependencies: ['representable-functor'],
-    definition: String.raw`The **Yoneda lemma**: for any functor $F : C \to \mathbf{Set}$ and object $A$, the natural transformations from $\operatorname{Hom}_C(A, -)$ to $F$ correspond bijectively to elements of $F(A)$, naturally in both $A$ and $F$:
+    definition: String.raw`For any functor $F : C \to \mathbf{Set}$ and object $A$, the natural transformations from $\operatorname{Hom}_C(A, -)$ to $F$ correspond bijectively to elements of $F(A)$, naturally in both $A$ and $F$:
 $$\operatorname{Nat}\bigl(\operatorname{Hom}_C(A, -),\, F\bigr) \;\cong\; F(A).$$
 This naturality makes the **Yoneda embedding** $C \hookrightarrow [\,C^{\mathrm{op}}, \mathbf{Set}\,]$ full and faithful, so an object is determined up to isomorphism by its web of morphisms.`,
   },

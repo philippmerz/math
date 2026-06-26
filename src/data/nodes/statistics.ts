@@ -80,7 +80,7 @@ the two forms agreeing under standard regularity. More information means more pr
     kind: 'theorem',
     tags: ['Statistics'],
     dependencies: ['fisher-information', 'estimator'],
-    definition: String.raw`The **Cramér–Rao bound**: under standard regularity, the variance of any unbiased estimator of $\theta$ is at least the reciprocal of the Fisher information,
+    definition: String.raw`Under standard regularity, the variance of any unbiased estimator of $\theta$ is at least the reciprocal of the Fisher information,
 $$\operatorname{Var}(\hat\theta) \ge \frac{1}{I(\theta)}.$$
 It sets a hard floor on estimation precision; an unbiased estimator meeting it is **efficient**. The maximum-likelihood estimator attains the bound asymptotically.`,
   },
@@ -111,7 +111,7 @@ It sets a hard floor on estimation precision; an unbiased estimator meeting it i
     kind: 'theorem',
     tags: ['Statistics'],
     dependencies: ['hypothesis-testing'],
-    definition: String.raw`The **Neyman–Pearson lemma**: among all tests of a simple null $H_0$ against a simple alternative $H_1$ at significance level at most $\alpha$, the **likelihood-ratio test** — reject when $f_1(x)/f_0(x)$ exceeds a threshold (randomizing on the boundary to attain exact level $\alpha$) — is the most powerful. It pins down the optimal test for simple hypotheses and founds the theory of testing.`,
+    definition: String.raw`Among all tests of a simple null $H_0$ against a simple alternative $H_1$ at significance level at most $\alpha$, the **likelihood-ratio test** — reject when $f_1(x)/f_0(x)$ exceeds a threshold (randomizing on the boundary to attain exact level $\alpha$) — is the most powerful. It pins down the optimal test for simple hypotheses and founds the theory of testing.`,
   },
   {
     id: 'likelihood-ratio-test',

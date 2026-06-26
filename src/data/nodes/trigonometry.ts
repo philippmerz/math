@@ -83,7 +83,7 @@ The correction $-2ab\cos C$ vanishes when $C = 90^\circ$, recovering $a^2 + b^2 
     kind: 'theorem',
     tags: ['Trigonometry'],
     dependencies: ['triangle', 'sine-cosine'],
-    definition: String.raw`The **law of sines**: in any triangle each side is proportional to the sine of its opposite angle,
+    definition: String.raw`In any triangle each side is proportional to the sine of its opposite angle,
 $$\frac{a}{\sin A} = \frac{b}{\sin B} = \frac{c}{\sin C} = 2R,$$
 the shared ratio being the diameter $2R$ of the circumscribed circle. It solves a triangle given two angles and a side.`,
   },

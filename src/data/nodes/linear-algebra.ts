@@ -79,7 +79,7 @@ $\ker T$ is a subspace of $V$ and $\operatorname{im} T$ a subspace of $W$; $T$ i
     kind: 'theorem',
     tags: ['Linear Algebra'],
     dependencies: ['kernel-image', 'basis'],
-    definition: String.raw`The **rank–nullity theorem**: for a linear map $T : V \to W$ with $V$ finite-dimensional,
+    definition: String.raw`For a linear map $T : V \to W$ with $V$ finite-dimensional,
 $$\dim \ker T + \dim \operatorname{im} T = \dim V.$$
 The **rank** ($\dim \operatorname{im} T$) and **nullity** ($\dim \ker T$) account for the whole domain — a conservation law making precise that whatever dimensions a linear map collapses, it loses from its image.`,
   },
@@ -121,7 +121,7 @@ It equips a vector space with geometry — the dot product on $\mathbb{R}^n$ is 
     kind: 'theorem',
     tags: ['Linear Algebra'],
     dependencies: ['eigenvalue-eigenvector', 'orthonormal-basis'],
-    definition: String.raw`The **spectral theorem**: every real symmetric matrix (equivalently, a self-adjoint operator on a real inner product space) has an orthonormal basis of eigenvectors and only real eigenvalues — equivalently, it is diagonalized by an orthogonal change of basis,
+    definition: String.raw`Every real symmetric matrix (equivalently, a self-adjoint operator on a real inner product space) has an orthonormal basis of eigenvectors and only real eigenvalues — equivalently, it is diagonalized by an orthogonal change of basis,
 $$A = Q \Lambda Q^{\mathsf{T}}, \qquad Q^{\mathsf{T}} Q = I.$$
 It is the cornerstone of principal component analysis, quadratic forms, and the stability analysis of equilibria.`,
   },
@@ -132,7 +132,7 @@ It is the cornerstone of principal component analysis, quadratic forms, and the 
     kind: 'theorem',
     tags: ['Linear Algebra'],
     dependencies: ['inner-product-space'],
-    definition: String.raw`The **Cauchy–Schwarz inequality**: in any inner product space,
+    definition: String.raw`In any inner product space,
 $$|\langle u, v\rangle| \le \|u\|\,\|v\|,$$
 with equality exactly when $u$ and $v$ are linearly dependent. In a real inner product space it makes $\langle u, v\rangle / (\|u\|\,\|v\|)$ a valid cosine; it yields the triangle inequality for the norm, and recurs throughout analysis and probability.`,
   },
@@ -143,6 +143,37 @@ with equality exactly when $u$ and $v$ are linearly dependent. In a real inner p
     kind: 'theorem',
     tags: ['Linear Algebra'],
     dependencies: ['eigenvalue-eigenvector', 'matrix'],
-    definition: String.raw`The **Cayley–Hamilton theorem**: every square matrix satisfies its own characteristic polynomial — if $p(\lambda) = \det(\lambda I - A)$, then $p(A) = 0$. It expresses high powers of $A$ in terms of lower ones, shows the minimal polynomial divides the characteristic polynomial, and underlies the calculus of matrix functions.`,
+    definition: String.raw`Every square matrix satisfies its own characteristic polynomial — if $p(\lambda) = \det(\lambda I - A)$, then $p(A) = 0$. It expresses high powers of $A$ in terms of lower ones, shows the minimal polynomial divides the characteristic polynomial, and underlies the calculus of matrix functions.`,
+  },
+  {
+    id: 'dot-product',
+    label: 'Dot Product',
+    title: 'Dot Product',
+    kind: 'definition',
+    tags: ['Linear Algebra'],
+    dependencies: ['euclidean-space', 'vector-space'],
+    definition: String.raw`The **dot product** of vectors in $\mathbb{R}^n$ is
+$$x \cdot y = \sum_{i=1}^{n} x_i y_i.$$
+It is the standard **inner product**: it gives length $|x| = \sqrt{x \cdot x}$ and distance, and (bounded by Cauchy–Schwarz) the angle $\cos\theta = \dfrac{x \cdot y}{|x|\,|y|}$, with $x \cdot y = 0$ meaning orthogonal. It is the concrete prototype that the abstract inner product space generalizes.`,
+  },
+  {
+    id: 'orthogonality',
+    label: 'Orthogonality',
+    title: 'Orthogonality',
+    kind: 'definition',
+    tags: ['Linear Algebra'],
+    dependencies: ['dot-product'],
+    definition: String.raw`Two vectors are **orthogonal** when their dot product vanishes, $u \cdot v = 0$ — perpendicular in the Euclidean sense. Orthogonality underlies projections, the **Pythagorean identity** $|u + v|^2 = |u|^2 + |v|^2$ for orthogonal vectors, and orthonormal bases, and it carries over verbatim to any inner product space.`,
+  },
+  {
+    id: 'hyperplane',
+    label: 'Hyperplane',
+    title: 'Hyperplane',
+    kind: 'definition',
+    tags: ['Linear Algebra'],
+    dependencies: ['dot-product', 'subspace'],
+    definition: String.raw`A **hyperplane** in $\mathbb{R}^n$ is the solution set of a single linear equation
+$$\{x \in \mathbb{R}^n : a \cdot x = c\}, \qquad a \neq 0,$$
+a flat of dimension $n - 1$ with **normal vector** $a$ — generalizing a line in the plane ($n = 2$) and a plane in space ($n = 3$). Through the origin ($c = 0$) it is a subspace; otherwise an affine translate of one. Hyperplanes are the basic building block of linear constraints, separation, and convex geometry.`,
   },
 ]

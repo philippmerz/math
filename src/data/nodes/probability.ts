@@ -117,7 +117,7 @@ Determined by its mean $\mu$ and variance $\sigma^2$, closed under sums of indep
     kind: 'theorem',
     tags: ['Probability'],
     dependencies: ['expectation', 'independence', 'convergence-of-random-variables'],
-    definition: String.raw`The **law of large numbers**: the sample mean of independent, identically distributed variables converges to their common expectation,
+    definition: String.raw`The sample mean of independent, identically distributed variables converges to their common expectation,
 $$\bar{X}_n = \frac{1}{n}\sum_{i=1}^{n} X_i \;\longrightarrow\; \mathbb{E}[X].$$
 The *weak* law gives convergence in probability, the *strong* law almost surely. It is why averages stabilize and why probabilities can be estimated by long-run frequencies.`,
   },
@@ -128,7 +128,7 @@ The *weak* law gives convergence in probability, the *strong* law almost surely.
     kind: 'theorem',
     tags: ['Probability'],
     dependencies: ['normal-distribution', 'variance', 'independence', 'convergence-of-random-variables'],
-    definition: String.raw`The **central limit theorem**: for i.i.d. variables with mean $\mu$ and finite, positive variance $\sigma^2$, the standardized sample mean converges *in distribution* to a standard normal,
+    definition: String.raw`For i.i.d. variables with mean $\mu$ and finite, positive variance $\sigma^2$, the standardized sample mean converges *in distribution* to a standard normal,
 $$\frac{\bar{X}_n - \mu}{\sigma / \sqrt{n}} \;\xrightarrow{\;d\;}\; \mathcal{N}(0, 1).$$
 Sums of many small independent effects are approximately Gaussian whatever their individual distribution — the reason the normal law is everywhere.`,
   },

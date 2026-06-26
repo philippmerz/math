@@ -39,7 +39,7 @@ The initial condition aims to single out one trajectory from the family of solut
     kind: 'theorem',
     tags: ['Differential Equations'],
     dependencies: ['initial-value-problem', 'banach-fixed-point'],
-    definition: String.raw`The **Picard–Lindelöf theorem**: if $f(t, y)$ is continuous and Lipschitz in $y$, the initial value problem $y' = f(t, y),\ y(t_0) = y_0$ has a unique solution on some interval around $t_0$. The proof recasts the ODE as the integral fixed-point equation
+    definition: String.raw`If $f(t, y)$ is continuous and Lipschitz in $y$, the initial value problem $y' = f(t, y),\ y(t_0) = y_0$ has a unique solution on some interval around $t_0$. The proof recasts the ODE as the integral fixed-point equation
 $$y(t) = y_0 + \int_{t_0}^{t} f\bigl(s, y(s)\bigr)\,ds$$
 and applies the Banach fixed-point theorem to the contraction $y \mapsto$ (its right-hand side).`,
   },
@@ -51,25 +51,5 @@ and applies the Banach fixed-point theorem to the contraction $y \mapsto$ (its r
     tags: ['Differential Equations'],
     dependencies: ['ordinary-differential-equation', 'linear-map'],
     definition: String.raw`A **linear differential equation** is linear in the unknown and its derivatives, e.g. $y'' + p(t)\,y' + q(t)\,y = g(t)$. Its homogeneous solutions ($g = 0$) obey **superposition**: they form a vector space — the kernel of a linear differential operator — and the general solution is any particular solution plus that space. Linearity makes these the most completely solvable differential equations.`,
-  },
-  {
-    id: 'partial-differential-equation',
-    label: 'PDE',
-    title: 'Partial Differential Equation',
-    kind: 'definition',
-    tags: ['Differential Equations'],
-    dependencies: ['partial-derivative', 'differential-equation'],
-    definition: String.raw`A **partial differential equation** relates a multivariable function to its *partial* derivatives, e.g. $u_t = u_{xx}$. With several independent variables — often space and time — PDEs govern fields and continua: heat, waves, fluids, electromagnetism, quantum states. They are far richer and harder than ODEs, their solutions shaped decisively by boundary and initial data.`,
-  },
-  {
-    id: 'classical-pdes',
-    label: 'Heat · Wave · Laplace',
-    title: 'Heat, Wave, and Laplace Equations',
-    kind: 'definition',
-    tags: ['Differential Equations'],
-    dependencies: ['partial-differential-equation'],
-    definition: String.raw`Three linear second-order PDEs anchor the theory:
-$$u_t = \alpha\,u_{xx}\ \text{(heat)},\qquad u_{tt} = c^2\,u_{xx}\ \text{(wave)},\qquad u_{xx} + u_{yy} = 0\ \text{(Laplace)}.$$
-They are the prototypes of *parabolic*, *hyperbolic*, and *elliptic* equations — modelling diffusion, propagation, and equilibrium — and motivate separation of variables, Fourier series, and Green's functions.`,
   },
 ]

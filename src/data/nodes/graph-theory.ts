@@ -120,7 +120,7 @@ a topological invariant of the sphere. Planarity is characterized by forbidding 
     kind: 'theorem',
     tags: ['Graph Theory'],
     dependencies: ['planar-graph', 'graph-coloring'],
-    definition: String.raw`The **four color theorem**: every planar map can be colored with at most four colors so that adjacent regions differ. Conjectured in 1852 and proved by Appel and Haken in 1976, it was the first major theorem to rely essentially on a computer — verifying a large set of unavoidable configurations — provoking lasting debate about what a proof is.`,
+    definition: String.raw`Every planar map can be colored with at most four colors so that adjacent regions differ. Conjectured in 1852 and proved by Appel and Haken in 1976, it was the first major theorem to rely essentially on a computer — verifying a large set of unavoidable configurations — provoking lasting debate about what a proof is.`,
   },
   {
     id: 'matching',

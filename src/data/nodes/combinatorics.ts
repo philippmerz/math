@@ -48,7 +48,7 @@ the coefficients being exactly the binomial coefficients — since forming $x^k 
     kind: 'theorem',
     tags: ['Combinatorics'],
     dependencies: ['function'],
-    definition: String.raw`The **pigeonhole principle**: if more than $n$ objects are placed into $n$ boxes, some box holds at least two. Trivial to state yet startlingly powerful, it shows that among any $13$ people two share a birth month, that two people in any crowd have the same number of acquaintances, and countless existence results where no construction is offered.`,
+    definition: String.raw`If more than $n$ objects are placed into $n$ boxes, some box holds at least two. Trivial to state yet startlingly powerful, it shows that among any $13$ people two share a birth month, that two people in any crowd have the same number of acquaintances, and countless existence results where no construction is offered.`,
   },
   {
     id: 'inclusion-exclusion',

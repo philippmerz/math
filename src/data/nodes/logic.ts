@@ -44,7 +44,7 @@ export const LOGIC_NODES: MathNode[] = [
     kind: 'theorem',
     tags: ['Logic'],
     dependencies: ['truth-table'],
-    definition: String.raw`The **law of non-contradiction** says no proposition is both true and false:
+    definition: String.raw`No proposition is both true and false:
 $$\neg (P \wedge \neg P).$$
 A tautology of classical logic — and, unlike Excluded Middle, a theorem of intuitionistic logic too — it is, with Excluded Middle, one of the classical "laws of thought."`,
   },
@@ -104,7 +104,7 @@ Together with logical axioms it generates formal proofs — a proof being a fini
     kind: 'theorem',
     tags: ['Logic'],
     dependencies: ['first-order-logic'],
-    definition: String.raw`**Gödel's completeness theorem**: in first-order logic, a formula is provable from a set of premises if and only if it holds in every model of them — derivability and semantic entailment coincide.
+    definition: String.raw`In first-order logic, a formula is provable from a set of premises if and only if it holds in every model of them — derivability and semantic entailment coincide.
 $$\Gamma \models \varphi \quad\Longleftrightarrow\quad \Gamma \vdash \varphi.$$
 The proof system derives exactly the formulas true in every model of $\Gamma$ (with $\Gamma$ empty, every valid sentence is provable).`,
   },
@@ -115,7 +115,7 @@ The proof system derives exactly the formulas true in every model of $\Gamma$ (w
     kind: 'theorem',
     tags: ['Logic'],
     dependencies: ['first-order-logic'],
-    definition: String.raw`The **compactness theorem**: a set of first-order sentences has a model if and only if every *finite* subset does. A consequence of completeness (proofs are finite), it is the workhorse of model theory — building infinite models from finite consistency, and yielding non-standard models of arithmetic and analysis.`,
+    definition: String.raw`A set of first-order sentences has a model if and only if every *finite* subset does. A consequence of completeness (proofs are finite), it is the workhorse of model theory — building infinite models from finite consistency, and yielding non-standard models of arithmetic and analysis.`,
   },
   {
     id: 'godel-incompleteness',
@@ -124,7 +124,7 @@ The proof system derives exactly the formulas true in every model of $\Gamma$ (w
     kind: 'theorem',
     tags: ['Logic'],
     dependencies: ['first-order-logic', 'natural-numbers'],
-    definition: String.raw`**Gödel's incompleteness theorems**: any consistent, effectively axiomatized theory strong enough to encode arithmetic (1) has a true statement it cannot prove; and any such theory that can also formalize its own provability (PA-strength, more than (1) needs) (2) cannot prove its own consistency. They set hard limits on formalization, ending Hilbert's program of a complete, self-certifying foundation for mathematics.`,
+    definition: String.raw`Any consistent, effectively axiomatized theory strong enough to encode arithmetic (1) has a true statement it cannot prove; and any such theory that can also formalize its own provability (PA-strength, more than (1) needs) (2) cannot prove its own consistency. They set hard limits on formalization, ending Hilbert's program of a complete, self-certifying foundation for mathematics.`,
   },
   {
     id: 'lowenheim-skolem',
@@ -133,6 +133,6 @@ The proof system derives exactly the formulas true in every model of $\Gamma$ (w
     kind: 'theorem',
     tags: ['Logic'],
     dependencies: ['first-order-logic', 'cardinality'],
-    definition: String.raw`The **Löwenheim–Skolem theorem**: a *countable* first-order theory with an infinite model has models of *every* infinite cardinality. First-order logic thus cannot pin down the size of an infinite structure — the source of *Skolem's paradox*, that set theory, though it proves uncountable sets exist, itself has countable models.`,
+    definition: String.raw`A *countable* first-order theory with an infinite model has models of *every* infinite cardinality. First-order logic thus cannot pin down the size of an infinite structure — the source of *Skolem's paradox*, that set theory, though it proves uncountable sets exist, itself has countable models.`,
   },
 ]

@@ -114,7 +114,7 @@ its **degree** the largest $k$ with $a_k \neq 0$ (the zero polynomial having deg
     kind: 'theorem',
     tags: ['Algebra'],
     dependencies: ['integers'],
-    definition: String.raw`The **fundamental theorem of arithmetic**: every integer greater than $1$ factors into primes, uniquely up to order — as a product of powers of distinct primes,
+    definition: String.raw`Every integer greater than $1$ factors into primes, uniquely up to order — as a product of powers of distinct primes,
 $$n = p_1^{a_1} \cdots p_k^{a_k}, \qquad p_1 < \cdots < p_k.$$
 Existence and uniqueness together make the primes the multiplicative atoms of $\mathbb{Z}$ — the prototype of unique factorization in an integral domain.`,
   },
@@ -125,7 +125,7 @@ Existence and uniqueness together make the primes the multiplicative atoms of $\
     kind: 'theorem',
     tags: ['Algebra'],
     dependencies: ['group'],
-    definition: String.raw`**Lagrange's theorem**: in a finite group $G$, the order of any subgroup $H$ divides the order of $G$,
+    definition: String.raw`In a finite group $G$, the order of any subgroup $H$ divides the order of $G$,
 $$|H| \;\big|\; |G|,$$
 since $G$ splits into equal-sized cosets of $H$. It forces every element's order to divide $|G|$ and is the first structural constraint in finite group theory.`,
   },
@@ -136,7 +136,7 @@ since $G$ splits into equal-sized cosets of $H$. It forces every element's order
     kind: 'theorem',
     tags: ['Algebra'],
     dependencies: ['polynomial', 'complex-numbers'],
-    definition: String.raw`The **fundamental theorem of algebra**: every non-constant polynomial with complex coefficients has a root in $\mathbb{C}$. Hence a degree-$n$ polynomial splits into $n$ linear factors — $\mathbb{C}$ is **algebraically closed**. Despite the name, its deepest proofs are analytic or topological rather than purely algebraic.`,
+    definition: String.raw`Every non-constant polynomial with complex coefficients has a root in $\mathbb{C}$. Hence a degree-$n$ polynomial splits into $n$ linear factors — $\mathbb{C}$ is **algebraically closed**. Despite the name, its deepest proofs are analytic or topological rather than purely algebraic.`,
   },
 
   // ── Group structure ──────────────────────────────────────────────────────
@@ -212,7 +212,7 @@ Every homomorphic image is a quotient. With its companions (the second and third
     kind: 'theorem',
     tags: ['Algebra'],
     dependencies: ['group-action', 'group-homomorphism'],
-    definition: String.raw`**Cayley's theorem**: every group embeds into a symmetric group. Acting on itself by left multiplication gives an injective homomorphism $G \hookrightarrow \operatorname{Sym}(G)$, so abstract groups are no more general than permutation groups.`,
+    definition: String.raw`Every group embeds into a symmetric group. Acting on itself by left multiplication gives an injective homomorphism $G \hookrightarrow \operatorname{Sym}(G)$, so abstract groups are no more general than permutation groups.`,
   },
   {
     id: 'sylow-theorems',

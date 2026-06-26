@@ -74,7 +74,7 @@ export const FUNCTIONAL_ANALYSIS_NODES: MathNode[] = [
     kind: 'theorem',
     tags: ['Functional Analysis'],
     dependencies: ['dual-space'],
-    definition: String.raw`The **Hahn–Banach theorem**: a bounded linear functional on a subspace extends to the whole space with the same norm. The dual is therefore rich — it separates points, and for every vector there is a functional with $\lVert f \rVert = 1$ and $f(x) = \lVert x \rVert$. Its geometric form separates two disjoint convex sets — one of them open (or one compact and the other closed, for strict separation) — by a hyperplane, the basis of convex duality.`,
+    definition: String.raw`A bounded linear functional on a subspace extends to the whole space with the same norm. The dual is therefore rich — it separates points, and for every vector there is a functional with $\lVert f \rVert = 1$ and $f(x) = \lVert x \rVert$. Its geometric form separates two disjoint convex sets — one of them open (or one compact and the other closed, for strict separation) — by a hyperplane, the basis of convex duality.`,
   },
   {
     id: 'weak-topology',
@@ -94,7 +94,7 @@ export const FUNCTIONAL_ANALYSIS_NODES: MathNode[] = [
     kind: 'theorem',
     tags: ['Functional Analysis'],
     dependencies: ['metric-space', 'cauchy-sequence'],
-    definition: String.raw`The **Baire category theorem**: in a complete metric space, a countable union of nowhere-dense sets has empty interior — the space is not **meager** in itself. Equivalently, a countable intersection of dense open sets is dense. It is the engine behind the cornerstone theorems of functional analysis — uniform boundedness, open mapping, closed graph — and many existence proofs.`,
+    definition: String.raw`In a complete metric space, a countable union of nowhere-dense sets has empty interior — the space is not **meager** in itself. Equivalently, a countable intersection of dense open sets is dense. It is the engine behind the cornerstone theorems of functional analysis — uniform boundedness, open mapping, closed graph — and many existence proofs.`,
   },
   {
     id: 'uniform-boundedness-principle',
@@ -114,7 +114,7 @@ Pointwise control thus upgrades to uniform control — one of the Baire-category
     kind: 'theorem',
     tags: ['Functional Analysis'],
     dependencies: ['banach-space', 'bounded-linear-operator', 'baire-category-theorem'],
-    definition: String.raw`The **open mapping theorem**: a surjective bounded operator between Banach spaces is an **open map**. A bijective bounded operator therefore has a bounded inverse (the **bounded inverse theorem**), so a continuous linear bijection between Banach spaces is automatically a topological isomorphism.`,
+    definition: String.raw`A surjective bounded operator between Banach spaces is an **open map**. A bijective bounded operator therefore has a bounded inverse (the **bounded inverse theorem**), so a continuous linear bijection between Banach spaces is automatically a topological isomorphism.`,
   },
   {
     id: 'closed-graph-theorem',
@@ -123,7 +123,7 @@ Pointwise control thus upgrades to uniform control — one of the Baire-category
     kind: 'theorem',
     tags: ['Functional Analysis'],
     dependencies: ['banach-space', 'bounded-linear-operator', 'open-mapping-theorem'],
-    definition: String.raw`The **closed graph theorem**: a linear map between Banach spaces is bounded if and only if its **graph** is closed — that is, $x_n \to x$ and $T x_n \to y$ force $y = T x$. It replaces the direct proof of continuity with the often easier check that the graph is closed, and follows from the open mapping theorem.`,
+    definition: String.raw`A linear map between Banach spaces is bounded if and only if its **graph** is closed — that is, $x_n \to x$ and $T x_n \to y$ force $y = T x$. It replaces the direct proof of continuity with the often easier check that the graph is closed, and follows from the open mapping theorem.`,
   },
 
   // ── Hilbert space structure ────────────────────────────────────────────────
@@ -134,7 +134,7 @@ Pointwise control thus upgrades to uniform control — one of the Baire-category
     kind: 'theorem',
     tags: ['Functional Analysis'],
     dependencies: ['hilbert-space', 'dual-space'],
-    definition: String.raw`The **Riesz representation theorem** for Hilbert spaces: every bounded linear functional $f$ on a Hilbert space $H$ is given by an inner product with a unique vector,
+    definition: String.raw`Every bounded linear functional $f$ on a Hilbert space $H$ is given by an inner product with a unique vector,
 $$f(x) = \langle x, y \rangle, \qquad \lVert f \rVert = \lVert y \rVert.$$
 So $H$ is its own dual, $H \cong H^*$ (conjugate-linearly in the complex case). This self-duality powers Hilbert space methods and underlies the weak formulation of differential equations.`,
   },

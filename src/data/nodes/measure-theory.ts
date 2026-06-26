@@ -104,7 +104,7 @@ where a simple function $s = \sum_i c_i\,\mathbf{1}_{A_i}$ (disjoint measurable 
     kind: 'theorem',
     tags: ['Measure Theory'],
     dependencies: ['lebesgue-integral', 'measurable-function'],
-    definition: String.raw`The **monotone convergence theorem** (Lebesgue): if $0 \le f_1 \le f_2 \le \cdots$ are measurable with pointwise limit $f$, then
+    definition: String.raw`If $0 \le f_1 \le f_2 \le \cdots$ are measurable with pointwise limit $f$, then
 $$\int \lim_{n} f_n \, d\mu = \lim_{n} \int f_n \, d\mu.$$
 Increasing limits pass through the integral — the basic licence to interchange limit and Lebesgue integral, and the very way the integral extends from simple functions.`,
   },
@@ -115,7 +115,7 @@ Increasing limits pass through the integral — the basic licence to interchange
     kind: 'theorem',
     tags: ['Measure Theory'],
     dependencies: ['lebesgue-integral', 'almost-everywhere'],
-    definition: String.raw`The **dominated convergence theorem**: if measurable functions $f_n \to f$ almost everywhere and $|f_n| \le g$ for some integrable $g$, then $f$ is integrable and
+    definition: String.raw`If measurable functions $f_n \to f$ almost everywhere and $|f_n| \le g$ for some integrable $g$, then $f$ is integrable and
 $$\lim_{n} \int f_n \, d\mu = \int f \, d\mu.$$
 A single integrable dominating function licenses swapping limit and integral — one of the most-used such theorems in analysis and probability.`,
   },
@@ -126,7 +126,7 @@ A single integrable dominating function licenses swapping limit and integral —
     kind: 'theorem',
     tags: ['Measure Theory'],
     dependencies: ['lebesgue-integral'],
-    definition: String.raw`**Fatou's lemma**: for non-negative measurable $f_n$,
+    definition: String.raw`For non-negative measurable $f_n$,
 $$\int \liminf_{n} f_n \, d\mu \;\le\; \liminf_{n} \int f_n \, d\mu.$$
 Mass can leak away in the limit but never appear from nowhere. This one-directional inequality follows from the monotone convergence theorem and in turn yields the dominated convergence theorem.`,
   },
@@ -137,7 +137,7 @@ Mass can leak away in the limit but never appear from nowhere. This one-directio
     kind: 'theorem',
     tags: ['Measure Theory'],
     dependencies: ['lebesgue-integral', 'measure'],
-    definition: String.raw`**Fubini's theorem**: for $\sigma$-finite measure spaces and a function $f$ integrable on the product space, the double integral equals either iterated integral,
+    definition: String.raw`For $\sigma$-finite measure spaces and a function $f$ integrable on the product space, the double integral equals either iterated integral,
 $$\int_{X \times Y} f \, d(\mu \times \nu) = \int_X\!\Bigl(\int_Y f \, d\nu\Bigr) d\mu = \int_Y\!\Bigl(\int_X f \, d\mu\Bigr) d\nu.$$
 The order may be swapped once $f$ is integrable; for non-negative measurable $f$, Tonelli's theorem gives the same.`,
   },

@@ -359,7 +359,7 @@ It is what makes the informal "$\dots$" rigorous, and it is the basis for defini
     kind: 'theorem',
     tags: ['Set Theory'],
     dependencies: ['power-set', 'cardinality'],
-    definition: String.raw`**Cantor's theorem**: no set maps onto its power set, so
+    definition: String.raw`No set maps onto its power set, so
 $$|A| < |\mathcal{P}(A)|$$
 for every set $A$. There is no largest cardinality — iterating $\mathcal{P}$ builds an endless tower of infinities — and the same diagonal argument shows $\mathbb{R}$ is uncountable (indeed $|\mathcal{P}(\mathbb{N})| = |\mathbb{R}|$).`,
   },
@@ -370,7 +370,7 @@ for every set $A$. There is no largest cardinality — iterating $\mathcal{P}$ b
     kind: 'theorem',
     tags: ['Set Theory'],
     dependencies: ['cardinality'],
-    definition: String.raw`The **Cantor–Schröder–Bernstein theorem**: if there are injections $A \hookrightarrow B$ and $B \hookrightarrow A$, then a bijection $A \to B$ exists — so $|A| \le |B|$ and $|B| \le |A|$ together give $|A| = |B|$. It makes cardinal comparison a genuine (antisymmetric) order, and it needs no axiom of choice.`,
+    definition: String.raw`If there are injections $A \hookrightarrow B$ and $B \hookrightarrow A$, then a bijection $A \to B$ exists — so $|A| \le |B|$ and $|B| \le |A|$ together give $|A| = |B|$. It makes cardinal comparison a genuine (antisymmetric) order, and it needs no axiom of choice.`,
   },
   {
     id: 'zorns-lemma',
@@ -379,7 +379,7 @@ for every set $A$. There is no largest cardinality — iterating $\mathcal{P}$ b
     kind: 'theorem',
     tags: ['Set Theory'],
     dependencies: ['partial-order', 'choice'],
-    definition: String.raw`**Zorn's lemma**: a partially ordered set in which every chain (totally ordered subset) has an upper bound contains a maximal element. Equivalent to the Axiom of Choice, it is the form used to produce maximal ideals, vector-space bases, and algebraic closures without explicit construction.`,
+    definition: String.raw`A partially ordered set in which every chain (totally ordered subset) has an upper bound contains a maximal element. Equivalent to the Axiom of Choice, it is the form used to produce maximal ideals, vector-space bases, and algebraic closures without explicit construction.`,
   },
   {
     id: 'well-ordering-theorem',
@@ -388,6 +388,6 @@ for every set $A$. There is no largest cardinality — iterating $\mathcal{P}$ b
     kind: 'theorem',
     tags: ['Set Theory'],
     dependencies: ['well-order', 'choice'],
-    definition: String.raw`The **well-ordering theorem**: every set admits a well-ordering — a total order in which every non-empty subset has a least element. Equivalent to the Axiom of Choice (and to Zorn's lemma), it underwrites transfinite induction and recursion on arbitrary sets, however large.`,
+    definition: String.raw`Every set admits a well-ordering — a total order in which every non-empty subset has a least element. Equivalent to the Axiom of Choice (and to Zorn's lemma), it underwrites transfinite induction and recursion on arbitrary sets, however large.`,
   },
 ]
