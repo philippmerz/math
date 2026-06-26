@@ -137,9 +137,65 @@ function dagreLayout(clustered: boolean, nodes: MathNode[]): LayoutResult {
   return { nodes: rfNodes, edges: buildEdges(nodes), clusters }
 }
 
-/** Synchronous dagre layout for a mode; used directly and as the ELK fallback. */
+// The dagre layout is expensive (seconds, for ~900 nodes in the compound
+// `grouped` engine). It's deterministic in the node *structure*, so we cache the
+// computed positions in localStorage keyed by a structural signature — a repeat
+// load with unchanged content reuses them and skips the recompute entirely.
+type LayoutCache = { sig: string; pos: Record<string, [number, number]>; clusters: ClusterBox[] }
+
+function layoutSignature(mode: LayoutMode, nodes: MathNode[]): string {
+  let h = 0x811c9dc5
+  const s = `${mode}|${nodes
+    .map((n) => `${n.id}>${n.dependencies.join(',')}#${n.tags[0] ?? ''}`)
+    .join('|')}`
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i)
+    h = Math.imul(h, 0x01000193)
+  }
+  return `${(h >>> 0).toString(36)}.${nodes.length}`
+}
+
+function readCache(mode: LayoutMode, sig: string): LayoutCache | null {
+  if (typeof localStorage === 'undefined') return null
+  try {
+    const raw = localStorage.getItem(`mathgraph-layout-${mode}`)
+    if (!raw) return null
+    const c = JSON.parse(raw) as LayoutCache
+    return c.sig === sig ? c : null
+  } catch {
+    return null
+  }
+}
+
+function writeCache(mode: LayoutMode, sig: string, result: LayoutResult) {
+  if (typeof localStorage === 'undefined') return
+  try {
+    const pos: Record<string, [number, number]> = {}
+    for (const n of result.nodes) pos[n.id] = [n.position.x, n.position.y]
+    localStorage.setItem(`mathgraph-layout-${mode}`, JSON.stringify({ sig, pos, clusters: result.clusters }))
+  } catch {
+    // quota / serialization failure — just skip the cache
+  }
+}
+
+/** Synchronous dagre layout for a mode; used directly and as the ELK fallback.
+ *  Cached by structural signature (only for the full graph — the common load). */
 export function dagreLayoutFor(mode: LayoutMode, hidden: ReadonlySet<string>): LayoutResult {
-  return dagreLayout(mode !== 'flow', visibleNodes(hidden))
+  const nodes = visibleNodes(hidden)
+  // The signature is over the *visible* nodes, so it already distinguishes the
+  // default-collapsed load from an expanded one — one cached entry per mode.
+  const sig = layoutSignature(mode, nodes)
+  const cached = readCache(mode, sig)
+  if (cached) {
+    const rfNodes = nodes
+      .filter((n) => cached.pos[n.id])
+      .map((n) => rfNode(n, cached.pos[n.id][0], cached.pos[n.id][1]))
+    return { nodes: rfNodes, edges: buildEdges(nodes), clusters: cached.clusters }
+  }
+
+  const result = dagreLayout(mode !== 'flow', nodes)
+  writeCache(mode, sig, result)
+  return result
 }
 
 // ── ELK ──────────────────────────────────────────────────────────────────
