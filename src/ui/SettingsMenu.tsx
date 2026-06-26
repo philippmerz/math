@@ -142,7 +142,8 @@ export function SettingsMenu({
           </section>
 
           <p className="settings__note">
-            Prefer a plain list? <a href="#/index">Index of all {nodeById.size} concepts →</a>
+            Prefer a plain list?{' '}
+            <a href="#/index">Index of all {nodeById.size}&nbsp;concepts&nbsp;→</a>
           </p>
         </div>
     </div>

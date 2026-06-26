@@ -2,7 +2,13 @@
   --bg: #ffffff;
   --fg: #000000;
   --muted: #6b6b6b;
-  --line: #000000;
+  /* soft, low-impact border for UI chrome (buttons, inputs, popovers) */
+  --line: #d8d8db;
+  /* stronger border, only where a crisp edge is wanted (graph cards, tooltip) */
+  --node-border: #11111a;
+  /* faint fill so buttons/inputs read as surfaces, not bare outlines */
+  --control-bg: #f6f6f7;
+  --control-hover: #ededf0;
   --hairline: #e6e6e6;
   /* off-white so nodes read as cards against the pure-white page + faint hulls
      (mirrors dark mode, where the node fill is lighter than the #000 page) */
@@ -16,7 +22,10 @@
   --bg: #000000;
   --fg: #ffffff;
   --muted: #9a9a9a;
-  --line: #d0d0d0;
+  --line: #38383c;
+  --node-border: #d0d0d0;
+  --control-bg: #19191b;
+  --control-hover: #232327;
   --hairline: #2a2a2a;
   --node-bg: #1c1c1c;
   --panel-bg: #000000;
@@ -96,7 +105,7 @@ body {
   justify-content: center;
   background: var(--node-bg);
   color: var(--fg);
-  border: 1px solid var(--line);
+  border: 1px solid var(--node-border);
   border-radius: 7px;
   cursor: pointer;
   transition: background 120ms ease, color 120ms ease, box-shadow 120ms ease;
@@ -198,7 +207,7 @@ body {
   padding: 8px 12px;
   background: var(--panel-bg);
   color: var(--fg);
-  border: 1px solid var(--line);
+  border: 1px solid var(--node-border);
   border-radius: 8px;
   box-shadow: 0 6px 22px rgba(0, 0, 0, 0.22);
 }
@@ -251,10 +260,52 @@ body {
   font-weight: 700;
 }
 
-.toolbar__subtitle {
-  font-size: 11px;
+/* The current field, centered at the top as a context indicator. It fades in
+   and out (and across field changes) rather than blinking. */
+.toolbar__field {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 40vw;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+.toolbar__field.is-visible {
+  opacity: 1;
+}
+.toolbar__field-name {
+  animation: field-fade 240ms ease;
+}
+@keyframes field-fade {
+  from {
+    opacity: 0.25;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.toolbar__field::before {
+  content: '';
+  flex: none;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.toolbar__field-name {
+  pointer-events: auto;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
   color: var(--muted);
-  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* The icon cluster (GitHub + theme) sits in the upper-right corner. */
@@ -271,15 +322,17 @@ body {
   height: 36px;
   display: grid;
   place-items: center;
-  background: var(--panel-bg);
+  background: var(--control-bg);
   color: var(--fg);
   border: 1px solid var(--line);
   border-radius: 8px;
   cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
 }
 
 .icon-btn:hover {
-  background: var(--hairline);
+  background: var(--control-hover);
+  border-color: var(--muted);
 }
 
 /* active-filter count on the filter funnel */
@@ -298,6 +351,17 @@ body {
   background: var(--fg);
   border: 1px solid var(--bg);
   border-radius: 999px;
+  animation: badge-pop 200ms ease;
+}
+@keyframes badge-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .icon-btn svg {
@@ -353,6 +417,45 @@ body {
   border-top: 1px solid var(--hairline);
 }
 
+/* Filter popover: Type and Clear stay put; only the (long) Area list scrolls,
+   so the Clear button is never pushed off under the fold. */
+.filtermenu {
+  overflow: hidden;
+}
+.filtermenu__fixed,
+.filtermenu__footer {
+  flex: none;
+}
+/* The Clear-filters footer slides/fades in and out instead of popping. */
+.filtermenu__footer {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 220ms ease, opacity 200ms ease, padding 220ms ease;
+}
+.filtermenu__footer.is-active {
+  max-height: 60px;
+  padding-top: 8px;
+  padding-bottom: 10px;
+  opacity: 1;
+}
+.filtermenu__area {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+.filtermenu__chips {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  align-content: flex-start;
+  /* keep chips clear of the scrollbar gutter */
+  padding-right: 4px;
+  margin-right: -4px;
+}
+
 .settings__heading {
   font-size: 10px;
   letter-spacing: 0.14em;
@@ -399,7 +502,8 @@ body {
 }
 
 .settings__option.is-active {
-  border-color: var(--line);
+  background: var(--control-bg);
+  border-color: var(--muted);
 }
 
 .settings__option-title {
@@ -572,10 +676,11 @@ body {
   padding: 8px 12px;
   font-size: 13px;
   color: var(--fg);
-  background: var(--panel-bg);
+  background: var(--control-bg);
   border: 1px solid var(--line);
   border-radius: 8px;
   outline: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
 }
 
 .search__input::placeholder {
@@ -583,6 +688,7 @@ body {
 }
 
 .search__input:focus {
+  border-color: var(--muted);
   box-shadow: 0 0 0 3px var(--hairline);
 }
 
@@ -745,13 +851,11 @@ body {
   color: var(--fg);
   border-color: var(--muted);
 }
-.toolbar__subtitle.area-tag--linked {
-  align-self: flex-start;
+.toolbar__field-name.area-tag--linked {
   padding: 0;
   border: none;
-  text-align: left;
 }
-.toolbar__subtitle.area-tag--linked:hover {
+.toolbar__field-name.area-tag--linked:hover {
   color: var(--fg);
 }
 
@@ -894,7 +998,7 @@ body {
     font-size: 13px;
     white-space: nowrap;
   }
-  .toolbar__subtitle {
+  .toolbar__field {
     display: none;
   }
   .search {

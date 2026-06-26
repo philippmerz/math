@@ -75,8 +75,12 @@ export function FilterMenu({ area, onAreaChange, kinds, onKindToggle, onClear }:
         {activeCount > 0 && <span className="icon-btn__badge">{activeCount}</span>}
       </button>
 
-      <div className={`settings__menu${open ? ' is-open' : ''}`} role="menu" aria-hidden={!open}>
-        <section className="settings__section">
+      <div
+        className={`settings__menu filtermenu${open ? ' is-open' : ''}`}
+        role="menu"
+        aria-hidden={!open}
+      >
+        <section className="settings__section filtermenu__fixed">
           <span className="settings__heading">Type</span>
           <div className="filter-chips">
             {allKinds.map((k) => (
@@ -93,7 +97,7 @@ export function FilterMenu({ area, onAreaChange, kinds, onKindToggle, onClear }:
           </div>
         </section>
 
-        <section className="settings__section">
+        <section className="settings__section filtermenu__area">
           <span className="settings__heading">Area</span>
           <input
             type="text"
@@ -103,7 +107,7 @@ export function FilterMenu({ area, onAreaChange, kinds, onKindToggle, onClear }:
             onChange={(e) => setTagQuery(e.target.value)}
             aria-label="Search areas"
           />
-          <div className="filter-chips">
+          <div className="filter-chips filtermenu__chips">
             {shownTags.map((tag) => (
               <button
                 key={tag}
@@ -119,13 +123,19 @@ export function FilterMenu({ area, onAreaChange, kinds, onKindToggle, onClear }:
           </div>
         </section>
 
-        {activeCount > 0 && (
-          <section className="settings__section">
-            <button type="button" className="settings__clear" onClick={onClear}>
-              Clear filters
-            </button>
-          </section>
-        )}
+        <section
+          className={`settings__section filtermenu__footer${activeCount > 0 ? ' is-active' : ''}`}
+          aria-hidden={activeCount === 0}
+        >
+          <button
+            type="button"
+            className="settings__clear"
+            onClick={onClear}
+            tabIndex={activeCount > 0 ? 0 : -1}
+          >
+            Clear filters
+          </button>
+        </section>
       </div>
     </div>
   )

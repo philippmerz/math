@@ -33,6 +33,12 @@ export default function App() {
   const [query, setQuery] = useState('')
   const [viewArea, setViewArea] = useState<string | null>(null)
   const onAreaChange = useCallback((area: string | null) => setViewArea(area), [])
+  // Retain the last field name while the indicator fades out, so its text never
+  // blinks away abruptly (the container's opacity does the fading).
+  const [shownField, setShownField] = useState<string | null>(null)
+  useEffect(() => {
+    if (viewArea) setShownField(viewArea)
+  }, [viewArea])
   const [focusTag, setFocusTag] = useState<string | null>(null)
   const [kindFilter, setKindFilter] = useState<ReadonlySet<NodeKind>>(() => new Set())
   const toggleKind = useCallback((k: NodeKind) => {
@@ -121,7 +127,11 @@ export default function App() {
         <header className="toolbar">
           <div className="toolbar__brand">
             <span className="toolbar__title">Mathematics Graph</span>
-            {viewArea && <AreaTag tag={viewArea} className="toolbar__subtitle" />}
+          </div>
+          <div className={`toolbar__field${viewArea ? ' is-visible' : ''}`} aria-hidden={!viewArea}>
+            {shownField && (
+              <AreaTag key={shownField} tag={shownField} className="toolbar__field-name" />
+            )}
           </div>
           <SearchBox
             query={query}
