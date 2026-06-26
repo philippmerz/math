@@ -138,7 +138,7 @@ export default function App() {
     () => collapsedConstructionIds(expanded, showAllConstructions),
     [expanded, showAllConstructions],
   )
-  const { layout, loading } = useLayout(layoutMode, hidden)
+  const { layout, loading } = useLayout(layoutMode, hidden, !isMobile || mobileGraph)
 
   const results = useMemo(() => searchNodes(query), [query])
   const matchIds = useMemo(

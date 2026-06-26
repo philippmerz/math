@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { dagreLayoutFor, elkLayout, type LayoutMode, type LayoutResult } from '../graph/layout'
 
+const EMPTY_LAYOUT: LayoutResult = { nodes: [], edges: [], clusters: [] }
+
 /**
  * Resolve the active layout for the current engine and the set of hidden nodes
  * (collapsed constructions). The dagre layouts are synchronous; ELK is computed
@@ -13,12 +15,18 @@ import { dagreLayoutFor, elkLayout, type LayoutMode, type LayoutResult } from '.
 export function useLayout(
   mode: LayoutMode,
   hidden: ReadonlySet<string>,
+  enabled = true,
 ): { layout: LayoutResult; loading: boolean } {
-  const dagre = useMemo(() => dagreLayoutFor(mode, hidden), [mode, hidden])
+  // Skip the (expensive, ~900-node) layout entirely when the graph isn't shown
+  // — e.g. the mobile list shell. No point spending seconds arranging it.
+  const dagre = useMemo(
+    () => (enabled ? dagreLayoutFor(mode, hidden) : EMPTY_LAYOUT),
+    [mode, hidden, enabled],
+  )
   const [elk, setElk] = useState<{ hidden: ReadonlySet<string>; layout: LayoutResult } | null>(null)
 
   useEffect(() => {
-    if (mode !== 'compact' || elk?.hidden === hidden) return
+    if (!enabled || mode !== 'compact' || elk?.hidden === hidden) return
     let cancelled = false
     elkLayout(hidden).then((layout) => {
       if (!cancelled) setElk({ hidden, layout })
@@ -26,7 +34,7 @@ export function useLayout(
     return () => {
       cancelled = true
     }
-  }, [mode, hidden, elk])
+  }, [mode, hidden, elk, enabled])
 
   if (mode === 'compact' && elk && elk.hidden === hidden) {
     return { layout: elk.layout, loading: false }
