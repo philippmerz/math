@@ -9,6 +9,31 @@ import { AreaTag } from './AreaTag'
 const remarkPlugins = [remarkMath]
 const rehypePlugins = [rehypeMathjax]
 
+function Markdown({ children }: { children: string }) {
+  return (
+    <ReactMarkdown remarkPlugins={remarkPlugins} rehypePlugins={rehypePlugins}>
+      {children}
+    </ReactMarkdown>
+  )
+}
+
+/** The formal section(s) a node carries, in reading order, by kind. */
+function formalSections(node: MathNode): { label: string; md: string }[] {
+  const out: { label: string; md: string }[] = []
+  if (node.kind === 'definition') {
+    if (node.definition) out.push({ label: 'Definition', md: node.definition })
+    if (node.proof) out.push({ label: 'Proof', md: node.proof })
+  } else if (node.kind === 'axiom') {
+    if (node.statement) out.push({ label: 'Statement', md: node.statement })
+    if (node.proof) out.push({ label: 'Proof', md: node.proof })
+  } else if (node.kind === 'theorem') {
+    if (node.statement) out.push({ label: 'Statement', md: node.statement })
+    if (node.proof) out.push({ label: 'Proof', md: node.proof })
+  }
+  // primitive: description only
+  return out
+}
+
 type Props = {
   node: MathNode | null
   onClose: () => void
@@ -58,11 +83,20 @@ export function DefinitionPanel({ node, onClose, onNavigate }: Props) {
         </div>
       )}
 
-      <div className="panel__body">
-        <ReactMarkdown remarkPlugins={remarkPlugins} rehypePlugins={rehypePlugins}>
-          {node.definition}
-        </ReactMarkdown>
-      </div>
+      {node.description && (
+        <div className="panel__body">
+          <Markdown>{node.description}</Markdown>
+        </div>
+      )}
+
+      {formalSections(node).map((s) => (
+        <section key={s.label} className="panel__section">
+          <h3 className="panel__section-title">{s.label}</h3>
+          <div className="panel__body">
+            <Markdown>{s.md}</Markdown>
+          </div>
+        </section>
+      ))}
 
       {node.dependencies.length > 0 && (
         <section className="panel__section">
