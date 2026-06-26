@@ -20,6 +20,7 @@ import {
 } from './layout'
 import { nodeById } from '../data/graph'
 import { isoGroupByCanonical } from '../data/variants'
+import { useIntroTour } from '../hooks/useIntroTour'
 import type { Theme } from '../hooks/useTheme'
 
 const CLUSTER_PAD = 26
@@ -107,6 +108,9 @@ export function GraphView({
   // `nodes` carries React Flow's measured dimensions; we layer flags on top.
   const [nodes, setNodes, onNodesChange] = useNodesState<ConceptNodeType>(layout.nodes)
   const rf = useReactFlow()
+
+  // A one-time cinematic pan across the graph on first load (desktop only).
+  useIntroTour(layout.nodes)
 
   const reportArea = useCallback(
     () => onAreaChange(areaInView(rf.getViewport(), layout.nodes)),
