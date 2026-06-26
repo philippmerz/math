@@ -4,14 +4,14 @@ import type { LayoutMode } from '../graph/layout'
 
 const LAYOUTS: { mode: LayoutMode; title: string; desc: string }[] = [
   {
+    mode: 'grouped',
+    title: 'Grouped by field',
+    desc: 'Flows top-down, with each field boxed in its own region. Roomier.',
+  },
+  {
     mode: 'flow',
     title: 'By dependency',
     desc: 'Strict top-down prerequisite order. Most compact, but fields intermix.',
-  },
-  {
-    mode: 'grouped',
-    title: 'Grouped by field',
-    desc: 'Still flows top-down, but each field is boxed in its own region. Roomier.',
   },
   {
     mode: 'compact',
