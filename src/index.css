@@ -1059,6 +1059,68 @@ body {
   margin: 12px 0;
 }
 
+/* Formal content (statement / definition / proof) set off as a theorem
+   environment: a quiet left rule marking "this is the rigorous part". */
+.panel__formal {
+  margin: 18px 0;
+  padding-left: 16px;
+  border-left: 2px solid var(--line);
+}
+.panel__formal-label {
+  margin: 0 0 7px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+.panel__formal .panel__body p:last-child {
+  margin-bottom: 0;
+}
+
+/* The proof folds away — its label is the toggle. */
+.panel__proof-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 120ms ease;
+}
+.panel__proof-toggle:hover {
+  color: var(--fg);
+}
+.panel__proof-chevron {
+  width: 11px;
+  height: 11px;
+  transition: transform 180ms ease;
+}
+.panel__proof-toggle[aria-expanded='false'] .panel__proof-chevron {
+  transform: rotate(-90deg);
+}
+.panel__proof-body {
+  margin-top: 8px;
+  animation: proof-in 200ms ease;
+}
+@keyframes proof-in {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .panel__section {
   margin-top: 18px;
   border-top: 1px solid var(--hairline);
