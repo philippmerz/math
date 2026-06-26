@@ -1310,3 +1310,273 @@ body {
     display: none;
   }
 }
+
+/* ===== Mobile shell (the list-based phone app) ========================== */
+.mobile {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--fg);
+  overflow: hidden;
+}
+.mobile__top {
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding: calc(env(safe-area-inset-top) + 12px) 18px 12px;
+  border-bottom: 1px solid var(--hairline);
+}
+.mobile__title {
+  font-size: 17px;
+  font-weight: 700;
+}
+.mobile__view {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ---- bottom tab bar ---- */
+.mnav {
+  flex: none;
+  display: flex;
+  border-top: 1px solid var(--hairline);
+  background: var(--bg);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.mnav__tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 9px 0 7px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  transition: color 120ms ease;
+}
+.mnav__tab.is-active {
+  color: var(--fg);
+}
+.mnav__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.mnav__icon svg {
+  width: 23px;
+  height: 23px;
+}
+.mnav__label {
+  font-size: 10.5px;
+  letter-spacing: 0.02em;
+}
+.mnav__badge {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--bg);
+  background: var(--fg);
+  border-radius: 999px;
+}
+
+/* ---- the dependency / search list ---- */
+.mlist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.mlist__item {
+  border-bottom: 1px solid var(--hairline);
+}
+.mlist__item .mlist__item {
+  border-bottom: none;
+}
+.mrow {
+  display: flex;
+  align-items: stretch;
+  min-height: 50px;
+}
+.mrow__toggle {
+  flex: none;
+  width: 40px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+.mrow__toggle svg {
+  width: 13px;
+  height: 13px;
+  transition: transform 160ms ease;
+}
+.mrow__toggle[aria-expanded='false'] svg {
+  transform: rotate(-90deg);
+}
+.mrow__spacer {
+  flex: none;
+  width: 40px;
+}
+.mrow__label {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 16px 8px 0;
+  background: none;
+  border: none;
+  text-align: left;
+  color: var(--fg);
+  cursor: pointer;
+}
+.mrow__label--flush {
+  padding-left: 16px;
+}
+.mrow__title {
+  font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mrow__kind {
+  flex: none;
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---- search / filter / settings views ---- */
+.mview {
+  padding: 16px;
+}
+.mview__search {
+  width: 100%;
+  padding: 11px 14px;
+  font-size: 16px; /* ≥16px avoids iOS zoom-on-focus */
+  color: var(--fg);
+  background: var(--control-bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  outline: none;
+  margin-bottom: 8px;
+}
+.mview .mlist {
+  margin: 0 -16px;
+}
+.mview__heading {
+  margin: 22px 0 10px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+.mview__heading:first-child {
+  margin-top: 4px;
+}
+.mview__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.mview__chips .filterbar__chip {
+  padding: 8px 13px;
+  font-size: 13px;
+}
+.mview__action {
+  display: block;
+  width: 100%;
+  padding: 13px 14px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  text-align: left;
+  text-decoration: none;
+  color: var(--fg);
+  background: var(--control-bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.mview__clear {
+  margin-top: 20px;
+}
+.mview__empty {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* ---- detail as a bottom sheet (overrides the panel inside the shell) ---- */
+.mobile .panel {
+  position: absolute;
+  inset: 12px 0 0 0;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  z-index: 20;
+  border-left: none;
+  border-top: 1px solid var(--line);
+  border-radius: 18px 18px 0 0;
+  padding: 26px 20px calc(env(safe-area-inset-bottom) + 24px);
+  animation: sheet-up 280ms cubic-bezier(0.2, 0, 0, 1);
+}
+.mobile .panel::before {
+  content: '';
+  position: absolute;
+  top: 9px;
+  left: 50%;
+  width: 38px;
+  height: 4px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: var(--line);
+}
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* "Back to list" escape, shown over the graph in mobile graph-mode. */
+.to-list {
+  position: absolute;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom) + 14px);
+  transform: translateX(-50%);
+  z-index: 11;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--bg);
+  background: var(--fg);
+  border: none;
+  border-radius: 999px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+/* nested dependency sub-lists carry no bullets */
+.mlist ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}

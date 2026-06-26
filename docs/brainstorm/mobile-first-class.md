@@ -1,6 +1,6 @@
 # First-class mobile UX
 
-**Status:** OPEN — brainstorm only; nothing here is implemented yet.
+**Status:** DECIDED — building now (see **Decision** at the bottom).
 
 ## Problem
 
@@ -111,3 +111,37 @@ Lacking:
 - Bottom sheet (hand-rolled, reusing momentum): ~medium, the bulk of the work.
 - Mobile entry frame: ~small (reuses `planFieldTour`).
 - PWA manifest + safe-area sweep: ~small.
+
+## Decision
+
+Graph-first is wrong for phones. Mobile becomes a **search/read-first, list-based
+app** (a B + C + D mix), with the graph available on demand.
+
+- **`useIsMobile()` spine (B).** On a coarse pointer / small screen, App renders a
+  separate `MobileApp` shell instead of the desktop graph + chrome. Same state
+  (selection, filters, theme); different surface.
+- **Tab bar at the *bottom* (modern-app convention — YT / Spotify / Instagram).**
+  Four destinations: **Math · Search · Filter · Settings**. Tapping one switches
+  the view and highlights it as active.
+- **Math = a graph-shaped list (C, but graph-like).** Not a flat index: a list
+  that starts at the foundations and **recursively expands the next level of
+  dependents** (tap a row to reveal what's built on it, indefinitely). It's the
+  dependency DAG rendered as an expandable tree.
+- **Search expands the path.** Searching reveals only the chain from a root down
+  to the match (auto-expanded), so you see *how you get there*, not just the hit.
+- **Detail = a bottom sheet.** Tapping a node slides up a sheet with the full
+  details (description / statement / proof / relations). **Hand-rolled** (reusing
+  the existing pan-momentum / gesture primitives — keeps the zero-dependency
+  ethos), with a drag handle and swipe-down to dismiss.
+- **PWA (D).** Cheap, no downside: `manifest.webmanifest`, `theme-color`,
+  `display: standalone`, maskable icon, `env(safe-area-inset-*)` throughout.
+- **Escape hatch.** A Settings option **"Switch to graph"** renders the regular
+  (touch-gesture) graph on mobile for anyone who wants it.
+
+### Build phases
+
+1. Foundations — `useIsMobile`, PWA manifest + meta, the `MobileApp` shell with
+   the bottom tab bar + view switching, and the Settings "Switch to graph" toggle.
+2. The dependency **list** (recursive expand) + the **bottom sheet** detail.
+3. **Path-search** (auto-expand to a match), Filter/Settings mobile views,
+   drag-to-dismiss polish, safe-area sweep.

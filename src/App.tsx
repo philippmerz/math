@@ -7,8 +7,10 @@ import { FilterMenu } from './ui/FilterMenu'
 import { FrequentTags } from './ui/FrequentTags'
 import { AreaTag } from './ui/AreaTag'
 import { SettingsMenu } from './ui/SettingsMenu'
+import { MobileApp } from './mobile/MobileApp'
 import { useTheme } from './hooks/useTheme'
 import { useLayout } from './hooks/useLayout'
+import { useIsMobile } from './hooks/useIsMobile'
 import { useChromeAutoHide } from './hooks/useChromeAutoHide'
 import type { LayoutMode } from './graph/layout'
 import type { NodeKind } from './data/types'
@@ -107,6 +109,13 @@ export default function App() {
   // Float the chrome away when the mouse rests; it returns on the next move.
   const chromeHidden = useChromeAutoHide()
 
+  // Phones get a separate list-based shell; the graph is opt-in from there.
+  const isMobile = useIsMobile()
+  const [mobileGraph, setMobileGraph] = useState(() => localStorage.getItem('mobile-graph') === '1')
+  useEffect(() => {
+    localStorage.setItem('mobile-graph', mobileGraph ? '1' : '0')
+  }, [mobileGraph])
+
   // Isomorphic constructions collapse under their canonical node by default;
   // `expanded` tracks individually-opened canonicals, `showAllConstructions` is
   // the global override. `revealTarget`/`revealNonce` tell the camera what to
@@ -149,6 +158,23 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
+  if (isMobile && !mobileGraph) {
+    return (
+      <MobileApp
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        selectedId={selectedId}
+        onSelect={setSelectedId}
+        focusTag={focusTag}
+        onFocusTag={setFocusTag}
+        kindFilter={kindFilter}
+        onToggleKind={toggleKind}
+        onClearFilters={clearFilters}
+        onShowGraph={() => setMobileGraph(true)}
+      />
+    )
+  }
+
   return (
     <ReactFlowProvider>
       <main className={`app${chromeHidden ? ' chrome-hidden' : ''}`}>
@@ -171,6 +197,12 @@ export default function App() {
         />
 
         {loading && <div className="layout-loading">Arranging…</div>}
+
+        {isMobile && (
+          <button type="button" className="to-list" onClick={() => setMobileGraph(false)}>
+            ≡ List
+          </button>
+        )}
 
         <header className="toolbar">
           <div className="toolbar__brand">
