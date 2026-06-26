@@ -347,7 +347,9 @@ export function GraphView({
             )
           })}
         </ViewportPortal>
-        <Background gap={28} size={1} color={theme === 'dark' ? '#141414' : '#ececec'} />
+        {/* Light: a faint dot grid. Dark: none — at the zoomed-out default the
+            dots merge into a grey haze, so we keep the page a true #000. */}
+        {theme === 'light' && <Background gap={28} size={1} color="#ececec" />}
         <Controls showInteractive={false} position="bottom-right" />
       </ReactFlow>
       {tip && tipNode && <NodeTip x={tip.x} y={tip.y} node={tipNode} />}
