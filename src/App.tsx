@@ -178,23 +178,28 @@ export default function App() {
   return (
     <ReactFlowProvider>
       <main className={`app${chromeHidden ? ' chrome-hidden' : ''}`}>
-        <GraphView
-          theme={theme}
-          layout={layout}
-          layoutMode={layoutMode}
-          selectedId={selectedId}
-          matchIds={matchIds}
-          focusTag={focusTag}
-          kindFilter={kindFilter}
-          focusNodeId={focusNodeId}
-          expanded={expanded}
-          showAllConstructions={showAllConstructions}
-          onToggleExpand={toggleExpand}
-          revealTarget={revealTarget}
-          revealNonce={revealNonce}
-          onSelect={setSelectedId}
-          onAreaChange={onAreaChange}
-        />
+        {/* Mount the graph only once a layout exists, so its camera/intro-tour
+            logic still sees a ready layout. The worker computes asynchronously;
+            until the first result (or a cache hit) the canvas shows "Arranging…". */}
+        {layout.nodes.length > 0 && (
+          <GraphView
+            theme={theme}
+            layout={layout}
+            layoutMode={layoutMode}
+            selectedId={selectedId}
+            matchIds={matchIds}
+            focusTag={focusTag}
+            kindFilter={kindFilter}
+            focusNodeId={focusNodeId}
+            expanded={expanded}
+            showAllConstructions={showAllConstructions}
+            onToggleExpand={toggleExpand}
+            revealTarget={revealTarget}
+            revealNonce={revealNonce}
+            onSelect={setSelectedId}
+            onAreaChange={onAreaChange}
+          />
+        )}
 
         {loading && <div className="layout-loading">Arranging…</div>}
 

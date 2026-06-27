@@ -1,43 +1,53 @@
-import { useEffect, useMemo, useState } from 'react'
-import { dagreLayoutFor, elkLayout, type LayoutMode, type LayoutResult } from '../graph/layout'
+import { useEffect, useState } from 'react'
+import { cachedLayout, elkLayout, graphvizLayout, type LayoutMode, type LayoutResult } from '../graph/layout'
 
 const EMPTY_LAYOUT: LayoutResult = { nodes: [], edges: [], clusters: [] }
 
+type State = { layout: LayoutResult; loading: boolean }
+
+function initial(mode: LayoutMode, hidden: ReadonlySet<string>, enabled: boolean): State {
+  if (!enabled) return { layout: EMPTY_LAYOUT, loading: false }
+  const cached = cachedLayout(mode, hidden)
+  return cached ? { layout: cached, loading: false } : { layout: EMPTY_LAYOUT, loading: true }
+}
+
 /**
- * Resolve the active layout for the current engine and the set of hidden nodes
- * (collapsed constructions). The dagre layouts are synchronous; ELK is computed
- * lazily and cached per visible-node set, with the grouped dagre layout shown as
- * a fallback while it loads so the canvas never goes blank.
+ * Resolve the active layout for the current engine and visible-node set. The
+ * heavy work runs off the main thread: `grouped`/`flow` go through the Graphviz
+ * worker, `compact` through ELK. A localStorage cache (keyed by node structure)
+ * fills in instantly on a repeat load; otherwise the last good layout stays on
+ * screen, `loading` flips true, and the fresh one swaps in when it's ready.
  *
- * `hidden` must be a stable reference (memoize it in the caller) — its identity
- * is what drives recomputation.
+ * `hidden` must be a stable reference (memoize it in the caller).
+ * `enabled` is false on the mobile list shell, where the graph isn't shown.
  */
-export function useLayout(
-  mode: LayoutMode,
-  hidden: ReadonlySet<string>,
-  enabled = true,
-): { layout: LayoutResult; loading: boolean } {
-  // Skip the (expensive, ~900-node) layout entirely when the graph isn't shown
-  // — e.g. the mobile list shell. No point spending seconds arranging it.
-  const dagre = useMemo(
-    () => (enabled ? dagreLayoutFor(mode, hidden) : EMPTY_LAYOUT),
-    [mode, hidden, enabled],
-  )
-  const [elk, setElk] = useState<{ hidden: ReadonlySet<string>; layout: LayoutResult } | null>(null)
+export function useLayout(mode: LayoutMode, hidden: ReadonlySet<string>, enabled = true): State {
+  const [state, setState] = useState<State>(() => initial(mode, hidden, enabled))
 
   useEffect(() => {
-    if (!enabled || mode !== 'compact' || elk?.hidden === hidden) return
+    if (!enabled) {
+      setState({ layout: EMPTY_LAYOUT, loading: false })
+      return
+    }
+    const cached = cachedLayout(mode, hidden)
+    if (cached) {
+      setState({ layout: cached, loading: false })
+      return
+    }
     let cancelled = false
-    elkLayout(hidden).then((layout) => {
-      if (!cancelled) setElk({ hidden, layout })
-    })
+    setState((s) => ({ layout: s.layout, loading: true })) // keep last good on screen
+    const compute = mode === 'compact' ? elkLayout(hidden) : graphvizLayout(mode, hidden)
+    compute
+      .then((layout) => {
+        if (!cancelled) setState({ layout, loading: false })
+      })
+      .catch(() => {
+        if (!cancelled) setState((s) => ({ ...s, loading: false }))
+      })
     return () => {
       cancelled = true
     }
-  }, [mode, hidden, elk, enabled])
+  }, [mode, hidden, enabled])
 
-  if (mode === 'compact' && elk && elk.hidden === hidden) {
-    return { layout: elk.layout, loading: false }
-  }
-  return { layout: dagre, loading: mode === 'compact' }
+  return state
 }
