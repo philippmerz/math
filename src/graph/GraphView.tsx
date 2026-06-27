@@ -34,6 +34,10 @@ const CLUSTER_PAD = 26
 // and we name its dominant area; at or above it (zoomed out) we show nothing.
 const FOCUSED_FRACTION = 0.6
 
+// The intro tour runs at most once per session — GraphView remounts on an engine
+// swap, and we don't want to replay it then.
+let introShown = false
+
 /** The dominant mathematical area(s) among the nodes inside the viewport. */
 function areaInView(vp: Viewport, nodes: ConceptNodeType[]): string | null {
   const { x, y, zoom } = vp
@@ -117,13 +121,18 @@ export function GraphView({
   // A one-time cinematic pan across the graph on first load (desktop only).
   // Planned once, from the initial layout, so the camera can start already
   // framed on the pan's beginning rather than fitting the whole graph first.
+  // Only the first GraphView mount of the session runs it — switching the engine
+  // remounts this component (see the `key` in App), and we don't want to replay
+  // the tour each time; a null plan lets React Flow's own fitView frame the swap.
   const [introPlan] = useState<IntroPlan | null>(() => {
+    if (introShown) return null
     // A deep link (?field / ?node) should land on its target, not run the tour.
     const params = new URLSearchParams(window.location.search)
     if (params.has('field') || params.has('node')) return null
     const desktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (!desktop || reduced) return null
+    introShown = true
     return planFieldTour(layout.clusters, window.innerWidth, window.innerHeight)
   })
   useIntroTour(introPlan)
@@ -144,34 +153,77 @@ export function GraphView({
     setNodes(layout.nodes)
   }, [layout, setNodes])
 
-  // Re-fit the whole graph on a "global" view change — engine swap or the
+  // Queue a re-fit on a "global" view change — engine swap or the
   // show-all-constructions toggle. Compare against the previous values so that
   // neither the initial mount nor StrictMode's double-invoked effect fires a
   // spurious fit (which would otherwise stomp the intro's starting viewport).
   const prevView = useRef({ layoutMode, showAllConstructions })
+  const pendingFit = useRef(false)
   useEffect(() => {
     if (
-      prevView.current.layoutMode === layoutMode &&
-      prevView.current.showAllConstructions === showAllConstructions
+      prevView.current.layoutMode !== layoutMode ||
+      prevView.current.showAllConstructions !== showAllConstructions
     ) {
-      return
+      prevView.current = { layoutMode, showAllConstructions }
+      pendingFit.current = true
     }
-    prevView.current = { layoutMode, showAllConstructions }
-    const id = window.setTimeout(() => rf.fitView({ padding: 0.2, duration: 400 }), 60)
-    return () => window.clearTimeout(id)
-  }, [layoutMode, showAllConstructions, rf])
+  }, [layoutMode, showAllConstructions])
 
-  // After expanding/collapsing one canonical, frame it and any revealed
-  // constructions, so focus stays put rather than re-fitting the whole graph.
+  // Queue framing the just-expanded canonical (and any revealed constructions)
+  // instead of re-fitting the whole graph.
+  const pendingReveal = useRef<string | null>(null)
   useEffect(() => {
-    if (!revealTarget) return
-    const ids = [
-      revealTarget,
-      ...(isoGroupByCanonical.get(revealTarget)?.variants ?? []),
-    ].map((id) => ({ id }))
-    const t = window.setTimeout(() => rf.fitView({ nodes: ids, padding: 0.4, duration: 500 }), 90)
-    return () => window.clearTimeout(t)
-  }, [revealNonce, revealTarget, rf])
+    if (revealTarget) pendingReveal.current = revealTarget
+  }, [revealNonce, revealTarget])
+
+  // Run the queued camera move (show-all-constructions toggle or a construction
+  // reveal — engine swaps remount instead, see App) once the new off-thread
+  // layout arrives. We compute the target viewport from the layout's own
+  // positions and setViewport directly: with onlyRenderVisibleElements a relayout
+  // can leave the camera over empty space where nothing is rendered/measured, and
+  // React Flow's fitView/fitBounds then no-op and strand the view.
+  useEffect(() => {
+    if (!pendingReveal.current && !pendingFit.current) return
+    const target = pendingReveal.current
+    pendingReveal.current = null
+    pendingFit.current = false
+    const subset = target
+      ? ((ids) => layout.nodes.filter((n) => ids.has(n.id)))(
+          new Set([target, ...(isoGroupByCanonical.get(target)?.variants ?? [])]),
+        )
+      : layout.nodes
+    if (subset.length === 0) return
+    let minX = Infinity
+    let minY = Infinity
+    let maxX = -Infinity
+    let maxY = -Infinity
+    for (const n of subset) {
+      minX = Math.min(minX, n.position.x)
+      minY = Math.min(minY, n.position.y)
+      maxX = Math.max(maxX, n.position.x + (n.width ?? NODE_WIDTH))
+      maxY = Math.max(maxY, n.position.y + (n.height ?? NODE_HEIGHT))
+    }
+    const w = maxX - minX
+    const h = maxY - minY
+    // Set the viewport directly from the computed bounds. React Flow's own
+    // fitView needs measured nodes, and with onlyRenderVisibleElements a swap can
+    // leave the camera over empty space where nothing is rendered/measured —
+    // computing the target ourselves frames the new layout regardless.
+    const pad = target ? 0.7 : 0.92 // fraction of the pane the bounds should fill
+    const raf = requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        const pane = document.querySelector('.react-flow')
+        if (!pane) return
+        const { width: pw, height: ph } = pane.getBoundingClientRect()
+        const zoom = Math.max(0.05, Math.min((pw / w) * pad, (ph / h) * pad, 5))
+        rf.setViewport(
+          { x: pw / 2 - (minX + w / 2) * zoom, y: ph / 2 - (minY + h / 2) * zoom, zoom },
+          { duration: 400 },
+        )
+      }),
+    )
+    return () => cancelAnimationFrame(raf)
+  }, [layout, rf])
 
   // Report once after the initial fitView settles, then on every camera move.
   useEffect(() => {

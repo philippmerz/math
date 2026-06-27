@@ -183,6 +183,7 @@ export default function App() {
             until the first result (or a cache hit) the canvas shows "Arranging…". */}
         {layout.nodes.length > 0 && (
           <GraphView
+            key={layoutMode}
             theme={theme}
             layout={layout}
             layoutMode={layoutMode}

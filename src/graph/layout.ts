@@ -59,6 +59,12 @@ function rfNode(node: MathNode, x: number, y: number): ConceptNode {
     id: node.id,
     type: 'concept',
     position: { x, y },
+    // Explicit dimensions (the nodes are fixed-size, and the layout assumes
+    // exactly these) so React Flow can frame the graph without the nodes being
+    // on-screen first — fitView would otherwise no-op when culling has unmounted
+    // every node, e.g. right after a layout swap leaves the camera off in space.
+    width: NODE_WIDTH,
+    height: NODE_HEIGHT,
     data: { label: node.label, kind: node.kind },
     sourcePosition: Position.Bottom,
     targetPosition: Position.Top,
@@ -71,52 +77,27 @@ function rfNode(node: MathNode, x: number, y: number): ConceptNode {
 // together and separates them. dagre did this too, but in JS it cost ~7s for
 // ~900 nodes; Graphviz's compiled `dot` does the same in well under a second.
 
-// Spacing (in inches; the node box is set to our real px size ÷ 72dpi, so the
-// output points map 1:1 to pixels). Graphviz packs wider than dagre did, so the
-// grouped numbers lean taller-and-tighter (more ranksep, less nodesep) to land
-// near dagre's ~7:1 aspect instead of sprawling out to ~10:1.
-const DOT_SPACING = {
-  grouped: { ranksep: 1.9, nodesep: 0.2 },
+// Layout tuning (Graphviz ranksep/nodesep, in inches; the node box is set to our
+// real px size ÷ 72dpi, so output points map 1:1 to pixels). `field` is the
+// within-field pass, `fieldDag` stacks the fields, `flow` is the un-clustered
+// single pass. Part of the cache signature, so retuning invalidates stale
+// positions instead of silently reusing them.
+const LAYOUT_PARAMS = {
   flow: { ranksep: 1.1, nodesep: 0.55 },
+  field: { ranksep: 0.5, nodesep: 0.2 },
+  fieldDag: { ranksep: 1.6, nodesep: 0.6 },
 }
+const LAYOUT_SIG = JSON.stringify(LAYOUT_PARAMS)
 
-// The graph-level options that shape the layout. Part of the cache signature, so
-// changing any of them invalidates stale cached positions. newrank ranks every
-// node in one global pass (instead of per-cluster, the default), so fields
-// cascade top-to-bottom by their dependencies rather than sitting side-by-side.
-function graphOpts(clustered: boolean): string {
-  const { ranksep, nodesep } = clustered ? DOT_SPACING.grouped : DOT_SPACING.flow
-  return `rankdir=TB, ranksep=${ranksep}, nodesep=${nodesep}${clustered ? ', newrank=true' : ''}`
-}
-
-function buildDot(nodes: MathNode[], clustered: boolean): string {
+// The structural slice the worker needs — id, its field, and its visible deps.
+type LayoutNode = { id: string; field: string; deps: string[] }
+function payloadFor(nodes: MathNode[]): LayoutNode[] {
   const visible = new Set(nodes.map((n) => n.id))
-  const w = (NODE_WIDTH / 72).toFixed(3)
-  const h = (NODE_HEIGHT / 72).toFixed(3)
-  let s = `digraph G {\n  graph [${graphOpts(clustered)}];\n`
-  s += `  node [shape=box, fixedsize=true, width=${w}, height=${h}];\n`
-  if (clustered) {
-    const byArea = new Map<string, MathNode[]>()
-    for (const n of nodes) {
-      const list = byArea.get(primaryArea(n))
-      if (list) list.push(n)
-      else byArea.set(primaryArea(n), [n])
-    }
-    let ci = 0
-    for (const list of byArea.values()) {
-      s += `  subgraph "cluster_${ci++}" {\n`
-      for (const n of list) s += `    "${n.id}";\n`
-      s += `  }\n`
-    }
-  } else {
-    for (const n of nodes) s += `  "${n.id}";\n`
-  }
-  for (const n of nodes) {
-    for (const dep of n.dependencies) {
-      if (visible.has(dep)) s += `  "${dep}" -> "${n.id}";\n`
-    }
-  }
-  return s + '}\n'
+  return nodes.map((n) => ({
+    id: n.id,
+    field: primaryArea(n),
+    deps: n.dependencies.filter((d) => visible.has(d)),
+  }))
 }
 
 // Hull boxes from the actual node bounds (not any reported cluster box) — the
@@ -166,11 +147,18 @@ function layoutWorker(): Worker {
   return worker
 }
 
-function runLayout(dot: string): Promise<PosMap> {
+function runLayout(mode: LayoutMode, nodes: LayoutNode[]): Promise<PosMap> {
   return new Promise((resolve, reject) => {
     const reqId = ++seq
     pending.set(reqId, { resolve, reject })
-    layoutWorker().postMessage({ reqId, dot })
+    layoutWorker().postMessage({
+      reqId,
+      mode,
+      nodes,
+      nodeW: NODE_WIDTH,
+      nodeH: NODE_HEIGHT,
+      params: LAYOUT_PARAMS,
+    })
   })
 }
 
@@ -182,7 +170,7 @@ export async function graphvizLayout(
 ): Promise<LayoutResult> {
   const nodes = visibleNodes(hidden)
   const clustered = mode !== 'flow'
-  const pos = await runLayout(buildDot(nodes, clustered))
+  const pos = await runLayout(mode, payloadFor(nodes))
   const rfNodes = nodes.map((n) => {
     const [cx, cy] = pos[n.id] ?? [0, 0]
     return rfNode(n, cx - NODE_WIDTH / 2, cy - NODE_HEIGHT / 2)
@@ -207,9 +195,9 @@ const cacheKey = (mode: LayoutMode) => `mathgraph-gvlayout-${mode}`
 
 function layoutSignature(mode: LayoutMode, nodes: MathNode[]): string {
   let h = 0x811c9dc5
-  // The graph options are part of the signature, so retuning spacing/newrank
-  // invalidates stale cached positions rather than silently reusing them.
-  const s = `${graphOpts(mode !== 'flow')}|${nodes
+  // The layout params are part of the signature, so retuning them invalidates
+  // stale cached positions rather than silently reusing them.
+  const s = `${mode}|${LAYOUT_SIG}|${nodes
     .map((n) => `${n.id}>${n.dependencies.join(',')}#${n.tags[0] ?? ''}`)
     .join('|')}`
   for (let i = 0; i < s.length; i++) {
