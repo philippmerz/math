@@ -72,10 +72,11 @@ function rfNode(node: MathNode, x: number, y: number): ConceptNode {
 // ~900 nodes; Graphviz's compiled `dot` does the same in well under a second.
 
 // Spacing (in inches; the node box is set to our real px size ÷ 72dpi, so the
-// output points map 1:1 to pixels). Tuned to echo the old dagre proportions:
-// taller-and-narrower when clustered.
+// output points map 1:1 to pixels). Graphviz packs wider than dagre did, so the
+// grouped numbers lean taller-and-tighter (more ranksep, less nodesep) to land
+// near dagre's ~7:1 aspect instead of sprawling out to ~10:1.
 const DOT_SPACING = {
-  grouped: { ranksep: 1.4, nodesep: 0.3 },
+  grouped: { ranksep: 1.9, nodesep: 0.2 },
   flow: { ranksep: 1.1, nodesep: 0.55 },
 }
 
@@ -84,7 +85,11 @@ function buildDot(nodes: MathNode[], clustered: boolean): string {
   const w = (NODE_WIDTH / 72).toFixed(3)
   const h = (NODE_HEIGHT / 72).toFixed(3)
   const { ranksep, nodesep } = clustered ? DOT_SPACING.grouped : DOT_SPACING.flow
-  let s = `digraph G {\n  graph [rankdir=TB, ranksep=${ranksep}, nodesep=${nodesep}];\n`
+  // newrank ranks every node in one global pass (instead of per-cluster, the
+  // default), so fields cascade top-to-bottom by their dependencies instead of
+  // sitting side-by-side — and the layout comes out ~40% narrower.
+  const opts = `rankdir=TB, ranksep=${ranksep}, nodesep=${nodesep}${clustered ? ', newrank=true' : ''}`
+  let s = `digraph G {\n  graph [${opts}];\n`
   s += `  node [shape=box, fixedsize=true, width=${w}, height=${h}];\n`
   if (clustered) {
     const byArea = new Map<string, MathNode[]>()
