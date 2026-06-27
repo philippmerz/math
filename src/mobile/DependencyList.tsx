@@ -1,15 +1,26 @@
-import { useState } from 'react'
-import { dependentsById, nodeById, rootNodes as ROOTS } from '../data/graph'
+import { useEffect, useRef, useState } from 'react'
+import { ancestorsOf, dependentsById, nodeById, rootNodes as ROOTS } from '../data/graph'
+import { MATH_NODES } from '../data/nodes'
+import type { NodeKind } from '../data/types'
 
 type Props = {
   onOpen: (id: string) => void
+  kindFilter: ReadonlySet<NodeKind>
+  focusTag: string | null
+  /** A node to surface (from search): its dependency chain is opened and it
+   *  scrolls into view. `nonce` lets the same id re-trigger. */
+  revealId: string | null
+  revealNonce: number
 }
 
-export function DependencyList({ onOpen }: Props) {
+const EMPTY: ReadonlySet<string> = new Set()
+
+export function DependencyList({ onOpen, kindFilter, focusTag, revealId, revealNonce }: Props) {
+  const filtering = kindFilter.size > 0 || focusTag != null
   // Roots open by default, so the first level shows immediately.
-  const [expanded, setExpanded] = useState<ReadonlySet<string>>(
-    () => new Set(ROOTS.map((r) => r.id)),
-  )
+  const [expanded, setExpanded] = useState<ReadonlySet<string>>(() => new Set(ROOTS.map((r) => r.id)))
+  const listRef = useRef<HTMLUListElement>(null)
+
   const toggle = (id: string) =>
     setExpanded((prev) => {
       const next = new Set(prev)
@@ -18,8 +29,50 @@ export function DependencyList({ onOpen }: Props) {
       return next
     })
 
+  // Reveal a searched node: open its whole ancestor chain, then scroll to it.
+  useEffect(() => {
+    if (!revealId) return
+    setExpanded((prev) => {
+      const next = new Set(prev)
+      next.add(revealId)
+      for (const a of ancestorsOf([revealId])) next.add(a)
+      return next
+    })
+    const t = window.setTimeout(() => {
+      listRef.current
+        ?.querySelector(`[data-id="${CSS.escape(revealId)}"]`)
+        ?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    }, 90)
+    return () => window.clearTimeout(t)
+  }, [revealId, revealNonce])
+
+  // Filtered: a flat list of just the matching concepts (not the tree).
+  if (filtering) {
+    const matches = MATH_NODES.filter(
+      (n) =>
+        (kindFilter.size === 0 || kindFilter.has(n.kind)) &&
+        (focusTag == null || n.tags.includes(focusTag)),
+    ).sort((a, b) => a.title.localeCompare(b.title))
+    return (
+      <ul className="mlist mlist--padded">
+        {matches.length === 0 ? (
+          <li className="mlist__empty">Nothing matches this filter.</li>
+        ) : (
+          matches.map((n) => (
+            <li key={n.id} className="mlist__item">
+              <button type="button" className="mrow__label mrow__label--flush" onClick={() => onOpen(n.id)}>
+                <span className="mrow__title">{n.title}</span>
+                <span className="mrow__kind">{n.kind}</span>
+              </button>
+            </li>
+          ))
+        )}
+      </ul>
+    )
+  }
+
   return (
-    <ul className="mlist">
+    <ul className="mlist mlist--padded" ref={listRef}>
       {ROOTS.map((n) => (
         <Row
           key={n.id}
@@ -34,8 +87,6 @@ export function DependencyList({ onOpen }: Props) {
     </ul>
   )
 }
-
-const EMPTY: ReadonlySet<string> = new Set()
 
 function Row({
   id,
@@ -60,7 +111,7 @@ function Row({
 
   return (
     <li className="mlist__item">
-      <div className="mrow" style={{ paddingLeft: 12 + depth * 18 }}>
+      <div className="mrow" data-id={id} style={{ paddingLeft: 12 + depth * 18 }}>
         {children.length > 0 ? (
           <button
             type="button"
@@ -82,7 +133,7 @@ function Row({
         </button>
       </div>
       {open && children.length > 0 && (
-        <ul>
+        <ul className="mrow__children">
           {children.map((c) => (
             <Row
               key={c.id}

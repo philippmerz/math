@@ -1,9 +1,8 @@
-import { lazy, Suspense, useState } from 'react'
+import { lazy, Suspense, useMemo, useState } from 'react'
 import { BottomNav, type MobileTab } from './BottomNav'
 import { BottomSheet } from './BottomSheet'
 import { DependencyList } from './DependencyList'
-import { PathSearch } from './PathSearch'
-import { allKinds, allTags, nodeById } from '../data/graph'
+import { allKinds, allTags, nodeById, searchNodes } from '../data/graph'
 import type { NodeKind } from '../data/types'
 import type { Theme } from '../hooks/useTheme'
 
@@ -43,8 +42,18 @@ type Props = {
 
 export function MobileApp(props: Props) {
   const [tab, setTab] = useState<MobileTab>('math')
+  // A node picked from search to surface in the Math list (not the detail sheet).
+  const [reveal, setReveal] = useState<{ id: string | null; nonce: number }>({ id: null, nonce: 0 })
   const filterCount = (props.focusTag ? 1 : 0) + props.kindFilter.size
   const selected = props.selectedId ? nodeById.get(props.selectedId) ?? null : null
+
+  // Picking a search result drops you onto the Math list with the concept opened
+  // in place — clear any filter first so the full tree is there to reveal into.
+  const onSearchPick = (id: string) => {
+    props.onClearFilters()
+    setReveal((r) => ({ id, nonce: r.nonce + 1 }))
+    setTab('math')
+  }
 
   return (
     <div className="mobile">
@@ -53,8 +62,16 @@ export function MobileApp(props: Props) {
       </header>
 
       <main className="mobile__view">
-        {tab === 'math' && <DependencyList onOpen={props.onSelect} />}
-        {tab === 'search' && <PathSearch onOpen={props.onSelect} />}
+        {tab === 'math' && (
+          <DependencyList
+            onOpen={props.onSelect}
+            kindFilter={props.kindFilter}
+            focusTag={props.focusTag}
+            revealId={reveal.id}
+            revealNonce={reveal.nonce}
+          />
+        )}
+        {tab === 'search' && <SearchView onPick={onSearchPick} />}
         {tab === 'filter' && (
           <FilterView
             focusTag={props.focusTag}
@@ -83,6 +100,38 @@ export function MobileApp(props: Props) {
           </Suspense>
         </BottomSheet>
       )}
+    </div>
+  )
+}
+
+// A plain list of matches. Picking one reveals it in the Math list (the graph
+// proper) rather than showing path structure inside the search view itself.
+function SearchView({ onPick }: { onPick: (id: string) => void }) {
+  const [query, setQuery] = useState('')
+  const results = useMemo(() => searchNodes(query).slice(0, 50), [query])
+  const q = query.trim()
+  return (
+    <div className="mview">
+      <input
+        className="mview__search"
+        type="text"
+        placeholder="Search concepts…"
+        value={query}
+        autoFocus
+        spellCheck={false}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      {q && results.length === 0 && <p className="mview__empty">No matches.</p>}
+      <ul className="mlist">
+        {results.map((n) => (
+          <li key={n.id} className="mlist__item">
+            <button type="button" className="mrow__label mrow__label--flush" onClick={() => onPick(n.id)}>
+              <span className="mrow__title">{n.title}</span>
+              <span className="mrow__kind">{n.kind}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

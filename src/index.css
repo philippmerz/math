@@ -1667,3 +1667,32 @@ body.is-col-resizing {
   cursor: ew-resize;
   user-select: none;
 }
+
+/* ---- mobile list: flush rows, top reach-padding, expand transition ----- */
+.mrow__label--flush {
+  padding-left: 16px;
+}
+/* breathing room at the top so the first rows sit in thumb reach, not jammed
+   under the header (task: scroll/reach the topmost item comfortably) */
+.mlist--padded {
+  padding-top: 20vh;
+}
+.mlist__empty {
+  padding: 14px 16px;
+  color: var(--muted);
+  font-size: 14px;
+}
+/* expand/collapse: dependents slide + fade in when a row opens */
+.mrow__children {
+  animation: mrow-expand 180ms ease;
+}
+@keyframes mrow-expand {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
