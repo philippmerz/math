@@ -1,5 +1,6 @@
 import { lazy, Suspense, useState } from 'react'
 import { BottomNav, type MobileTab } from './BottomNav'
+import { BottomSheet } from './BottomSheet'
 import { DependencyList } from './DependencyList'
 import { PathSearch } from './PathSearch'
 import { allKinds, allTags, nodeById } from '../data/graph'
@@ -72,9 +73,15 @@ export function MobileApp(props: Props) {
       <BottomNav active={tab} onChange={setTab} filterCount={filterCount} />
 
       {selected && (
-        <Suspense fallback={null}>
-          <DefinitionPanel node={selected} onClose={() => props.onSelect(null)} onNavigate={props.onSelect} />
-        </Suspense>
+        <BottomSheet onClose={() => props.onSelect(null)}>
+          <Suspense fallback={null}>
+            <DefinitionPanel
+              node={selected}
+              onClose={() => props.onSelect(null)}
+              onNavigate={props.onSelect}
+            />
+          </Suspense>
+        </BottomSheet>
       )}
     </div>
   )
