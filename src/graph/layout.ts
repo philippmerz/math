@@ -80,16 +80,20 @@ const DOT_SPACING = {
   flow: { ranksep: 1.1, nodesep: 0.55 },
 }
 
+// The graph-level options that shape the layout. Part of the cache signature, so
+// changing any of them invalidates stale cached positions. newrank ranks every
+// node in one global pass (instead of per-cluster, the default), so fields
+// cascade top-to-bottom by their dependencies rather than sitting side-by-side.
+function graphOpts(clustered: boolean): string {
+  const { ranksep, nodesep } = clustered ? DOT_SPACING.grouped : DOT_SPACING.flow
+  return `rankdir=TB, ranksep=${ranksep}, nodesep=${nodesep}${clustered ? ', newrank=true' : ''}`
+}
+
 function buildDot(nodes: MathNode[], clustered: boolean): string {
   const visible = new Set(nodes.map((n) => n.id))
   const w = (NODE_WIDTH / 72).toFixed(3)
   const h = (NODE_HEIGHT / 72).toFixed(3)
-  const { ranksep, nodesep } = clustered ? DOT_SPACING.grouped : DOT_SPACING.flow
-  // newrank ranks every node in one global pass (instead of per-cluster, the
-  // default), so fields cascade top-to-bottom by their dependencies instead of
-  // sitting side-by-side — and the layout comes out ~40% narrower.
-  const opts = `rankdir=TB, ranksep=${ranksep}, nodesep=${nodesep}${clustered ? ', newrank=true' : ''}`
-  let s = `digraph G {\n  graph [${opts}];\n`
+  let s = `digraph G {\n  graph [${graphOpts(clustered)}];\n`
   s += `  node [shape=box, fixedsize=true, width=${w}, height=${h}];\n`
   if (clustered) {
     const byArea = new Map<string, MathNode[]>()
@@ -203,7 +207,9 @@ const cacheKey = (mode: LayoutMode) => `mathgraph-gvlayout-${mode}`
 
 function layoutSignature(mode: LayoutMode, nodes: MathNode[]): string {
   let h = 0x811c9dc5
-  const s = `${mode}|${nodes
+  // The graph options are part of the signature, so retuning spacing/newrank
+  // invalidates stale cached positions rather than silently reusing them.
+  const s = `${graphOpts(mode !== 'flow')}|${nodes
     .map((n) => `${n.id}>${n.dependencies.join(',')}#${n.tags[0] ?? ''}`)
     .join('|')}`
   for (let i = 0; i < s.length; i++) {
