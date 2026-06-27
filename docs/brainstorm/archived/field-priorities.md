@@ -1,5 +1,7 @@
 # Field priorities
 
+> **STATUS (2026-06-27): all done.** All 20 ranked fields below AND all 10 honorable mentions have been built, in the fine-grained typed schema with proofs, and run through the migrate→verify→fix→re-verify pipeline. The graph now spans **53 areas / ~1035 nodes** (acyclic, every node renders, `tsc`/build green). The list below is kept as the historical roadmap.
+
 The next 20 mathematical fields to add, ordered by value. "Value" weighs four things: how foundational/central the field is, how strongly it connects to areas already in the graph (cross-links over redundancy), how large a coverage gap it fills, and how broadly it is used. Each entry notes the existing nodes it would build on or link to.
 
 Current areas (24): Algebra, Algebraic Topology, Analysis, Category Theory, Combinatorics, Complex Analysis, Differential Equations, Differential Geometry, Functional Analysis, Geometry, Graph Theory, Linear Algebra, Logic, Measure Theory, Multivariable Calculus, Number Theory, Optimization, Order Theory, Probability, Set Theory, Statistics, Topology, Trigonometry, Type Theory.
@@ -46,6 +48,9 @@ Current areas (24): Algebra, Algebraic Topology, Analysis, Category Theory, Comb
 
 20. **Machine Learning Theory** — empirical risk minimization, bias–variance, VC dimension and generalization, kernels, regularization. Bridges **Statistics, Probability, Optimization**; high contemporary relevance and a natural sink for `bias-variance-tradeoff`, `gradient-descent`, and `rkhs`-style ideas.
 
-## Honorable mentions (next 20)
+## Honorable mentions — BUILT (2026-06-27)
 
-Operator Algebras (C\*/von Neumann, quantum) · Set Theory depth (forcing, large cardinals) · Coding Theory · Universal Algebra · Symplectic Geometry · Proof Theory · Tensor/Multilinear Algebra · Descriptive Set Theory · Knot Theory · Spectral Geometry.
+All ten added as full areas in the fine-grained schema (verified + fixed + re-verified):
+Operator Algebras (C\*/von Neumann) · Set Theory depth (forcing, V=L, independence of CH, large cardinals — folded into the Set Theory area) · Coding Theory · Universal Algebra · Symplectic Geometry · Proof Theory · Multilinear Algebra (tensor/exterior) · Descriptive Set Theory · Knot Theory · Spectral Geometry.
+
+Possible *future* honorable mentions (not yet built): Descriptive complexity · Tropical geometry · Matroid theory · Nonstandard analysis depth · Random matrix theory · Operadic/higher category theory.

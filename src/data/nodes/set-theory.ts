@@ -821,4 +821,214 @@ $$\alpha + 0 = \alpha, \qquad \alpha + (\beta + 1) = (\alpha + \beta) + 1, \qqua
 $$\alpha \cdot 0 = 0, \qquad \alpha \cdot (\beta + 1) = \alpha \cdot \beta + \alpha, \qquad \alpha \cdot \lambda = \bigcup_{\beta \in \lambda} \alpha \cdot \beta\ \ (\lambda \text{ limit}).$$`,
     proof: String.raw`**Well-definedness.** As with addition, the clauses give the value at $0$, at successors (via the predecessor's value and one further addition), and at limits (as a union), which is precisely a transfinite recursion on $\beta$; the Transfinite Recursion theorem supplies a unique such operation, and induction shows each $\alpha \cdot \beta$ is an ordinal. $\square$`,
   },
+
+  // ── Cofinality and the continuum problem ────────────────────────────────────
+  {
+    id: 'cofinality',
+    label: 'Cofinality',
+    title: 'Cofinality, Regular & Singular Cardinals',
+    kind: 'definition',
+    tags: ['Set Theory'],
+    dependencies: ['limit-ordinal', 'cardinal-number', 'ordinal-trichotomy', 'image'],
+    description: String.raw`How "long a reach" does it take to climb to a limit ordinal from below? The **cofinality** $\operatorname{cf}(\lambda)$ is the shortest length of an unbounded ascending sequence converging up to $\lambda$ — the least number of steps that exhausts it. A cardinal is **regular** when it cannot be reached by fewer steps than its own size ($\operatorname{cf}(\kappa) = \kappa$) and **singular** otherwise. Successor cardinals like $\aleph_1$ are regular; $\aleph_\omega$ is singular, reached in only $\omega$ steps. Cofinality measures how "approachable from below" a cardinal is, and it governs which cardinal equalities König's theorem forbids.`,
+    definition: String.raw`A subset $C \subseteq \lambda$ of a limit ordinal $\lambda$ is **cofinal** (unbounded) in $\lambda$ if $\sup C = \lambda$, i.e. $\forall \alpha \in \lambda\,\exists \gamma \in C\,(\alpha \in \gamma)$. The **cofinality** $\operatorname{cf}(\lambda)$ is the least order type of a cofinal subset — equivalently the least ordinal $\delta$ admitting an increasing map $f : \delta \to \lambda$ with cofinal image. Then $\operatorname{cf}(\lambda)$ is always a regular cardinal $\le \lambda$. An infinite cardinal $\kappa$ is **regular** when $\operatorname{cf}(\kappa) = \kappa$ and **singular** when $\operatorname{cf}(\kappa) < \kappa$.`,
+    proof: String.raw`**$\operatorname{cf}(\lambda)$ is a regular cardinal.** Among the cofinal subsets of $\lambda$, choose one $C$ of least order type $\delta = \operatorname{cf}(\lambda)$, realized by the increasing enumeration $f : \delta \to \lambda$ with $f[\delta]$ cofinal; $\delta$ is a limit ordinal, since a cofinal set with a greatest element would let that element bound $\lambda$. If some $D \subseteq \delta$ were cofinal in $\delta$ with order type $\delta' < \delta$, then $f[D]$ would be cofinal in $\lambda$ (for $\alpha \in \lambda$ pick $\gamma \in \delta$ with $\alpha \in f(\gamma)$, then $\xi \in D$ with $\gamma \in \xi$, so $\alpha \in f(\gamma) \in f(\xi)$) of order type $\le \delta' < \delta$ — contradicting minimality. So $\delta$ has no shorter cofinal subset, i.e. $\operatorname{cf}(\delta) = \delta$. Finally $\delta$ is a cardinal. Suppose $\kappa := |\delta| < \delta$ and fix a surjection $g : \kappa \to \delta$ (a bijection serves; note $g$ need not be order-preserving). Define $h : \kappa \to \delta$ by recursion $h(\xi) = \max\bigl(g(\xi),\ \sup\{\,h(\eta)+1 : \eta < \xi\,\}\bigr)$; each value stays below $\delta$ because $\operatorname{cf}(\delta) = \delta$ is a limit and $\{h(\eta) : \eta < \xi\}$ is a set of fewer than $\delta$ ordinals below $\delta$, hence bounded. Then $h$ is strictly increasing, and its image is cofinal in $\delta$ since $h(\xi) \ge g(\xi)$ makes it dominate the cofinal set $g[\kappa] = \delta$. Thus $\delta$ has a cofinal subset of order type $\le \kappa < \delta$, contradicting $\operatorname{cf}(\delta) = \delta$. So $\kappa = \delta$, i.e. $\delta$ is initial — a cardinal. Hence $\operatorname{cf}(\lambda)$ is a regular cardinal. $\square$`,
+  },
+  {
+    id: 'continuum-hypothesis',
+    label: 'Continuum Hypothesis',
+    title: 'Continuum Hypothesis (CH) & GCH',
+    kind: 'definition',
+    tags: ['Set Theory'],
+    dependencies: ['cardinal-number', 'cantors-theorem', 'power-set', 'countable-uncountable', 'cofinality'],
+    description: String.raw`Cantor's theorem makes $2^{\aleph_0} = |\mathcal{P}(\mathbb{N})| = |\mathbb{R}|$ strictly larger than $\aleph_0$, but how much larger? The **Continuum Hypothesis** is Cantor's conjecture that there is *no* size strictly between the countable and the continuum — the reals are the very next cardinal, $2^{\aleph_0} = \aleph_1$. The **Generalized** form says the same at every infinite cardinal: $2^{\aleph_\alpha} = \aleph_{\alpha+1}$. First on Hilbert's 1900 list, CH turned out to be neither provable nor refutable from ZFC — true in Gödel's $L$, false in suitable Cohen extensions — the prototype of an independence result.`,
+    definition: String.raw`The **Continuum Hypothesis** (CH) is the statement
+$$2^{\aleph_0} = \aleph_1,$$
+equivalently: every uncountable set of reals is in bijection with $\mathbb{R}$ (no cardinality lies strictly between $|\mathbb{N}|$ and $|\mathbb{R}|$). The **Generalized Continuum Hypothesis** (GCH) asserts $2^{\aleph_\alpha} = \aleph_{\alpha+1}$ for every ordinal $\alpha$ — i.e. $2^\kappa = \kappa^+$ (the least cardinal $> \kappa$) for every infinite cardinal $\kappa$. By **Cantor's theorem** $2^\kappa > \kappa$ always, and by König's theorem $\operatorname{cf}(2^\kappa) > \kappa$; CH and GCH posit that, beyond these, the power operation jumps by exactly one step.`,
+  },
+
+  // ── Inner models, absoluteness, and the constructible universe ───────────────
+  {
+    id: 'inner-model',
+    label: 'Inner Model',
+    title: 'Inner Model (Transitive Class Model of ZF)',
+    kind: 'definition',
+    tags: ['Set Theory'],
+    dependencies: ['transitive-set', 'ordinal', 'ordinals-proper-class', 'first-order-logic'],
+    description: String.raw`An **inner model** is a sub-universe of the set-theoretic universe $V$ that is itself a model of ZF: a transitive class, containing all the ordinals, and closed enough to verify the axioms when its quantifiers are read as ranging over the class. Inner models are the tool for relative-consistency proofs by *restriction* — to show ZF cannot refute a statement $\varphi$, one exhibits an inner model satisfying $\varphi$. Gödel's $L$ is the smallest such model; the technique complements forcing, which instead *enlarges* the universe.`,
+    definition: String.raw`A class $M$ (defined by a first-order formula, possibly with parameters) is an **inner model** of ZF if it is (i) **transitive** — $x \in M$ and $y \in x$ imply $y \in M$; (ii) **almost universal** / closed under the basic set operations and containing every ordinal, $\mathrm{Ord} \subseteq M$; and (iii) a **model of ZF**, meaning every ZF axiom holds in $M$ when each quantifier $\forall x, \exists x$ is **relativized** to $M$ (written $\varphi^M$, the result of replacing $\forall x$ by $\forall x \in M$ and $\exists x$ by $\exists x \in M$ throughout $\varphi$). Since $M$ is a proper class, "$M \models \varphi$" is the schema asserting each $\varphi^M$; satisfaction is expressed formula-by-formula in the ambient theory rather than by a single truth predicate.`,
+  },
+  {
+    id: 'absoluteness',
+    label: 'Absoluteness',
+    title: 'Absoluteness & Δ₀ Formulas',
+    kind: 'definition',
+    tags: ['Set Theory'],
+    dependencies: ['inner-model', 'transitive-set', 'first-order-logic', 'ordinal', 'regularity'],
+    description: String.raw`A formula is **absolute** for a class $M$ when its truth there matches its truth in the full universe — what $M$ "sees" about its own elements is correct. The bounded ($\Delta_0$) formulas, whose every quantifier is restricted to range over a member of the situation, are absolute for all transitive classes: notions like "$x \subseteq y$", "$x$ is transitive", "$x$ is an ordinal", and the von Neumann naturals mean the same inside any inner model as outside. Absoluteness is the lever that makes inner-model arguments work — it lets one transfer facts between $M$ and $V$ — while *non*-absolute notions like "$x$ is the power set of $y$" or "$x$ is uncountable" are exactly where models can disagree.`,
+    definition: String.raw`A formula is **$\Delta_0$** (bounded) if every quantifier in it is bounded, of the form $\forall x \in y$ or $\exists x \in y$. A formula $\varphi(\bar v)$ is **absolute** between a transitive class $M$ and $V$ (or between two transitive classes) if for all parameters $\bar a \in M$, $\varphi^M(\bar a) \leftrightarrow \varphi(\bar a)$ — its relativization to $M$ agrees with its unrelativized truth. **Theorem (absoluteness of $\Delta_0$).** Every $\Delta_0$ formula is absolute for every transitive class $M$.`,
+    proof: String.raw`**$\Delta_0$ formulas are absolute for transitive $M$.** Induct on the formula. *Atomic* formulas $x \in y$ and $x = y$ mention only membership and equality, whose meaning does not change under relativization, so they are absolute. *Connectives* are immediate: if $\varphi, \psi$ are absolute for $M$ then so are $\neg\varphi$, $\varphi \wedge \psi$, etc., since relativization commutes with the connectives. *Bounded quantifiers:* consider $\exists x \in y\,\varphi$ with parameters $\bar a \in M$ and the bounding parameter $b \in M$. Its relativization is $\exists x \in M\,(x \in b \wedge \varphi^M)$. Because $M$ is **transitive**, $b \in M$ gives $b \subseteq M$, so quantifying "$x \in b$ with $x \in M$" is the same as quantifying "$x \in b$": every witness $x \in b$ already lies in $M$. Hence $\exists x \in b\,\varphi^M$ matches $\exists x \in b\,\varphi$ by the inductive hypothesis, i.e. the bounded existential is absolute; the bounded universal is dual. Consequently "$x$ is transitive", "$x$ is an ordinal" (a $\Delta_0$ condition under Foundation), the pairing and union operations, and "$x = \omega$" are all absolute for every transitive class. $\square$`,
+  },
+  {
+    id: 'constructible-universe',
+    label: 'Constructible Universe L',
+    title: 'The Constructible Universe (L)',
+    kind: 'definition',
+    tags: ['Set Theory'],
+    dependencies: ['inner-model', 'absoluteness', 'transfinite-recursion', 'ordinal', 'power-set', 'definable-set', 'limit-ordinal', 'union'],
+    description: String.raw`Gödel's **constructible universe** $L$ is built like the cumulative hierarchy $V_\alpha$, but at each step one admits only the subsets that are *definable* from the level already in hand — nothing arbitrary, only what the language can pin down. Iterating this restrained power operation along all the ordinals yields $L$, a transitive class containing every ordinal. $L$ is the canonical *minimal* inner model of ZF: it satisfies every axiom of ZFC, and — the point of the construction — it also satisfies the strong combinatorial principle $V = L$, from which Choice and the GCH both follow. It is the inner-model half of the independence story.`,
+    definition: String.raw`For a set $X$, let $\operatorname{Def}(X)$ be the collection of subsets of $X$ that are **definable over the structure** $(X, \in)$ with parameters from $X$ — i.e. sets $\{\,a \in X : (X,\in) \models \varphi[a, \bar b]\,\}$ for some formula $\varphi$ and $\bar b \in X$. The **constructible hierarchy** is defined by transfinite recursion:
+$$L_0 = \varnothing, \qquad L_{\alpha+1} = \operatorname{Def}(L_\alpha), \qquad L_\lambda = \bigcup_{\beta < \lambda} L_\beta\ \ (\lambda \text{ limit}).$$
+The **constructible universe** is the proper class $L = \bigcup_{\alpha \in \mathrm{Ord}} L_\alpha$. Each $L_\alpha$ is transitive with $L_\alpha \cap \mathrm{Ord} = \alpha$, so $L$ is a transitive class containing every ordinal — an **inner model** of ZF.`,
+    proof: String.raw`**$L$ is a transitive class containing all ordinals.** By induction each $L_\alpha$ is transitive: $L_0 = \varnothing$ is; at a limit a union of transitive sets is transitive; and $L_{\alpha+1} = \operatorname{Def}(L_\alpha)$ consists of subsets of the transitive set $L_\alpha$, with $L_\alpha \in L_{\alpha+1}$ (it is defined by $x = x$), so every element of a member of $L_{\alpha+1}$ lies in $L_\alpha \subseteq L_{\alpha+1}$. The hierarchy is increasing, $L_\beta \subseteq L_\alpha$ for $\beta \le \alpha$, so $L = \bigcup_\alpha L_\alpha$ is transitive. A further induction gives $\alpha = L_\alpha \cap \mathrm{Ord}$: the ordinal $\alpha$ itself is $\Delta_0$-definable over $L_\alpha$ (by **absoluteness**, "is an ordinal" holds of the right elements), so $\alpha \in L_{\alpha+1}$, whence $\mathrm{Ord} \subseteq L$. That the relativizations of the ZF axioms hold in $L$ is verified axiom by axiom using the closure of the $\operatorname{Def}$ operation and the absoluteness of the bounded notions — the standard inner-model verification, which we record here without reproducing each axiom. $\square$`,
+  },
+  {
+    id: 'axiom-of-constructibility',
+    label: 'Axiom V=L',
+    title: 'The Axiom of Constructibility (V = L)',
+    kind: 'axiom',
+    tags: ['Set Theory'],
+    dependencies: ['constructible-universe', 'inner-model', 'absoluteness', 'choice', 'continuum-hypothesis'],
+    description: String.raw`The **axiom of constructibility**, $V = L$, asserts that every set is constructible — the universe coincides with Gödel's minimal inner model. It is a powerful *anti-large-universe* principle: it cannot be refuted by ZFC (since $L$ models it), and it settles many independent questions at a stroke. From $V = L$ one proves the Axiom of Choice, the Generalized Continuum Hypothesis, and the existence of definable well-orderings and of various combinatorial objects (Suslin trees, $\diamondsuit$). Its tension with large cardinals — $V = L$ rules out measurable cardinals — is one reason most set theorists treat it as a useful hypothesis rather than a true axiom.`,
+    statement: String.raw`The **Axiom of Constructibility** is the sentence
+$$V = L: \qquad \forall x\,\exists \alpha\,(x \in L_\alpha),$$
+i.e. every set is constructible. It is consistent with ZF relative to ZF (it holds in $L$, and $L^L = L$, so $L \models (V = L)$). Within ZF, $V = L$ implies the **Axiom of Choice** and the **Generalized Continuum Hypothesis**.`,
+    proof: String.raw`**$V = L$ is consistent and $L \models (V = L)$.** The construction of the $L_\alpha$ is absolute between transitive models containing the relevant ordinals: computing the hierarchy inside $L$ gives the same sets, so $(L_\alpha)^L = L_\alpha$ and $L^L = L$. Hence $L \models \forall x\,\exists\alpha\,(x \in L_\alpha)$, i.e. $L \models (V = L)$. Since $L$ is an **inner model** of ZF, this shows ZF $+\,(V=L)$ is consistent if ZF is. The deductions of **Choice** and the **GCH** from $V = L$ are recorded as the theorem on $L$ (the global well-ordering of $L$ by stage-then-definition gives AC; the condensation lemma gives GCH); we do not reprove them here. $\square$`,
+  },
+  {
+    id: 'godel-l-consistency',
+    label: 'Con(ZFC + GCH)',
+    title: 'Gödel: Consistency of AC and GCH with ZF',
+    kind: 'theorem',
+    tags: ['Set Theory'],
+    dependencies: ['constructible-universe', 'axiom-of-constructibility', 'inner-model', 'absoluteness', 'choice', 'continuum-hypothesis', 'cardinal-number', 'cofinality', 'transfinite-recursion', 'lowenheim-skolem', 'cantors-theorem'],
+    description: String.raw`Gödel's 1938 theorem is the first half of the independence of CH: if ZF is consistent, then so is ZF together with the Axiom of Choice *and* the Generalized Continuum Hypothesis. Hence neither AC nor CH can be *refuted* from the other axioms. The proof is the inner-model method in its purest form: the constructible universe $L$ satisfies all of ZFC and GCH, so a contradiction from ZFC + GCH would relativize to a contradiction in $L$, hence in ZF. The key technical input is the **Condensation Lemma**, which forces every constructible subset of $\omega$ to appear at a countable stage.`,
+    statement: String.raw`If ZF is consistent, then ZFC $+$ GCH is consistent. More precisely, ZF proves: $L$ is an inner model satisfying all axioms of ZFC together with the **Generalized Continuum Hypothesis** $2^{\aleph_\alpha} = \aleph_{\alpha+1}$. In particular $\operatorname{Con}(\mathrm{ZF}) \rightarrow \operatorname{Con}(\mathrm{ZFC} + \mathrm{GCH})$, so neither AC nor (G)CH is refutable from ZF.`,
+    proof: String.raw`**Honest sketch (the full proof is the inner-model theory of $L$).** Work in ZF. By the **constructible universe** node, $L$ is a transitive **inner model** of ZF containing every ordinal, and $L \models (V = L)$.
+
+*AC in $L$.* A global well-ordering of $L$ is built by **transfinite recursion**: well-order each $L_{\alpha+1} \setminus L_\alpha$ by ranking its members according to (the Gödel number of) the least formula and the earlier-ordered parameters defining them, and order across stages by least $\alpha$ of appearance. This is a definable well-ordering of the class $L$, from which a choice function for any family in $L$ is read off; so $L \models \mathrm{AC}$, giving $L \models \mathrm{ZFC}$.
+
+*GCH in $L$ via Condensation.* The external input is the **Condensation Lemma**: if $X \preceq (L_\lambda, \in)$ is an elementary substructure with $\lambda$ a limit ordinal, then the transitive collapse of $X$ is exactly some $L_{\bar\lambda}$ with $\bar\lambda \le \lambda$ and $|\bar\lambda| = |X|$. Granting it, fix an infinite cardinal $\kappa$ and a constructible $A \subseteq \kappa$. Then $A \in L_\gamma$ for some $\gamma$; build, by Löwenheim–Skolem inside $L$, an elementary $X \preceq L_\gamma$ with $\kappa \cup \{A\} \subseteq X$ and $|X| = \kappa$. Condensation collapses $X$ to some $L_{\bar\gamma}$ with $|\bar\gamma| = \kappa$, and — since $\kappa+1 \subseteq X$ is fixed pointwise by the collapse (its elements are absolute ordinals) — $A$ is unmoved, so $A \in L_{\bar\gamma}$ with $\bar\gamma < \kappa^+$. Thus every constructible subset of $\kappa$ already appears in $L_{\kappa^+}$, whence in $L$, $|\mathcal{P}(\kappa)| \le |L_{\kappa^+}| = \kappa^+$. With **Cantor's** $2^\kappa > \kappa$ this forces $2^\kappa = \kappa^+$, i.e. $L \models \mathrm{GCH}$.
+
+*Relative consistency.* If ZFC $+$ GCH proved $\bot$, the proof uses finitely many axioms; relativizing each to $L$ yields, by the above, theorems of ZF, so ZF would prove $\bot^L \equiv \bot$. Hence $\operatorname{Con}(\mathrm{ZF}) \rightarrow \operatorname{Con}(\mathrm{ZFC} + \mathrm{GCH})$. $\square$`,
+  },
+
+  // ── Forcing and the independence of CH ──────────────────────────────────────
+  {
+    id: 'forcing-poset',
+    label: 'Forcing Poset',
+    title: 'Forcing Notion (Poset of Conditions)',
+    kind: 'definition',
+    tags: ['Set Theory'],
+    dependencies: ['partial-order', 'subset', 'cardinal-number'],
+    description: String.raw`Forcing builds a new model by adjoining a "generic" object approximated by finite (or small) pieces of information. The pieces are the elements of a **forcing notion** — a partially ordered set of **conditions**, where $p \le q$ means $p$ carries *more* information than $q$ (it *extends* $q$). The crucial combinatorial data are the **dense** sets: a set is dense if every condition can be strengthened into it, so a dense set lists a requirement the generic object will be forced to meet. The **antichains** (sets of pairwise incompatible conditions) control which cardinals are preserved: a poset with no uncountable antichain (the **countable chain condition**) collapses no cardinals.`,
+    definition: String.raw`A **forcing notion** is a partially ordered set $(\mathbb{P}, \le)$ with a greatest element $\mathbb{1}$ (the trivial condition); elements are **conditions**, and $p \le q$ reads "$p$ extends $q$" (is stronger). Two conditions are **compatible** if some $r$ has $r \le p$ and $r \le q$, **incompatible** ($p \perp q$) otherwise. A set $D \subseteq \mathbb{P}$ is **dense** if every $p \in \mathbb{P}$ has an extension $q \le p$ with $q \in D$. An **antichain** is a set of pairwise incompatible conditions; $\mathbb{P}$ has the **countable chain condition** (ccc) if every antichain is countable.`,
+  },
+  {
+    id: 'generic-filter',
+    label: 'Generic Filter',
+    title: 'Generic Filter & the Extension M[G]',
+    kind: 'definition',
+    tags: ['Set Theory'],
+    dependencies: ['forcing-poset', 'inner-model', 'power-set', 'transitive-set', 'first-order-logic', 'countable-uncountable'],
+    description: String.raw`Given a forcing poset $\mathbb{P}$ inside a model $M$, a **generic filter** $G$ is an idealized "decision" selecting one compatible thread of conditions that meets *every* dense set lying in $M$. Such a $G$ is typically not a member of $M$ — it is the genuinely new object. Adjoining it produces the **generic extension** $M[G]$, the smallest model of ZFC containing $M$ and $G$, built from $\mathbb{P}$-names interpreted by $G$. The miracle of the method (the Forcing Theorem) is that truth in $M[G]$ is controlled, condition by condition, from *within* $M$ by the forcing relation $\Vdash$, so one can arrange properties of $M[G]$ without ever stepping outside $M$.`,
+    definition: String.raw`Let $M$ be a transitive model of ZFC and $(\mathbb{P}, \le) \in M$ a forcing notion. A **filter** on $\mathbb{P}$ is $G \subseteq \mathbb{P}$ that is upward closed ($p \in G$, $p \le q \Rightarrow q \in G$) and downward directed (any $p, q \in G$ have a common extension in $G$). The filter $G$ is **$M$-generic** if it meets every dense set belonging to $M$: $G \cap D \neq \varnothing$ for every dense $D \subseteq \mathbb{P}$ with $D \in M$. The **generic extension** $M[G]$ is $\{\,\tau_G : \tau \in M^{\mathbb{P}}\,\}$, the collection of values $\tau_G$ of the $\mathbb{P}$-**names** $\tau \in M$ under the recursive evaluation $\tau_G = \{\,\sigma_G : \exists p \in G\,(\langle \sigma, p\rangle \in \tau)\,\}$; it is the least transitive model of ZFC with $M \subseteq M[G]$ and $G \in M[G]$, sharing the same ordinals as $M$. When $M$ is countable and $\mathbb{P} \in M$, an $M$-generic filter always exists (enumerate the countably many dense sets of $M$ and descend through them).`,
+  },
+  {
+    id: 'cohen-forcing',
+    label: 'Cohen Forcing',
+    title: 'The Cohen Forcing Poset',
+    kind: 'definition',
+    tags: ['Set Theory'],
+    dependencies: ['forcing-poset', 'generic-filter', 'function', 'cardinal-number', 'continuum-hypothesis'],
+    description: String.raw`Cohen's original forcing adds new subsets of $\omega$ — new "Cohen reals" — by finite approximations. A condition is a finite partial function from $\omega$ (or from $\omega \times \kappa$, to add $\kappa$ reals at once) into $\{0,1\}$, ordered by extension; the union of a generic filter is then a total function whose sections are brand-new reals not in the ground model. Taking $\kappa = \aleph_2$ and checking that this poset is ccc — so preserves all cardinals — yields a model with at least $\aleph_2$ reals, forcing $2^{\aleph_0} \ge \aleph_2$ and hence the failure of CH. It is the engine of the second half of the independence proof.`,
+    definition: String.raw`Fix an infinite cardinal $\kappa$ (computed in the ground model $M$). The **Cohen forcing** to add $\kappa$ reals is
+$$\operatorname{Fn}(\omega \times \kappa,\, 2) = \{\, p : p \text{ is a function},\ \operatorname{dom}(p) \text{ is a finite subset of } \omega \times \kappa,\ \operatorname{ran}(p) \subseteq \{0,1\}\,\},$$
+ordered by **reverse inclusion**: $p \le q$ iff $p \supseteq q$ (the larger partial function is the stronger condition), with greatest element the empty function. Two conditions are compatible iff they agree on the overlap of their domains. The special case $\kappa = 1$, $\operatorname{Fn}(\omega, 2)$, adds a single Cohen real. For an $M$-generic $G$, the union $\bigcup G$ is a total function $\omega \times \kappa \to 2$, and its sections $c_\xi(n) = (\bigcup G)(n, \xi)$ give $\kappa$ distinct **Cohen reals** in $M[G]$.`,
+    proof: String.raw`**$\bigcup G$ is a total function and the $c_\xi$ are new and distinct.** Any two conditions in the filter $G$ are compatible, so agree where both are defined; hence $\bigcup G$ is single-valued, a partial function $\omega \times \kappa \to 2$. For each $(n, \xi)$ the set $D_{n,\xi} = \{\,p : (n,\xi) \in \operatorname{dom} p\,\}$ is **dense** (extend any $p$ by deciding the value at $(n,\xi)$) and lies in $M$, so genericity gives $G \cap D_{n,\xi} \neq \varnothing$; thus $\bigcup G$ is total. For distinctness, given $\xi \neq \eta$ the set $E_{\xi,\eta} = \{\,p : \exists n\,(\,(n,\xi),(n,\eta) \in \operatorname{dom} p \text{ and } p(n,\xi) \neq p(n,\eta)\,)\,\}$ is dense in $M$, so $c_\xi \neq c_\eta$. Each $c_\xi$ differs from every ground-model real $r \in M$: the set of conditions forcing $c_\xi(n) \neq r(n)$ for some $n$ is dense and in $M$, so $c_\xi \notin M$. $\square$`,
+  },
+  {
+    id: 'independence-of-ch',
+    label: 'Independence of CH',
+    title: 'Cohen: Independence of the Continuum Hypothesis',
+    kind: 'theorem',
+    tags: ['Set Theory'],
+    dependencies: ['cohen-forcing', 'generic-filter', 'godel-l-consistency', 'continuum-hypothesis', 'cardinal-number', 'cofinality', 'inner-model'],
+    description: String.raw`Cohen's 1963 theorem completes the independence of the Continuum Hypothesis: if ZFC is consistent, then so is ZFC $+\,\neg$CH. Combined with Gödel's $L$ (which gives ZFC $+$ CH), this shows CH is **independent** of ZFC — it can be neither proved nor refuted. Cohen forces with the poset adding $\aleph_2$ Cohen reals; the countable chain condition guarantees that all cardinals (so $\aleph_1, \aleph_2$ themselves) are preserved from the ground model, and the $\aleph_2$ new reals then witness $2^{\aleph_0} \ge \aleph_2 > \aleph_1$. The work that earned forcing its place is the verification that $M[G]$ models ZFC and that ccc preserves cardinals.`,
+    statement: String.raw`If ZFC is consistent, then ZFC $+\,\neg\mathrm{CH}$ is consistent. Combined with $\operatorname{Con}(\mathrm{ZFC}) \rightarrow \operatorname{Con}(\mathrm{ZFC} + \mathrm{CH})$ (Gödel's $L$), the **Continuum Hypothesis is independent of ZFC**: $\mathrm{ZFC} \nvdash \mathrm{CH}$ and $\mathrm{ZFC} \nvdash \neg\mathrm{CH}$.`,
+    proof: String.raw`**Honest sketch (the full proof is the forcing apparatus).** Work over a countable transitive model $M \models \mathrm{ZFC}$ — such a model exists from $\operatorname{Con}(\mathrm{ZFC})$ by Löwenheim–Skolem and the Mostowski collapse, and suffices for a relative-consistency conclusion. Let $\kappa = (\aleph_2)^M$ and let $\mathbb{P} = \operatorname{Fn}(\omega \times \kappa, 2)^M$ be the **Cohen forcing**. Take an $M$-**generic filter** $G$ (which exists since $M$ is countable) and form $M[G]$.
+
+*$M[G] \models \mathrm{ZFC}$.* This is the **Generic Model Theorem**, proved via the definable forcing relation $p \Vdash \varphi$ and the Forcing Theorem ($M[G] \models \varphi$ iff some $p \in G$ forces $\varphi$): each ZFC axiom is forced by $\mathbb{1}$, using that $M \models \mathrm{ZFC}$. We take this external input as given.
+
+*Cardinals are preserved.* $\mathbb{P}$ has the **countable chain condition**: any antichain of finite partial functions is countable, by a $\Delta$-system (sunflower) argument on their finite domains. A standard lemma — a ccc forcing preserves cofinalities, hence all cardinals — then gives $(\aleph_n)^{M[G]} = (\aleph_n)^M$ for all $n$; in particular $\kappa = \aleph_2$ keeps its meaning in $M[G]$.
+
+*$\neg\mathrm{CH}$ holds.* By the **Cohen forcing** node the generic $G$ yields $\kappa$ distinct reals $c_\xi$ ($\xi < \kappa$) in $M[G]$, all new, so $(2^{\aleph_0})^{M[G]} \ge \kappa = (\aleph_2)^{M[G]} > \aleph_1$. Hence $M[G] \models 2^{\aleph_0} \ge \aleph_2$, i.e. $M[G] \models \neg\mathrm{CH}$. (A nice-names counting argument bounds $2^{\aleph_0}$ above by $\aleph_2$ as well, giving $2^{\aleph_0} = \aleph_2$, but $\ge \aleph_2$ already refutes CH.)
+
+Thus $\operatorname{Con}(\mathrm{ZFC}) \rightarrow \operatorname{Con}(\mathrm{ZFC} + \neg\mathrm{CH})$. Together with the $L$-side theorem **Con(ZFC + GCH)**, which gives $\operatorname{Con}(\mathrm{ZFC} + \mathrm{CH})$, CH is independent of ZFC. $\square$`,
+  },
+
+  // ── Combinatorial set theory: club, stationary, Fodor ───────────────────────
+  {
+    id: 'club-stationary',
+    label: 'Club & Stationary',
+    title: 'Club and Stationary Sets',
+    kind: 'definition',
+    tags: ['Set Theory'],
+    dependencies: ['cofinality', 'limit-ordinal', 'ordinal-trichotomy', 'cardinal-number', 'intersection'],
+    description: String.raw`On a regular uncountable cardinal $\kappa$ there is a robust notion of "almost all" ordinals below $\kappa$. A **club** ("closed unbounded") set is unbounded in $\kappa$ and contains all its own limit points below $\kappa$ — the large sets in this sense. A set is **stationary** if it meets *every* club, so it cannot be ignored. The clubs generate the **club filter**, a $\kappa$-complete filter capturing "largeness," and the stationary sets are the corresponding "non-negligible" sets. This is the combinatorial arena of Fodor's lemma and of the diamond and square principles.`,
+    definition: String.raw`Let $\kappa$ be a regular uncountable cardinal. A set $C \subseteq \kappa$ is **closed** if it contains every limit point below $\kappa$ (if $\alpha < \kappa$ is a limit ordinal and $\sup(C \cap \alpha) = \alpha$, then $\alpha \in C$) and **unbounded** if $\sup C = \kappa$; a **club** is a closed unbounded set. A set $S \subseteq \kappa$ is **stationary** if $S \cap C \neq \varnothing$ for every club $C \subseteq \kappa$. The **club filter** is $\{\,X \subseteq \kappa : X \supseteq C \text{ for some club } C\,\}$.`,
+    proof: String.raw`**The intersection of two clubs is a club; hence the club filter is a filter.** Let $C, D$ be clubs in the regular uncountable $\kappa$. *Closed:* $C \cap D$ is an intersection of closed sets, so closed. *Unbounded:* fix $\alpha_0 < \kappa$. Alternately pick $c_0 \in C$ with $c_0 > \alpha_0$, then $d_0 \in D$ with $d_0 > c_0$, then $c_1 \in C$ with $c_1 > d_0$, and so on, using unboundedness of $C$ and $D$ at each step. This builds an increasing $\omega$-sequence below $\kappa$; its supremum $\beta$ is $< \kappa$ because $\operatorname{cf}(\kappa) = \kappa > \omega$ (here regular *uncountable* is essential). The interleaved subsequences in $C$ and in $D$ both have supremum $\beta$, so closure puts $\beta \in C$ and $\beta \in D$, i.e. $\beta \in (C \cap D)$ with $\beta > \alpha_0$. So $C \cap D$ is unbounded, hence a club. The club filter is therefore closed under finite intersection and (by definition) supersets, contains $\kappa$, and omits $\varnothing$ (no club is empty) — a filter. $\square$`,
+  },
+  {
+    id: 'fodor-lemma',
+    label: "Fodor's Lemma",
+    title: "Fodor's Lemma (Pressing-Down Lemma)",
+    kind: 'theorem',
+    tags: ['Set Theory'],
+    dependencies: ['club-stationary', 'cofinality', 'ordinal-trichotomy', 'image', 'choice'],
+    description: String.raw`A **regressive** function on a stationary set pushes each (nonzero) ordinal strictly below itself. Fodor's lemma says such a function cannot be too dispersive: it must be *constant* on a stationary subset. This is the central pigeonhole principle of stationary-set combinatorics — the reason stationary sets behave like a notion of "positive measure" — and it underlies the theory of $\diamondsuit$, partition relations, and stationary reflection.`,
+    statement: String.raw`Let $\kappa$ be a regular uncountable cardinal, $S \subseteq \kappa$ stationary, and $f : S \to \kappa$ **regressive**, meaning $f(\alpha) < \alpha$ for every $\alpha \in S$ with $\alpha > 0$. Then $f$ is constant on a stationary set: there is $\gamma < \kappa$ such that $\{\,\alpha \in S : f(\alpha) = \gamma\,\}$ is stationary.`,
+    proof: String.raw`Suppose not: for every $\gamma < \kappa$ the preimage $S_\gamma = \{\,\alpha \in S : f(\alpha) = \gamma\,\}$ is **non-stationary**, so by definition there is a club $C_\gamma \subseteq \kappa$ with $S_\gamma \cap C_\gamma = \varnothing$ (choosing one such club per $\gamma$ uses **Choice**). Form the **diagonal intersection**
+$$C = \triangle_{\gamma < \kappa} C_\gamma = \{\,\alpha < \kappa : \alpha \in C_\gamma \text{ for all } \gamma < \alpha\,\}.$$
+*$C$ is a club.* It is closed: if $\alpha$ is a limit of points of $C$ and $\gamma < \alpha$, then all sufficiently large members of $C$ below $\alpha$ lie in $C_\gamma$ (each is $> \gamma$ and in $C$), so $\alpha \in C_\gamma$ by closure of $C_\gamma$; hence $\alpha \in C$. It is unbounded: given $\beta_0$, recursively pick $\beta_{n+1} \in \bigcap_{\gamma < \beta_n} C_\gamma$ above $\beta_n$ — this intersection of $< \kappa$ clubs is a club (using regularity of $\kappa$), hence unbounded — and $\sup_n \beta_n \in C$ since $\operatorname{cf}(\kappa) = \kappa > \omega$.
+
+Since $S$ is **stationary** and $C$ a club, pick $\alpha \in S \cap C$ with $\alpha > 0$. As $f$ is regressive, $\gamma := f(\alpha) < \alpha$, so $\alpha \in S_\gamma$. But $\alpha \in C$ with $\gamma < \alpha$ gives $\alpha \in C_\gamma$, so $\alpha \in S_\gamma \cap C_\gamma = \varnothing$ — a contradiction. Hence some $S_\gamma$ is stationary, i.e. $f$ is constant on a stationary set. $\square$`,
+  },
+
+  // ── Large cardinals ─────────────────────────────────────────────────────────
+  {
+    id: 'inaccessible-cardinal',
+    label: 'Inaccessible Cardinal',
+    title: 'Inaccessible Cardinal',
+    kind: 'definition',
+    tags: ['Set Theory'],
+    dependencies: ['cofinality', 'cardinal-number', 'cantors-theorem', 'power-set', 'continuum-hypothesis', 'godel-incompleteness', 'replacement'],
+    description: String.raw`An **inaccessible cardinal** is an uncountable cardinal that cannot be reached from below by the two cardinal-building operations: it is **regular** (not the supremum of fewer, smaller ordinals) and a **strong limit** (closed under power set, $2^\lambda < \kappa$ for all $\lambda < \kappa$). Such a $\kappa$ is so large that $V_\kappa$ is itself a model of ZFC — so by Gödel's second incompleteness theorem ZFC cannot prove that one exists. Inaccessibles are the entry point to the large-cardinal hierarchy: each stronger axiom posits a cardinal more transcendent than the last, calibrating the consistency strength of set theory.`,
+    definition: String.raw`An uncountable cardinal $\kappa$ is **(strongly) inaccessible** if it is **regular** ($\operatorname{cf}(\kappa) = \kappa$) and a **strong limit** ($2^\lambda < \kappa$ for every cardinal $\lambda < \kappa$). (Dropping "strong" to "$\kappa = \aleph_\kappa$-style limit" gives the weaker *weakly inaccessible*; under GCH the two notions coincide.) Equivalently $\kappa > \omega$ is regular and $\mathcal{P}(\lambda)$ has size $< \kappa$ for all $\lambda < \kappa$. If $\kappa$ is inaccessible then $(V_\kappa, \in) \models \mathrm{ZFC}$, so by Gödel's second incompleteness theorem $\mathrm{ZFC} \nvdash$ "an inaccessible exists" (assuming ZFC is consistent).`,
+    proof: String.raw`**$\kappa$ inaccessible $\Rightarrow V_\kappa \models \mathrm{ZFC}$ (hence unprovable existence).** Regularity and strong-limitness make $V_\kappa$ closed under the ZFC operations: if $x \in V_\kappa$ then $\operatorname{rank}(x) < \kappa$, and Power Set stays inside $V_\kappa$ because $|V_\lambda| < \kappa$ for $\lambda < \kappa$ (a strong-limit induction using **Cantor's theorem** at each step), while Replacement stays inside because the image of a set of size $< \kappa$ under a function cannot be cofinal in the regular $\kappa$. Thus every ZFC axiom holds in the transitive set $V_\kappa$, so $(V_\kappa, \in) \models \mathrm{ZFC}$ and in particular ZFC $+$ "$\exists$ inaccessible" proves $\operatorname{Con}(\mathrm{ZFC})$. Were ZFC to prove an inaccessible exists, ZFC would prove $\operatorname{Con}(\mathrm{ZFC})$, contradicting **Gödel's second incompleteness theorem** (for consistent ZFC). Hence the existence of an inaccessible is not provable in ZFC. $\square$`,
+  },
+  {
+    id: 'measurable-cardinal',
+    label: 'Measurable Cardinal',
+    title: 'Measurable Cardinal & its Ultrafilter',
+    kind: 'definition',
+    tags: ['Set Theory'],
+    dependencies: ['inaccessible-cardinal', 'ultrafilter', 'cofinality', 'cardinal-number', 'elementary-embedding', 'axiom-of-constructibility'],
+    description: String.raw`A **measurable cardinal** carries a nontrivial two-valued measure: a $\kappa$-additive, nonprincipal ultrafilter on $\kappa$ that decides every subset as "size $0$ or $1$" and is closed under intersections of fewer than $\kappa$ sets. Equivalently — Scott's theorem — $\kappa$ is the critical point of a nontrivial elementary embedding $j : V \to M$ into a transitive class $M$. Measurables sit far above the inaccessibles in consistency strength, and their mere existence contradicts $V = L$ (Scott: if a measurable exists then $V \neq L$), so they are genuinely beyond the constructible universe.`,
+    definition: String.raw`An uncountable cardinal $\kappa$ is **measurable** if there is a **$\kappa$-complete nonprincipal ultrafilter** $\mathcal{U}$ on $\kappa$: an **ultrafilter** on $\kappa$ that contains no singleton (nonprincipal) and is closed under intersections of fewer than $\kappa$ members — if $\gamma < \kappa$ and $X_\xi \in \mathcal{U}$ for $\xi < \gamma$ then $\bigcap_{\xi<\gamma} X_\xi \in \mathcal{U}$. Equivalently, there is a nontrivial **elementary embedding** $j : V \to M$ into a transitive class $M$ whose least moved ordinal (**critical point**) is $\kappa$; then $\mathcal{U} = \{\,X \subseteq \kappa : \kappa \in j(X)\,\}$ is such an ultrafilter. Every measurable cardinal is inaccessible, and (Scott) no measurable cardinal exists if $V = L$.`,
+    proof: String.raw`**A measurable cardinal is inaccessible.** Let $\mathcal{U}$ be a $\kappa$-complete nonprincipal ultrafilter on $\kappa$. *Regular:* if $\kappa = \bigcup_{\xi<\gamma} A_\xi$ with $\gamma < \kappa$ and each $|A_\xi| < \kappa$, then each $A_\xi \notin \mathcal{U}$ (a set of size $< \kappa$ is a union of $< \kappa$ singletons, none in the nonprincipal $\mathcal{U}$, so by $\kappa$-completeness its complement is in $\mathcal{U}$); but then $\kappa$-completeness gives $\bigcap_\xi (\kappa \setminus A_\xi) \in \mathcal{U}$, which is $\varnothing$ — impossible. So $\kappa$ has no cofinal set of size $< \kappa$, i.e. $\operatorname{cf}(\kappa) = \kappa$. *Strong limit:* if $2^\lambda \ge \kappa$ for some $\lambda < \kappa$, a standard splitting argument (distributing $\kappa$ along the binary tree $2^\lambda$ and using $\kappa$-completeness to follow $\mathcal{U}$ down one branch at each of the $\lambda < \kappa$ levels) drives $\mathcal{U}$ to a single point, contradicting nonprincipality. Hence $\kappa$ is regular and a strong limit, so **inaccessible**. The embedding characterization (Scott) and the consequence $V \neq L$ — that the critical point's ultrafilter, reflected through $j$, cannot exist inside $L$ — are the deeper facts recorded with the **axiom of constructibility**; we do not reprove them here. $\square$`,
+  },
+
+  // ── Martin's Axiom ──────────────────────────────────────────────────────────
+  {
+    id: 'martins-axiom',
+    label: "Martin's Axiom",
+    title: "Martin's Axiom (MA)",
+    kind: 'axiom',
+    tags: ['Set Theory'],
+    dependencies: ['forcing-poset', 'generic-filter', 'continuum-hypothesis', 'cardinal-number', 'cohen-forcing'],
+    description: String.raw`**Martin's Axiom** is a "generic existence" principle that extends a feature of countable forcing to uncountably many requirements — but only below the continuum. It asserts that for any ccc partial order and any family of fewer than $2^{\aleph_0}$ dense sets, a filter meeting all of them already exists *in the universe* (no extension needed). Under CH it is trivially true (it then quantifies over countably many dense sets, where such filters always exist); its force comes from MA $+\,\neg$CH, a consistent extension of ZFC that settles many problems uniformly — making $2^{\aleph_0}$ regular, every set of reals of size $< 2^{\aleph_0}$ Lebesgue null, and all such cardinals "behave like $\aleph_0$."`,
+    statement: String.raw`For an infinite cardinal $\kappa$, **$\mathrm{MA}_\kappa$** states: for every **ccc** forcing poset $(\mathbb{P}, \le)$ and every family $\mathcal{D}$ of at most $\kappa$ dense subsets of $\mathbb{P}$, there is a filter $G \subseteq \mathbb{P}$ meeting every $D \in \mathcal{D}$ (i.e. $G \cap D \neq \varnothing$). **Martin's Axiom** (MA) is the assertion that $\mathrm{MA}_\kappa$ holds for every $\kappa < 2^{\aleph_0}$. The principle $\mathrm{MA}_{\aleph_0}$ is a theorem of ZFC, so MA follows from CH; and MA $+\,2^{\aleph_0} > \aleph_1$ is consistent relative to ZFC (forced by a finite-support ccc iteration).`,
+    proof: String.raw`**$\mathrm{MA}_{\aleph_0}$ is a theorem of ZFC (so CH $\Rightarrow$ MA).** Let $\mathbb{P}$ be any forcing poset (ccc is not even needed here) and $\mathcal{D} = \{D_n : n < \omega\}$ countably many dense sets. Build a descending chain of conditions: set $p_0 = \mathbb{1}$, and given $p_n$ choose $p_{n+1} \le p_n$ with $p_{n+1} \in D_n$, possible since $D_n$ is **dense**. The upward closure $G = \{\,q : \exists n\,(p_n \le q)\,\}$ is a filter (the $p_n$ are pairwise compatible, being a descending chain) and meets each $D_n$. Hence $\mathrm{MA}_{\aleph_0}$ holds. If CH holds then every $\kappa < 2^{\aleph_0} = \aleph_1$ is countable, so MA reduces to $\mathrm{MA}_{\aleph_0}$ and thus holds. The consistency of MA $+\,\neg$CH — obtained by a length-$\aleph_2$ finite-support iteration of ccc forcings, arranging that every ccc poset of size $< \aleph_2$ is handled along the way while ccc-ness (hence cardinal preservation, cf. **Cohen forcing**) is maintained — is the deep direction, recorded here without the iteration machinery. $\square$`,
+  },
 ]

@@ -43,6 +43,15 @@ import { CONVEX_ANALYSIS_NODES } from './convex-analysis.ts'
 import { CALCULUS_OF_VARIATIONS_NODES } from './calculus-of-variations.ts'
 import { MODEL_THEORY_NODES } from './model-theory.ts'
 import { MACHINE_LEARNING_THEORY_NODES } from './machine-learning-theory.ts'
+import { UNIVERSAL_ALGEBRA_NODES } from './universal-algebra.ts'
+import { CODING_THEORY_NODES } from './coding-theory.ts'
+import { MULTILINEAR_ALGEBRA_NODES } from './multilinear-algebra.ts'
+import { PROOF_THEORY_NODES } from './proof-theory.ts'
+import { OPERATOR_ALGEBRAS_NODES } from './operator-algebras.ts'
+import { SYMPLECTIC_GEOMETRY_NODES } from './symplectic-geometry.ts'
+import { DESCRIPTIVE_SET_THEORY_NODES } from './descriptive-set-theory.ts'
+import { KNOT_THEORY_NODES } from './knot-theory.ts'
+import { SPECTRAL_GEOMETRY_NODES } from './spectral-geometry.ts'
 
 /**
  * The full node corpus, assembled from one file per mathematical area so the
@@ -95,4 +104,13 @@ export const MATH_NODES: MathNode[] = [
   ...CALCULUS_OF_VARIATIONS_NODES,
   ...MODEL_THEORY_NODES,
   ...MACHINE_LEARNING_THEORY_NODES,
+  ...UNIVERSAL_ALGEBRA_NODES,
+  ...CODING_THEORY_NODES,
+  ...MULTILINEAR_ALGEBRA_NODES,
+  ...PROOF_THEORY_NODES,
+  ...OPERATOR_ALGEBRAS_NODES,
+  ...SYMPLECTIC_GEOMETRY_NODES,
+  ...DESCRIPTIVE_SET_THEORY_NODES,
+  ...KNOT_THEORY_NODES,
+  ...SPECTRAL_GEOMETRY_NODES,
 ]
