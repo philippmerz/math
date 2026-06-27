@@ -32,7 +32,7 @@ export type LayoutResult = {
 }
 
 /** The selectable layout engines. */
-export type LayoutMode = 'flow' | 'grouped' | 'compact'
+export type LayoutMode = 'flow' | 'grouped'
 
 const primaryArea = (n: MathNode) => n.tags[0] ?? 'Other'
 const clusterId = (area: string) => `cluster:${area}`
@@ -244,83 +244,4 @@ export function cachedLayout(mode: LayoutMode, hidden: ReadonlySet<string>): Lay
     return rfNode(n, p[0], p[1])
   })
   return { nodes: rfNodes, edges: buildEdges(nodes), clusters: cached.clusters }
-}
-
-// ── ELK ──────────────────────────────────────────────────────────────────
-// `compact`: a hierarchical (nested) layered layout — each area is a group
-// node, so ELK groups them tightly. Loaded and computed lazily (async), cached
-// per visible-node set.
-
-type ElkBox = { id: string; x: number; y: number; width: number; height: number; children?: ElkBox[] }
-
-const elkCache = new Map<string, LayoutResult>()
-
-export async function elkLayout(hidden: ReadonlySet<string>): Promise<LayoutResult> {
-  const nodes = visibleNodes(hidden)
-  const key = nodes.map((n) => n.id).join(',') // MATH_NODES order is stable
-  const cached = elkCache.get(key)
-  if (cached) return cached
-
-  const ELK = (await import('elkjs/lib/elk.bundled.js')).default
-  const elk = new ELK()
-  const visible = new Set(nodes.map((n) => n.id))
-
-  const areas: string[] = []
-  const byArea = new Map<string, MathNode[]>()
-  for (const n of nodes) {
-    const a = primaryArea(n)
-    if (!byArea.has(a)) {
-      byArea.set(a, [])
-      areas.push(a)
-    }
-    byArea.get(a)!.push(n)
-  }
-
-  const graph = {
-    id: 'root',
-    layoutOptions: {
-      'elk.algorithm': 'layered',
-      'elk.direction': 'DOWN',
-      'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-      'elk.layered.spacing.nodeNodeBetweenLayers': '52',
-      'elk.spacing.nodeNode': '28',
-      'elk.spacing.componentComponent': '64',
-      'elk.padding': '[top=28,left=28,bottom=28,right=28]',
-    },
-    children: areas.map((area) => ({
-      id: clusterId(area),
-      layoutOptions: { 'elk.padding': '[top=32,left=20,bottom=20,right=20]' },
-      children: byArea.get(area)!.map((n) => ({ id: n.id, width: NODE_WIDTH, height: NODE_HEIGHT })),
-    })),
-    edges: nodes.flatMap((n) =>
-      n.dependencies
-        .filter((d) => visible.has(d))
-        .map((d) => ({ id: `${d}->${n.id}`, sources: [d], targets: [n.id] })),
-    ),
-  }
-
-  const res = (await elk.layout(graph)) as { children?: ElkBox[] }
-  const byId = new Map(nodes.map((n) => [n.id, n]))
-  const rfNodes: ConceptNode[] = []
-  const clusters: ClusterBox[] = []
-
-  for (const group of res.children ?? []) {
-    clusters.push({
-      id: group.id,
-      area: group.id.replace('cluster:', ''),
-      x: group.x,
-      y: group.y,
-      width: group.width,
-      height: group.height,
-    })
-    for (const child of group.children ?? []) {
-      const mn = byId.get(child.id)
-      // ELK child coords are relative to the parent group.
-      if (mn) rfNodes.push(rfNode(mn, group.x + child.x, group.y + child.y))
-    }
-  }
-
-  const result: LayoutResult = { nodes: rfNodes, edges: buildEdges(nodes), clusters }
-  elkCache.set(key, result)
-  return result
 }

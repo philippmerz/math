@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { cachedLayout, elkLayout, graphvizLayout, type LayoutMode, type LayoutResult } from '../graph/layout'
+import { cachedLayout, graphvizLayout, type LayoutMode, type LayoutResult } from '../graph/layout'
 
 const EMPTY_LAYOUT: LayoutResult = { nodes: [], edges: [], clusters: [] }
 
@@ -13,10 +13,10 @@ function initial(mode: LayoutMode, hidden: ReadonlySet<string>, enabled: boolean
 
 /**
  * Resolve the active layout for the current engine and visible-node set. The
- * heavy work runs off the main thread: `grouped`/`flow` go through the Graphviz
- * worker, `compact` through ELK. A localStorage cache (keyed by node structure)
- * fills in instantly on a repeat load; otherwise the last good layout stays on
- * screen, `loading` flips true, and the fresh one swaps in when it's ready.
+ * heavy work runs off the main thread in the Graphviz worker. A localStorage
+ * cache (keyed by node structure) fills in instantly on a repeat load;
+ * otherwise the last good layout stays on screen, `loading` flips true, and the
+ * fresh one swaps in when it's ready.
  *
  * `hidden` must be a stable reference (memoize it in the caller).
  * `enabled` is false on the mobile list shell, where the graph isn't shown.
@@ -36,8 +36,7 @@ export function useLayout(mode: LayoutMode, hidden: ReadonlySet<string>, enabled
     }
     let cancelled = false
     setState((s) => ({ layout: s.layout, loading: true })) // keep last good on screen
-    const compute = mode === 'compact' ? elkLayout(hidden) : graphvizLayout(mode, hidden)
-    compute
+    graphvizLayout(mode, hidden)
       .then((layout) => {
         if (!cancelled) setState({ layout, loading: false })
       })

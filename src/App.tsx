@@ -27,7 +27,7 @@ const LAYOUT_KEY = 'mathgraph-layout'
 
 function initialLayout(): LayoutMode {
   const saved = localStorage.getItem(LAYOUT_KEY)
-  return saved === 'flow' || saved === 'grouped' || saved === 'compact' ? saved : 'grouped'
+  return saved === 'flow' || saved === 'grouped' ? saved : 'grouped'
 }
 
 // Shareable deep-link state lives in the URL query string (independent of the

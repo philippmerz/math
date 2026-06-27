@@ -14,11 +14,6 @@ const LAYOUTS: { mode: LayoutMode; title: string; desc: string }[] = [
     title: 'By dependency',
     desc: 'Strict top-down prerequisite order. Most compact, but fields intermix.',
   },
-  {
-    mode: 'compact',
-    title: 'Grouped, compact',
-    desc: 'Field grouping packed tightly together. Takes a moment to arrange.',
-  },
 ]
 
 type Props = {
