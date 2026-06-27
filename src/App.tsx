@@ -217,6 +217,7 @@ export default function App() {
         <header className="toolbar">
           <div className="toolbar__brand">
             <span className="toolbar__title">Turnstile</span>
+            <span className="toolbar__tagline">The Math Map</span>
           </div>
           <div className={`toolbar__field${viewArea ? ' is-visible' : ''}`} aria-hidden={!viewArea}>
             {shownField && (

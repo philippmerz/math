@@ -303,6 +303,13 @@ body {
   font-weight: 700;
 }
 
+.toolbar__tagline {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
 /* The current field, centered at the top as a context indicator. It fades in
    and out (and across field changes) rather than blinking. */
 .toolbar__field {
@@ -1240,6 +1247,9 @@ body {
   .toolbar__title {
     font-size: 13px;
     white-space: nowrap;
+  }
+  .toolbar__tagline {
+    display: none;
   }
   .toolbar__field {
     display: none;
