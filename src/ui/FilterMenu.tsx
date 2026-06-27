@@ -20,17 +20,20 @@ type Props = {
   kinds: ReadonlySet<NodeKind>
   onKindToggle: (kind: NodeKind) => void
   onClear: () => void
+  onOpenChange?: (open: boolean) => void
 }
 
-export function FilterMenu({ area, onAreaChange, kinds, onKindToggle, onClear }: Props) {
+export function FilterMenu({ area, onAreaChange, kinds, onKindToggle, onClear, onOpenChange }: Props) {
   const [open, setOpen] = useState(false)
   const [tagQuery, setTagQuery] = useState('')
   const ref = useRef<HTMLDivElement>(null)
 
-  // Clear the area search each time the popover closes.
+  // Clear the area search each time the popover closes; let the parent know the
+  // open state (it keeps the chrome from auto-hiding while this is up).
   useEffect(() => {
     if (!open) setTagQuery('')
-  }, [open])
+    onOpenChange?.(open)
+  }, [open, onOpenChange])
 
   const q = tagQuery.trim().toLowerCase()
   const shownTags = q ? allTags.filter((t) => t.toLowerCase().includes(q)) : allTags

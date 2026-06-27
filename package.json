@@ -1,5 +1,5 @@
 {
-  "name": "mathematics-graph",
+  "name": "turnstile",
   "description": "An open, searchable dependency graph of mathematics, seeded with the ZFC axioms.",
   "license": "MIT",
   "private": true,

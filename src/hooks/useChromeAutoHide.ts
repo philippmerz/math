@@ -5,14 +5,21 @@ import { useEffect, useRef, useState } from 'react'
  * and brings it straight back on the next movement — an unobtrusive, immersive
  * view of the graph. Desktop only (it keys off mouse movement); on touch the
  * chrome always stays. Returns whether the chrome should currently be hidden.
+ *
+ * `suppressed` keeps the chrome up regardless of idle — e.g. while an overlay
+ * menu (settings, filter) is open, so it doesn't vanish out from under it.
  */
-export function useChromeAutoHide(delay = 3000): boolean {
+export function useChromeAutoHide(delay = 3000, suppressed = false): boolean {
   const [hidden, setHidden] = useState(false)
   const hiddenRef = useRef(false)
   hiddenRef.current = hidden
 
   useEffect(() => {
     if (!window.matchMedia('(pointer: fine)').matches) return
+    if (suppressed) {
+      setHidden(false)
+      return
+    }
 
     let timer = 0
     const arm = () => {
@@ -37,7 +44,7 @@ export function useChromeAutoHide(delay = 3000): boolean {
       window.removeEventListener('wheel', wake)
       window.removeEventListener('keydown', wake)
     }
-  }, [delay])
+  }, [delay, suppressed])
 
-  return hidden
+  return suppressed ? false : hidden
 }

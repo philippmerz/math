@@ -1,9 +1,9 @@
-# Mathematics Graph
+# Turnstile
 
 An open, pure-frontend tool for visualising mathematics as a directed dependency
 graph. Each concept is a labelled node; an arrow runs from every prerequisite to
 the concept it enables. Click a node to read a concise, MathJax-rendered
-definition.
+definition. (The name nods to `⊢`, the turnstile — "proves".)
 
 Open a PR if you spot any mistakes.
 

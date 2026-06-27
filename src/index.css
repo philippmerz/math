@@ -855,7 +855,8 @@ body {
   cursor: pointer;
 }
 
-.search__result:hover {
+.search__result:hover,
+.search__result.is-active {
   background: var(--hairline);
 }
 
@@ -1635,4 +1636,34 @@ body {
 }
 .mlist--path .mrow__label.is-match .mrow__kind {
   color: var(--fg);
+}
+
+/* ---- Definition panel: draggable resize edge (desktop sidebar) -------- */
+.panel__resize {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  margin-right: -5px; /* straddle the panel's left edge for an easy grab */
+  z-index: 9;
+  cursor: ew-resize;
+  touch-action: none;
+}
+.panel__resize::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 5px;
+  width: 1px;
+  background: transparent;
+  transition: background 120ms ease;
+}
+.panel__resize:hover::before {
+  background: var(--line);
+}
+/* while dragging, keep the resize cursor and stop text selection everywhere */
+body.is-col-resizing {
+  cursor: ew-resize;
+  user-select: none;
 }

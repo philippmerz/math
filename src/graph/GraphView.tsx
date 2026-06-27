@@ -379,8 +379,10 @@ export function GraphView({
       >
         <ViewportPortal>
           {clusters.map((c, i) => {
-            // Evenly spaced hue per area; very low opacity so it stays a hint.
-            const hue = Math.round((i * 360) / clusters.length)
+            // Golden-angle hue so consecutive fields land far apart on the wheel
+            // (an even 360/n step is only ~8° for ~44 fields — neighbours blur
+            // together). Very low opacity, so it stays a hint.
+            const hue = Math.round((i * 137.508) % 360)
             return (
               <div
                 key={c.id}

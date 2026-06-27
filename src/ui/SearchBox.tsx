@@ -8,10 +8,21 @@ type Props = {
   onPick: (id: string) => void
 }
 
+const MAX_RESULTS = 8
+
 export function SearchBox({ query, onQueryChange, results, onPick }: Props) {
   const [open, setOpen] = useState(false)
   const [focused, setFocused] = useState(false)
+  // Which result the arrow keys have highlighted; Enter picks it.
+  const [active, setActive] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const shown = results.slice(0, MAX_RESULTS)
+
+  // A fresh query starts the highlight back at the top.
+  useEffect(() => {
+    setActive(0)
+  }, [query])
 
   // "/" focuses the search from anywhere (unless already typing in a field).
   useEffect(() => {
@@ -31,16 +42,26 @@ export function SearchBox({ query, onQueryChange, results, onPick }: Props) {
     setOpen(false)
   }
 
+  const showList = open && query.trim() !== '' && shown.length > 0
+
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && results.length > 0) pick(results[0].id)
-    else if (e.key === 'Escape') {
+    if (e.key === 'Escape') {
       onQueryChange('')
       setOpen(false)
       e.currentTarget.blur()
+    } else if (!showList) {
+      return
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setActive((a) => Math.min(a + 1, shown.length - 1))
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setActive((a) => Math.max(a - 1, 0))
+    } else if (e.key === 'Enter') {
+      e.preventDefault()
+      pick((shown[active] ?? shown[0]).id)
     }
   }
-
-  const showList = open && query.trim() !== '' && results.length > 0
 
   return (
     <div className="search">
@@ -74,11 +95,13 @@ export function SearchBox({ query, onQueryChange, results, onPick }: Props) {
       )}
       {showList && (
         <ul className="search__results">
-          {results.slice(0, 8).map((n) => (
+          {shown.map((n, i) => (
             <li key={n.id}>
               <button
                 type="button"
-                className="search__result"
+                className={`search__result${i === active ? ' is-active' : ''}`}
+                aria-selected={i === active}
+                onMouseEnter={() => setActive(i)}
                 onMouseDown={() => pick(n.id)}
               >
                 <span className="search__result-title">{n.title}</span>

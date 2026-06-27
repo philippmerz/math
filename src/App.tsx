@@ -22,7 +22,7 @@ const DefinitionPanel = lazy(() =>
   import('./ui/DefinitionPanel').then((m) => ({ default: m.DefinitionPanel })),
 )
 
-const REPO_URL = 'https://github.com/philippmerz/math'
+const REPO_URL = 'https://github.com/philippmerz/turnstile'
 const LAYOUT_KEY = 'mathgraph-layout'
 
 function initialLayout(): LayoutMode {
@@ -106,8 +106,12 @@ export default function App() {
     localStorage.setItem(LAYOUT_KEY, layoutMode)
   }, [layoutMode])
 
-  // Float the chrome away when the mouse rests; it returns on the next move.
-  const chromeHidden = useChromeAutoHide()
+  // Float the chrome away when the mouse rests; it returns on the next move —
+  // but never while an overlay menu (settings, filter) is open. The setters are
+  // stable, so passing them straight to the menus won't loop.
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [filterOpen, setFilterOpen] = useState(false)
+  const chromeHidden = useChromeAutoHide(3000, settingsOpen || filterOpen)
 
   // Phones get a separate list-based shell; the graph is opt-in from there.
   const isMobile = useIsMobile()
@@ -212,7 +216,7 @@ export default function App() {
 
         <header className="toolbar">
           <div className="toolbar__brand">
-            <span className="toolbar__title">Mathematics Graph</span>
+            <span className="toolbar__title">Turnstile</span>
           </div>
           <div className={`toolbar__field${viewArea ? ' is-visible' : ''}`} aria-hidden={!viewArea}>
             {shownField && (
@@ -247,6 +251,7 @@ export default function App() {
               kinds={kindFilter}
               onKindToggle={toggleKind}
               onClear={clearFilters}
+              onOpenChange={setFilterOpen}
             />
             <SettingsMenu
               theme={theme}
@@ -255,6 +260,7 @@ export default function App() {
               onLayoutChange={setLayoutMode}
               showConstructions={showAllConstructions}
               onSetShowConstructions={setShowAllConstructions}
+              onOpenChange={setSettingsOpen}
             />
           </div>
         </header>
@@ -267,6 +273,7 @@ export default function App() {
               node={selected}
               onClose={() => setSelectedId(null)}
               onNavigate={setSelectedId}
+              resizable
             />
           </Suspense>
         )}

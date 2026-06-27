@@ -23,6 +23,7 @@ type Props = {
   onLayoutChange: (mode: LayoutMode) => void
   showConstructions: boolean
   onSetShowConstructions: (show: boolean) => void
+  onOpenChange?: (open: boolean) => void
 }
 
 export function SettingsMenu({
@@ -32,9 +33,15 @@ export function SettingsMenu({
   onLayoutChange,
   showConstructions,
   onSetShowConstructions,
+  onOpenChange,
 }: Props) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+
+  // Let the parent know the open state (it keeps the chrome from auto-hiding).
+  useEffect(() => {
+    onOpenChange?.(open)
+  }, [open, onOpenChange])
 
   useEffect(() => {
     if (!open) return

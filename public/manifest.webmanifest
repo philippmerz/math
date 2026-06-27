@@ -1,6 +1,6 @@
 {
-  "name": "Mathematics Graph",
-  "short_name": "Math Graph",
+  "name": "Turnstile",
+  "short_name": "Turnstile",
   "description": "An open, searchable dependency graph of mathematics.",
   "start_url": "./",
   "scope": "./",

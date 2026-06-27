@@ -2,11 +2,11 @@
 
 ### feature agent
 
-- arrow keys should navigate the search results when search bar is focused, enter should select the currently highlighted one
-- rename entire repo to 'turnstile'
-- make sidebar expandable per border-drag
-- move dagre computation to web worker and add a loading screen on first load to give visual indicator instead of 'stuck' 
-- many adjacent fields have the same hull color
+- mobile search should show only the results in a list, and only when selecting a result should the item be displayed in the math graph proper
+- transitions for toggling collapse state of a graph node's dependents on mobile
+- mobile: add padding to top of list so that user can scroll down to access top most item instead of reaching up with the thumb
+- filtering on mobile should remove all the items that aren't in the filter instead of just graying them out like on desktop
+- 'switch to graph' blocks main thread on mobile without loading indication
 
 ### content agent
 
